@@ -1,0 +1,63 @@
+import Link from 'next/link'
+import {
+  Trash2, Home, Truck, Archive, Package, FileText,
+  Video, MessageSquare, Sparkles, Layout, Briefcase,
+  type LucideIcon,
+} from 'lucide-react'
+import { formatPrice } from '@/lib/utils'
+
+const ICON_MAP: Record<string, LucideIcon> = {
+  Trash2,
+  Home,
+  Truck,
+  Archive,
+  Package,
+  FileText,
+  Video,
+  MessageSquare,
+  Sparkles,
+  Layout,
+  Briefcase,
+}
+
+interface ServiceCardProps {
+  slug: string
+  title: string
+  icon: string
+  priceFrom: number
+}
+
+export default function ServiceCard({ slug, title, icon, priceFrom }: ServiceCardProps) {
+  const Icon = ICON_MAP[icon] ?? Briefcase
+
+  return (
+    <article className="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow duration-200 overflow-hidden flex flex-col p-6 gap-4 min-w-[240px] xl:min-w-0 snap-start">
+      {/* Icon */}
+      <div className="flex items-center justify-center w-10 h-10 rounded-full bg-muted">
+        <Icon size={20} className="text-dark/50" aria-hidden="true" />
+      </div>
+
+      {/* Title */}
+      <h3 className="font-semibold text-dark leading-snug">{title}</h3>
+
+      {/* Placeholder description */}
+      <p className="text-dark/60 text-sm leading-relaxed line-clamp-2">
+        Professional, stress-free organizing tailored to your needs and timeline.
+      </p>
+
+      {/* Price + link row */}
+      <div className="flex items-center justify-between mt-auto pt-2">
+        <span className="font-mono text-sm text-primary">
+          From {formatPrice(priceFrom)}
+        </span>
+        <Link
+          href={`/services/${slug}`}
+          className="text-dark/50 hover:text-dark text-sm font-medium"
+          aria-label={`Learn more about ${title}`}
+        >
+          Learn more →
+        </Link>
+      </div>
+    </article>
+  )
+}
