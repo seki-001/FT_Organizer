@@ -278,22 +278,26 @@ export const DEFAULT_GALLERY = SERVICE_GALLERY['professional-organizing-declutte
 
 export const BOOKING_PROCESS_STEPS = [
   {
-    title: 'Book & Request',
+    title: 'Book a site visit',
     description:
-      'Submit your booking with the service you need. We respond within 24 hours to confirm next steps.',
+      'Choose your service and request a visit. We confirm timing — mainly Mondays across East Africa.',
   },
   {
-    title: 'Site Visit',
-    description: `Site visits are mainly on ${SITE_VISIT.primaryDays} (${SITE_VISIT.serviceArea}). Fee: KSh ${SITE_VISIT.feeKsh.toLocaleString()}. ${SITE_VISIT.redeemableNote}`,
+    title: 'We assess your space',
+    description: `On-site walkthrough (${formatPriceLabel(SITE_VISIT.feeKsh)}). We listen, measure scope, and note priorities.`,
   },
   {
-    title: 'Service Delivery',
+    title: 'You receive a plan & quote',
     description:
-      'We deliver your organizing, relocation, home management, or training scope with calm, premium care.',
+      'A clear proposal with timeline and investment — typically within 48 hours of your visit.',
   },
   {
-    title: 'Handover & Maintenance',
+    title: 'We organize, set up & follow up',
     description:
-      'We walk you through every system so your space stays functional, beautiful, and easy to maintain.',
+      'Hands-on delivery, coordination where needed, and guidance so your systems last.',
   },
 ] as const
+
+function formatPriceLabel(amount: number) {
+  return `KSh ${amount.toLocaleString()}`
+}

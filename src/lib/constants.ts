@@ -15,6 +15,15 @@ export {
   type ServiceGroupId,
 } from './services-data'
 
+export {
+  getServiceDetail,
+  getAllServiceDetails,
+  SERVICE_DETAIL_EXTRAS,
+  RELOCATION_SCOPE,
+  type CatalogServiceFull,
+  type ServiceFaqItem,
+} from './service-detail-data'
+
 export const NAV_LINKS = [
   { label: 'Home', href: '/' },
   { label: 'Services', href: '/services' },

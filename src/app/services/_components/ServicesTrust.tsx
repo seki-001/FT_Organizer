@@ -1,53 +1,38 @@
-'use client'
-
-import { motion } from 'framer-motion'
-import { Shield, Star, MapPin } from 'lucide-react'
-import { useScrollAnimation } from '@/hooks/useScrollAnimation'
-import { EASE_STANDARD } from '@/lib/animations'
+import { Globe2, Shield, Sparkles } from 'lucide-react'
 
 const TRUST_ITEMS = [
   {
+    icon: Sparkles,
+    heading: 'Professional standards',
+    body: 'Calm, confidential service with systems designed to last beyond the visit.',
+  },
+  {
     icon: Shield,
-    heading: 'Confidentiality Agreement',
-    body: 'Signed on every job, no exceptions. Your home and its contents remain private.',
+    heading: 'Trusted process',
+    body: 'Site visit first, clear quote, and handover guidance — no surprises.',
   },
   {
-    icon: Star,
-    heading: 'NAPO Code of Ethics',
-    body: 'We follow international organizing standards for professionalism and best practice.',
+    icon: Globe2,
+    heading: 'East Africa-wide',
+    body: 'Based in Nairobi; projects and relocations coordinated across the region.',
   },
-  {
-    icon: MapPin,
-    heading: 'Nairobi-Based',
-    body: 'We come to you, anywhere in the city — from Karen to Eastlands and beyond.',
-  },
-]
+] as const
 
 export default function ServicesTrust() {
-  const { ref, isInView } = useScrollAnimation({ amount: 0.2 })
-
   return (
-    <section className="pt-6 pb-16 bg-surface">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <motion.div ref={ref} className="bg-muted rounded-3xl p-10 sm:p-12">
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-10 text-center">
-            {TRUST_ITEMS.map(({ icon: Icon, heading, body }, i) => (
-              <motion.div
-                key={heading}
-                initial={{ opacity: 0, y: 20 }}
-                animate={isInView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.5, ease: EASE_STANDARD, delay: i * 0.12 }}
-                className="flex flex-col items-center gap-4"
-              >
-                <div className="flex items-center justify-center w-14 h-14 rounded-2xl bg-white shadow-sm">
-                  <Icon size={26} className="text-dark/50" aria-hidden="true" />
-                </div>
-                <h3 className="font-display text-xl text-dark">{heading}</h3>
-                <p className="text-dark/60 text-sm leading-relaxed max-w-xs mx-auto">{body}</p>
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
+    <section className="section-padding bg-white border-b border-dark/6">
+      <div className="section-container">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-10">
+          {TRUST_ITEMS.map(({ icon: Icon, heading, body }) => (
+            <div key={heading} className="flex flex-col items-center text-center md:items-start md:text-left gap-3">
+              <span className="flex h-12 w-12 items-center justify-center rounded-full bg-cream text-dark/70">
+                <Icon size={22} strokeWidth={1.75} aria-hidden="true" />
+              </span>
+              <h2 className="font-display text-xl font-semibold text-dark">{heading}</h2>
+              <p className="text-sm text-dark/60 leading-relaxed max-w-sm">{body}</p>
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   )
