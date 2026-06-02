@@ -8,7 +8,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { Eye, EyeOff, Loader2 } from 'lucide-react'
 import { useAuth } from '@/context/AuthContext'
-import { COMPANY } from '@/lib/constants'
+import BrandLogo from '@/components/ui/BrandLogo'
 
 const LoginSchema = z.object({
   email:    z.string().email('Enter a valid email address'),
@@ -58,8 +58,10 @@ export default function LoginClient() {
     <main className="min-h-screen bg-surface flex items-center justify-center px-4 py-16">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-sm border border-dark/8 p-8 flex flex-col gap-6">
 
-        <div className="text-center flex flex-col gap-1">
-          <p className="text-primary font-bold text-sm tracking-wide">{COMPANY.name}</p>
+        <div className="text-center flex flex-col gap-4">
+          <div className="flex justify-center rounded-card bg-surface px-6 py-4">
+            <BrandLogo heightClass="h-12 sm:h-14" priority />
+          </div>
           <h1 className="font-display text-3xl font-bold text-dark">Welcome Back</h1>
           <p className="text-dark/50 text-sm">Sign in to your account</p>
         </div>

@@ -5,21 +5,17 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import {
-  Menu, X, ShoppingCart, Search, Phone, Mail,
-  Heart, ArrowRight, Truck, ChevronDown, ChevronUp,
+  Menu, X, ShoppingCart, Search, Phone,
+  User, ArrowRight, Truck, ChevronDown, ChevronUp,
 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
+import BrandLogo from '@/components/ui/BrandLogo'
 import { NAV_LINKS, SERVICES, SHOP_CATEGORIES, COMPANY } from '@/lib/constants'
 import { MOCK_PRODUCTS } from '@/lib/mock-products'
 import { useCart } from '@/context/CartContext'
 import { cn, formatPrice } from '@/lib/utils'
 
-// ─── Nav order (spec: Home | Services | Shop | Blog | About | Contact) ────────
-
-const NAV_ORDER = ['Home', 'Services', 'Shop', 'Blog', 'About', 'Contact']
-const ORDERED_NAV = NAV_ORDER
-  .map(label => NAV_LINKS.find(n => n.label === label))
-  .filter(Boolean) as typeof NAV_LINKS
+const ORDERED_NAV = NAV_LINKS
 
 // ─── Room cards for the Services mega menu ────────────────────────────────────
 
@@ -361,12 +357,13 @@ function ShopMegaMenu({
 // ─── Mobile menu (full-screen overlay) ────────────────────────────────────────
 
 const MOBILE_NAV_ITEMS = [
-  { label: 'Home',     href: '/',        hasSubmenu: false },
-  { label: 'Services', href: '/services', hasSubmenu: true  },
-  { label: 'Shop',     href: '/shop',    hasSubmenu: false  },
-  { label: 'Blog',     href: '/blog',    hasSubmenu: false  },
-  { label: 'About',    href: '/about',   hasSubmenu: false  },
-  { label: 'Contact',  href: '/contact', hasSubmenu: false  },
+  { label: 'Home',      href: '/',          hasSubmenu: false },
+  { label: 'Services',  href: '/services',  hasSubmenu: true  },
+  { label: 'Shop',      href: '/shop',      hasSubmenu: false },
+  { label: 'About',     href: '/about',     hasSubmenu: false },
+  { label: 'Portfolio', href: '/portfolio', hasSubmenu: false },
+  { label: 'Blog',      href: '/blog',      hasSubmenu: false },
+  { label: 'Contact',   href: '/contact',   hasSubmenu: false },
 ]
 
 const MOBILE_STAGGER = {
@@ -399,10 +396,8 @@ function MobileMenu({
       aria-modal="true"
     >
       {/* Top bar */}
-      <div className="flex items-center justify-between px-6 h-16 border-b border-dark/8 flex-shrink-0">
-        <Link href="/" onClick={onClose} className="font-display text-xl font-bold text-primary">
-          {COMPANY.name}
-        </Link>
+      <div className="flex items-center justify-between px-6 h-[4.5rem] border-b border-dark/8 flex-shrink-0 bg-surface">
+        <BrandLogo heightClass="h-11 sm:h-12" href="/" onClick={onClose} priority />
         <button type="button" onClick={onClose} aria-label="Close menu"
           className="flex items-center justify-center w-10 h-10 rounded-xl text-dark/50 hover:bg-muted hover:text-dark transition-colors">
           <X size={22} />
@@ -510,8 +505,8 @@ function MobileMenu({
           </a>
         </div>
         <Link href="/book" onClick={onClose}
-          className="flex items-center justify-center w-full bg-primary hover:bg-primary/90 text-white font-semibold text-base min-h-[52px] rounded-xl transition-colors">
-          Book Now
+          className="flex items-center justify-center w-full bg-primary hover:bg-danger text-white font-semibold text-base min-h-[52px] rounded-button transition-colors">
+          Book Site Visit
         </Link>
       </div>
     </motion.div>
@@ -564,43 +559,18 @@ export default function Header() {
   return (
     <>
       <header className="sticky top-0 z-50 w-full">
-
-        {/* ── Row 1: Utility bar — desktop only ───────────────────────────── */}
-        <div className="hidden lg:block bg-dark">
-          <div className="max-w-7xl mx-auto px-8 py-2 flex items-center justify-between">
-            <p className="text-white/55 text-xs">
-              Professional Home &amp; Office Organizing — Nairobi
-            </p>
-            <div className="flex items-center gap-5 text-white/55 text-xs">
-              <a href={`tel:${COMPANY.phone}`}
-                className="flex items-center gap-1.5 hover:text-white transition-colors">
-                <Phone size={11} />
-                {COMPANY.phone}
-              </a>
-              <a href={`mailto:${COMPANY.email}`}
-                className="flex items-center gap-1.5 hover:text-white transition-colors">
-                <Mail size={11} />
-                {COMPANY.email}
-              </a>
-            </div>
-          </div>
-        </div>
-
-        {/* ── Row 2: Main nav ──────────────────────────────────────────────── */}
         <div
-          className="bg-white border-b border-dark/8 relative"
+          className="bg-surface/95 backdrop-blur-md border-b border-dark/8 relative"
           onMouseLeave={scheduleClose}
         >
-          <div className="max-w-7xl mx-auto px-4 lg:px-8 h-16 flex items-center justify-between gap-4">
+          <div className="section-container h-[4.5rem] md:h-20 flex items-center justify-between gap-6">
 
-            {/* Logo */}
-            <Link href="/" className="flex-shrink-0 flex items-center gap-2.5">
-              {/* Replace with actual FTO logo file */}
-              {/* <Image src="/logo.png" alt="Faith The Organizer" width={140} height={40} className="h-9 w-auto object-contain" /> */}
-              <span className="font-display text-xl font-bold text-primary leading-none">
-                {COMPANY.name}
-              </span>
-            </Link>
+            <BrandLogo
+              heightClass="h-11 sm:h-12 md:h-14"
+              href="/"
+              priority
+              className="max-w-[200px] sm:max-w-[240px] md:max-w-[280px]"
+            />
 
             {/* Desktop nav — hidden on mobile */}
             <nav aria-label="Primary navigation" className="hidden lg:flex items-center">
@@ -655,17 +625,15 @@ export default function Header() {
             {/* Right actions */}
             <div className="flex items-center gap-0.5 sm:gap-1 flex-shrink-0">
 
-              {/* Search */}
               <button type="button" onClick={openSearch} aria-label="Search"
-                className="hidden md:flex items-center justify-center w-10 h-10 rounded-xl text-dark/55 hover:text-dark hover:bg-muted transition-colors">
+                className="flex items-center justify-center w-10 h-10 rounded-xl text-dark/55 hover:text-dark hover:bg-muted transition-colors">
                 <Search size={19} />
               </button>
 
-              {/* Wishlist — TODO: wire to WishlistContext */}
-              <button type="button" aria-label="Wishlist"
-                className="hidden md:flex items-center justify-center w-10 h-10 rounded-xl text-dark/55 hover:text-dark hover:bg-muted transition-colors relative">
-                <Heart size={19} />
-              </button>
+              <Link href="/account" aria-label="Account"
+                className="hidden sm:flex items-center justify-center w-10 h-10 rounded-xl text-dark/55 hover:text-dark hover:bg-muted transition-colors">
+                <User size={19} />
+              </Link>
 
               {/* Cart */}
               <Link href="/cart"
@@ -679,10 +647,9 @@ export default function Header() {
                 )}
               </Link>
 
-              {/* Book Now — desktop */}
               <Link href="/book"
-                className="hidden md:inline-flex items-center gap-1.5 bg-primary hover:bg-primary/90 text-white font-medium text-sm px-5 py-2.5 rounded-lg transition-colors ml-1">
-                Book Now
+                className="hidden lg:inline-flex items-center gap-1.5 bg-primary hover:bg-danger text-white font-semibold text-sm px-5 min-h-[44px] rounded-button transition-colors ml-1">
+                Book Site Visit
               </Link>
 
               {/* Hamburger — mobile */}

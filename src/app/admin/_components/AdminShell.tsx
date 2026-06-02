@@ -6,8 +6,10 @@ import { usePathname, useRouter } from 'next/navigation'
 import {
   LayoutDashboard, ShoppingBag, Package, Tag, Users, Calendar,
   FileText, Settings, Menu, X, ChevronRight, LogOut, Bell,
-  BarChart2, Home,
+  BarChart2,
+  Home,
 } from 'lucide-react'
+import BrandLogo from '@/components/ui/BrandLogo'
 import { cn } from '@/lib/utils'
 
 // ─── Nav config ───────────────────────────────────────────────────────────────
@@ -134,17 +136,10 @@ function Sidebar({
     <div className="flex flex-col h-full bg-white w-[260px] flex-shrink-0 border-r border-dark/8">
 
       {/* ── Brand header ────────────────────────────────────────────────── */}
-      <div className="px-5 py-5 border-b border-dark/8 flex items-center justify-between gap-2">
-        <div className="flex items-center gap-3 min-w-0">
-          <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
-            <Home size={17} className="text-primary" aria-hidden="true" />
-          </div>
-          <div className="min-w-0">
-            <p className="font-display text-base text-primary font-bold leading-tight truncate">
-              Faith The Organizer
-            </p>
-            <p className="text-dark/40 text-[11px] mt-0.5">Admin Panel</p>
-          </div>
+      <div className="px-4 py-4 border-b border-dark/8 flex items-center justify-between gap-2">
+        <div className="min-w-0 flex-1 rounded-card bg-surface px-3 py-2.5">
+          <BrandLogo heightClass="h-9 sm:h-10" href="/admin" className="max-w-full" />
+          <p className="text-dark/45 text-[11px] mt-1 pl-0.5">Admin Panel</p>
         </div>
         {onClose && (
           <button
