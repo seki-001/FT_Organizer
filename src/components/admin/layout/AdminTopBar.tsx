@@ -30,7 +30,7 @@ export default function AdminTopBar({
           type="button"
           onClick={onMenuOpen}
           aria-label="Open navigation"
-          className="md:hidden w-9 h-9 rounded-lg flex items-center justify-center text-dark/50 hover:bg-muted"
+            className="md:hidden tap-target w-11 h-11 rounded-lg flex items-center justify-center text-dark/50 hover:bg-muted"
         >
           <Menu size={20} />
         </button>
@@ -79,7 +79,7 @@ export default function AdminTopBar({
           <button
             type="button"
             aria-label="Notifications (preview)"
-            className="relative w-9 h-9 rounded-lg flex items-center justify-center text-dark/40 hover:bg-muted hover:text-dark"
+              className="relative tap-target w-11 h-11 rounded-lg flex items-center justify-center text-dark/40 hover:bg-muted hover:text-dark"
           >
             <Bell size={17} />
             <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-primary border-2 border-white" aria-hidden="true" />

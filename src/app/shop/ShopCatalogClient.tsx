@@ -102,7 +102,7 @@ export default function ShopCatalogClient() {
   }
 
   return (
-    <main className="bg-surface">
+    <main className="bg-surface overflow-x-hidden min-w-0">
       <ShopHero />
 
       <section className="bg-white border-b border-dark/8 sticky top-16 z-20">

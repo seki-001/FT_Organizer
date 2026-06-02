@@ -21,8 +21,8 @@ export default function AuthShell({
   showLaunchNotice = true,
 }: AuthShellProps) {
   return (
-    <main className="bg-surface min-h-[calc(100vh-4rem)]">
-      <div className="section-container py-8 md:py-12 lg:py-16">
+    <main className="bg-surface min-h-[calc(100vh-4rem)] overflow-x-hidden">
+      <div className="section-container py-6 md:py-12 lg:py-16 min-w-0">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-stretch max-w-6xl mx-auto">
           {/* Lifestyle panel — desktop */}
           <aside className="hidden lg:flex lg:col-span-5 flex-col">
@@ -57,7 +57,7 @@ export default function AuthShell({
           <div className="lg:col-span-7 flex flex-col">
             <Link
               href="/"
-              className="inline-flex items-center gap-2 text-sm text-dark/50 hover:text-dark mb-6 w-fit transition-colors"
+              className="inline-flex items-center gap-2 text-sm text-dark/50 hover:text-dark mb-6 w-fit min-h-[44px] transition-colors"
             >
               <ArrowLeft size={16} aria-hidden="true" />
               Back to website

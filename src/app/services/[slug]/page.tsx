@@ -52,7 +52,7 @@ export default async function ServicePage({
 
   return (
     <>
-      <main>
+      <main className="pb-mobile-sticky md:pb-0 min-w-0 overflow-x-hidden">
         <ServiceDetailHero service={service} />
         <ServiceWhoIsFor service={service} />
         <ServiceIncluded service={service} />
@@ -74,10 +74,10 @@ export default async function ServicePage({
         />
       </main>
 
-      <div className="md:hidden fixed bottom-0 inset-x-0 z-50 p-4 bg-white/95 backdrop-blur border-t border-dark/10 shadow-lg">
+      <div className="lg:hidden fixed bottom-0 inset-x-0 z-40 border-t border-dark/10 bg-white/95 backdrop-blur-md shadow-[0_-4px_24px_rgba(0,0,0,0.08)] px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
         <Link
           href={`/book?service=${service.slug}`}
-          className="flex items-center justify-center w-full bg-primary hover:bg-danger text-white font-semibold py-3 rounded-button min-h-[48px] text-sm"
+          className="flex items-center justify-center w-full max-w-lg mx-auto bg-primary hover:bg-danger text-white font-semibold rounded-button min-h-[48px] text-sm"
         >
           Book Site Visit
         </Link>

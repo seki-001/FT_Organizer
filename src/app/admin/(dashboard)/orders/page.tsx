@@ -169,7 +169,7 @@ export default function AdminOrdersPage() {
 
   return (
     <>
-      <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-6 min-w-0 overflow-x-hidden">
         <AdminDemoNotice />
 
         <AdminPageHeader
@@ -275,8 +275,11 @@ export default function AdminOrdersPage() {
         </div>
 
         {/* Table */}
-        <div className="bg-white rounded-xl border border-dark/8 shadow-sm overflow-hidden">
-          <div className="overflow-x-auto">
+        <div className="bg-white rounded-xl border border-dark/8 shadow-sm overflow-hidden min-w-0">
+          <p className="mobile-scroll-hint px-5 pt-3 md:hidden border-b border-dark/5">
+            Swipe horizontally to see more columns
+          </p>
+          <div className="mobile-table-scroll md:overflow-visible">
             <table className="w-full text-sm min-w-[700px]">
               <thead>
                 <tr className="border-b border-dark/8 bg-muted/30">

@@ -48,7 +48,7 @@ export default function CartDrawer() {
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
             transition={{ type: 'tween', duration: 0.28, ease: [0.25, 0.1, 0.25, 1] }}
-            className="fixed right-0 top-0 h-full w-full max-w-md bg-surface shadow-2xl z-50 flex flex-col border-l border-dark/10"
+            className="fixed right-0 top-0 h-full w-full sm:max-w-md max-w-[100vw] bg-surface shadow-2xl z-50 flex flex-col border-l border-dark/10 pt-[env(safe-area-inset-top)]"
             role="dialog"
             aria-modal="true"
             aria-label="Shopping cart"
@@ -67,7 +67,7 @@ export default function CartDrawer() {
                 type="button"
                 onClick={closeCart}
                 aria-label="Close cart"
-                className="flex items-center justify-center w-10 h-10 rounded-button text-dark/45 hover:text-dark hover:bg-muted transition-colors"
+                className="tap-target flex items-center justify-center w-11 h-11 rounded-button text-dark/45 hover:text-dark hover:bg-muted transition-colors"
               >
                 <X size={18} />
               </button>
@@ -107,7 +107,7 @@ export default function CartDrawer() {
             </div>
 
             {items.length > 0 && (
-              <div className="border-t border-dark/8 px-5 py-5 flex flex-col gap-4 flex-shrink-0 bg-white">
+              <div className="border-t border-dark/8 px-5 py-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] flex flex-col gap-4 flex-shrink-0 bg-white">
                 <p className="text-xs text-dark/50 text-center">
                   Free delivery in Nairobi CBD · dispatch before 2 pm
                 </p>

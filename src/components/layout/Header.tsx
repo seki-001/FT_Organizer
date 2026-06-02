@@ -100,7 +100,7 @@ function SearchOverlay({ onClose }: { onClose: () => void }) {
             type="button"
             onClick={onClose}
             aria-label="Close search"
-            className="flex items-center justify-center w-9 h-9 rounded-xl text-dark/40 hover:bg-muted hover:text-dark transition-colors flex-shrink-0"
+            className="tap-target flex items-center justify-center w-11 h-11 rounded-xl text-dark/40 hover:bg-muted hover:text-dark transition-colors flex-shrink-0"
           >
             <X size={20} />
           </button>
@@ -626,19 +626,19 @@ export default function Header() {
             <div className="flex items-center gap-0.5 sm:gap-1 flex-shrink-0">
 
               <button type="button" onClick={openSearch} aria-label="Search"
-                className="flex items-center justify-center w-10 h-10 rounded-xl text-dark/55 hover:text-dark hover:bg-muted transition-colors">
+                className="tap-target flex items-center justify-center w-11 h-11 rounded-xl text-dark/55 hover:text-dark hover:bg-muted transition-colors">
                 <Search size={19} />
               </button>
 
               <Link href="/account" aria-label="Account"
-                className="hidden sm:flex items-center justify-center w-10 h-10 rounded-xl text-dark/55 hover:text-dark hover:bg-muted transition-colors">
+                className="hidden sm:flex tap-target items-center justify-center w-11 h-11 rounded-xl text-dark/55 hover:text-dark hover:bg-muted transition-colors">
                 <User size={19} />
               </Link>
 
               {/* Cart */}
               <Link href="/cart"
                 aria-label={`Cart${totalItems > 0 ? `, ${totalItems} item${totalItems !== 1 ? 's' : ''}` : ''}`}
-                className="flex items-center justify-center w-10 h-10 rounded-xl text-dark/70 hover:text-dark hover:bg-muted transition-colors relative">
+                className="tap-target flex items-center justify-center w-11 h-11 rounded-xl text-dark/70 hover:text-dark hover:bg-muted transition-colors relative">
                 <ShoppingCart size={20} />
                 {totalItems > 0 && (
                   <span className="absolute -top-0.5 -right-0.5 flex items-center justify-center w-5 h-5 rounded-full bg-primary text-white text-[10px] font-bold leading-none">
@@ -657,7 +657,7 @@ export default function Header() {
                 onClick={() => setIsMobileMenuOpen(o => !o)}
                 aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
                 aria-expanded={isMobileMenuOpen}
-                className="lg:hidden flex items-center justify-center w-10 h-10 rounded-xl text-dark hover:bg-muted transition-colors">
+                className="lg:hidden tap-target flex items-center justify-center w-11 h-11 rounded-xl text-dark hover:bg-muted transition-colors">
                 <Menu size={22} />
               </button>
             </div>

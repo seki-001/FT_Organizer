@@ -54,8 +54,13 @@ export default function AdminListToolbar<T extends string>({
 
 export function AdminTableShell({ children, footer }: { children: React.ReactNode; footer?: React.ReactNode }) {
   return (
-    <div className={cn('bg-white rounded-2xl border border-dark/8 shadow-sm overflow-hidden')}>
-      {children}
+    <div className={cn('bg-white rounded-2xl border border-dark/8 shadow-sm overflow-hidden min-w-0')}>
+      <p className="mobile-scroll-hint px-5 pt-3 pb-0 border-b border-dark/5 md:hidden">
+        Swipe horizontally to see more columns
+      </p>
+      <div className="mobile-table-scroll md:overflow-visible">
+        {children}
+      </div>
       {footer && <div className="px-5 py-3 border-t border-dark/5 text-xs text-dark/40">{footer}</div>}
     </div>
   )

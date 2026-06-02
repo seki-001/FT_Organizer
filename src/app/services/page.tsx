@@ -41,7 +41,7 @@ const FAQ_ITEMS: AccordionItem[] = [
 
 export default function ServicesHubPage() {
   return (
-    <main>
+    <main className="overflow-x-hidden min-w-0">
       <ServicesHero />
       <ServicesTrust />
       <ServicesCatalog />

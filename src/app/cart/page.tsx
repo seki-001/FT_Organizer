@@ -36,7 +36,7 @@ export default function CartPage() {
 
   if (items.length === 0) {
     return (
-      <main className="bg-surface min-h-[60vh]">
+      <main className="bg-surface min-h-[60vh] overflow-x-hidden">
         <div className="section-container py-20 flex flex-col items-center text-center gap-6">
           <div className="w-20 h-20 rounded-full bg-muted flex items-center justify-center">
             <ShoppingBag size={36} className="text-dark/20" aria-hidden="true" />
@@ -59,8 +59,8 @@ export default function CartPage() {
   }
 
   return (
-    <main className="bg-surface">
-      <div className="section-container py-10 md:py-14">
+    <main className="bg-surface overflow-x-hidden min-w-0">
+      <div className="section-container py-8 md:py-14 min-w-0">
         <Link
           href="/shop"
           className="inline-flex items-center gap-2 text-sm text-dark/50 hover:text-dark mb-6 transition-colors"

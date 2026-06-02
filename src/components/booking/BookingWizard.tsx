@@ -274,7 +274,7 @@ export default function BookingWizard({ onStepChange }: BookingWizardProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} noValidate>
+    <form onSubmit={handleSubmit(onSubmit)} noValidate className="w-full min-w-0">
       <ProgressBar step={step} />
 
       {submitError && step === 5 ? (
@@ -567,7 +567,7 @@ export default function BookingWizard({ onStepChange }: BookingWizardProps) {
         </div>
       )}
 
-      <div className="flex items-center justify-between mt-8 pt-6 border-t border-dark/10">
+      <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-between gap-3 mt-8 pt-6 border-t border-dark/10">
         {step > 1 ? (
           <button
             type="button"

@@ -40,13 +40,14 @@
 html {
   scroll-behavior: smooth;
   font-size: 16px;
+  overflow-x: hidden;
 }
 
 /* ─── Base typography ───────────────────────────────────────────────────────── */
 
 @layer base {
   body {
-    @apply font-sans bg-surface text-dark text-base leading-relaxed min-h-screen antialiased;
+    @apply font-sans bg-surface text-dark text-base leading-relaxed min-h-screen antialiased overflow-x-hidden;
   }
 
   h1,
@@ -93,7 +94,23 @@ html {
 
 @layer components {
   .section-container {
-    @apply max-w-content mx-auto px-6;
+    @apply max-w-content mx-auto px-4 sm:px-6 min-w-0;
+  }
+
+  .pb-mobile-sticky {
+    @apply pb-24 lg:pb-0;
+  }
+
+  .pb-mobile-sticky-tall {
+    @apply pb-32 lg:pb-0;
+  }
+
+  .mobile-table-scroll {
+    @apply -mx-4 px-4 sm:mx-0 sm:px-0 overflow-x-auto overscroll-x-contain;
+  }
+
+  .mobile-scroll-hint {
+    @apply text-[11px] text-dark/40 py-2 md:hidden;
   }
 
   .section-padding {
@@ -150,7 +167,13 @@ html {
 /* ─── Scroll margin for anchor targets ──────────────────────────────────────── */
 
 [id] {
-  scroll-margin-top: 80px;
+  scroll-margin-top: 5.5rem;
+}
+
+@media (min-width: 768px) {
+  [id] {
+    scroll-margin-top: 80px;
+  }
 }
 
 /* ─── Scrollbar hide ────────────────────────────────────────────────────────── */

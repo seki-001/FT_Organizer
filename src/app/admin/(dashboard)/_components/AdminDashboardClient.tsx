@@ -77,7 +77,7 @@ export default function AdminDashboardClient({ userName }: { userName: string })
   const ordersPct = trendPct(ADMIN_DASHBOARD_KPI.ordersThisMonth, ADMIN_DASHBOARD_KPI.ordersPrevMonth)
 
   return (
-    <div className="flex flex-col gap-6 md:gap-8 max-w-[1600px] mx-auto">
+    <div className="flex flex-col gap-6 md:gap-8 max-w-[1600px] mx-auto min-w-0 w-full">
       <AdminDemoNotice />
 
       <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4">

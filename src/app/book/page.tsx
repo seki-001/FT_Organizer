@@ -4,6 +4,7 @@ import { useState, Suspense } from 'react'
 import Link from 'next/link'
 import { Shield, Phone, MessageCircle, MapPin, Loader2 } from 'lucide-react'
 import BookingForm from '@/components/sections/BookingForm'
+import BookMobileSticky from './_components/BookMobileSticky'
 import { COMPANY, SITE_VISIT } from '@/lib/constants'
 import { formatPrice, cn } from '@/lib/utils'
 
@@ -63,8 +64,8 @@ export default function BookPage() {
   const [currentStep, setCurrentStep] = useState(1)
 
   return (
-    <main className="bg-surface min-h-screen">
-      <div className="section-container py-10 md:py-16">
+    <main className="bg-surface min-h-screen pb-mobile-sticky-tall lg:pb-0" id="booking-top">
+      <div className="section-container py-8 md:py-16 min-w-0">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-start">
           <aside className="lg:col-span-4">
             <div className="lg:sticky lg:top-24 space-y-8">
@@ -120,8 +121,8 @@ export default function BookPage() {
             </div>
           </aside>
 
-          <div className="lg:col-span-8">
-            <div className="card-surface border border-dark/8 p-6 sm:p-8 md:p-10">
+          <div className="lg:col-span-8 min-w-0" id="booking-form">
+            <div className="card-surface border border-dark/8 p-4 sm:p-8 md:p-10">
               <Suspense fallback={<FormSkeleton />}>
                 <BookingForm onStepChange={setCurrentStep} />
               </Suspense>
@@ -129,6 +130,7 @@ export default function BookPage() {
           </div>
         </div>
       </div>
+      <BookMobileSticky />
     </main>
   )
 }

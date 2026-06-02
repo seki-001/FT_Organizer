@@ -39,7 +39,7 @@ function NavLink({
       href={item.href}
       onClick={onClick}
       className={cn(
-        'flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-150',
+        'flex items-center gap-3 px-4 py-3 min-h-[44px] rounded-lg text-sm font-medium transition-all duration-150',
         isActive
           ? 'bg-primary/10 text-primary'
           : 'text-dark/60 hover:bg-muted hover:text-dark'
@@ -78,16 +78,16 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
   if (status === 'unauthenticated') return null
 
   return (
-    <div className="min-h-screen bg-surface">
-      {/* Mobile header bar */}
-      <div className="md:hidden sticky top-16 z-30 bg-white border-b border-dark/10 px-4 py-3 flex items-center justify-between">
+    <div className="min-h-screen bg-surface overflow-x-hidden">
+      {/* Mobile header bar — below site header (~4.5rem) */}
+      <div className="md:hidden sticky top-[4.5rem] z-30 bg-white border-b border-dark/10 px-4 py-3 flex items-center justify-between">
         <span className="font-semibold text-dark text-sm">
           {session?.user.name ?? 'My Account'}
         </span>
         <button
           type="button"
           onClick={() => setMobileOpen((o) => !o)}
-          className="p-2 rounded-lg text-dark/60 hover:bg-muted transition-colors"
+          className="tap-target flex items-center justify-center w-11 h-11 rounded-lg text-dark/60 hover:bg-muted transition-colors"
           aria-label="Toggle account menu"
         >
           {mobileOpen ? <X size={20} /> : <Menu size={20} />}
@@ -96,7 +96,7 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
 
       {/* Mobile slide-down nav */}
       {mobileOpen && (
-        <div className="md:hidden bg-white border-b border-dark/10 px-4 py-3 flex flex-col gap-1 sticky top-[105px] z-20">
+        <div className="md:hidden bg-white border-b border-dark/10 px-4 py-3 flex flex-col gap-1 sticky top-[calc(4.5rem+3.25rem)] z-20 max-h-[50vh] overflow-y-auto">
           {NAV_ITEMS.map((item) => (
             <NavLink
               key={item.href}
@@ -116,8 +116,8 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
         </div>
       )}
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="flex gap-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8 min-w-0">
+        <div className="flex gap-6 md:gap-8 min-w-0">
 
           {/* Desktop sidebar */}
           <aside className="hidden md:flex flex-col w-60 flex-shrink-0">

@@ -142,8 +142,8 @@ export default function CheckoutPage() {
   }
 
   return (
-    <main className="bg-surface min-h-screen">
-      <div className="section-container py-10 md:py-14">
+    <main className="bg-surface min-h-screen overflow-x-hidden">
+      <div className="section-container py-8 md:py-14 min-w-0">
         <h1 className="font-display text-3xl md:text-4xl text-dark mb-2">Checkout</h1>
         <p className="text-sm text-dark/55 mb-8">Reference: {orderRef}</p>
 
@@ -355,7 +355,7 @@ export default function CheckoutPage() {
               )}
 
               {step < 3 && (
-                <div className="flex items-center justify-between mt-8 pt-6 border-t border-dark/8">
+                <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-between gap-3 mt-8 pt-6 border-t border-dark/8">
                   {step > 1 ? (
                     <button
                       type="button"

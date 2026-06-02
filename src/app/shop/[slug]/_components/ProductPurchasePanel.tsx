@@ -16,17 +16,32 @@ type CartBtnState = 'idle' | 'adding' | 'added'
 
 interface ProductPurchasePanelProps {
   product: Product
+  selectedVariant?: ProductVariant
+  onVariantChange?: (v: ProductVariant | undefined) => void
+  quantity?: number
+  onQuantityChange?: (n: number) => void
 }
 
-export default function ProductPurchasePanel({ product }: ProductPurchasePanelProps) {
+export default function ProductPurchasePanel({
+  product,
+  selectedVariant: controlledVariant,
+  onVariantChange,
+  quantity: controlledQty,
+  onQuantityChange,
+}: ProductPurchasePanelProps) {
   const router = useRouter()
   const { addItem, openCart, updateQuantity } = useCart()
   const { isInWishlist, toggleWishlist } = useWishlist()
 
-  const [selectedVariant, setSelectedVariant] = useState<ProductVariant | undefined>(
+  const [internalVariant, setInternalVariant] = useState<ProductVariant | undefined>(
     product.variants?.find((v) => v.inStock) ?? product.variants?.[0],
   )
-  const [quantity, setQuantity] = useState(1)
+  const [internalQty, setInternalQty] = useState(1)
+
+  const selectedVariant = controlledVariant ?? internalVariant
+  const setSelectedVariant = onVariantChange ?? setInternalVariant
+  const quantity = controlledQty ?? internalQty
+  const setQuantity = onQuantityChange ?? setInternalQty
   const [cartState, setCartState] = useState<CartBtnState>('idle')
   const [notifyEmail, setNotifyEmail] = useState('')
 
@@ -104,7 +119,7 @@ export default function ProductPurchasePanel({ product }: ProductPurchasePanelPr
                 onClick={() => setSelectedVariant(v)}
                 aria-pressed={selectedVariant?.id === v.id}
                 className={cn(
-                  'px-3 py-2 rounded-button border text-sm font-medium transition-colors min-h-[40px]',
+                  'px-3 py-2 rounded-button border text-sm font-medium transition-colors min-h-[44px]',
                   !v.inStock && 'opacity-40 cursor-not-allowed line-through',
                   selectedVariant?.id === v.id
                     ? 'border-primary bg-primary/5 text-primary'
@@ -124,7 +139,7 @@ export default function ProductPurchasePanel({ product }: ProductPurchasePanelPr
           <div className="flex items-center w-fit border border-dark/12 rounded-button overflow-hidden">
             <button
               type="button"
-              onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+              onClick={() => setQuantity(Math.max(1, quantity - 1))}
               disabled={quantity <= 1}
               aria-label="Decrease quantity"
               className="flex items-center justify-center w-11 h-11 hover:bg-muted disabled:opacity-40"
@@ -139,7 +154,7 @@ export default function ProductPurchasePanel({ product }: ProductPurchasePanelPr
             </span>
             <button
               type="button"
-              onClick={() => setQuantity((q) => Math.min(product.stockCount, q + 1))}
+              onClick={() => setQuantity(Math.min(product.stockCount, quantity + 1))}
               disabled={quantity >= product.stockCount}
               aria-label="Increase quantity"
               className="flex items-center justify-center w-11 h-11 hover:bg-muted disabled:opacity-40"

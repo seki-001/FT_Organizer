@@ -358,8 +358,11 @@ export default function AdminProductsPage() {
         </div>
 
         {/* Table */}
-        <div className="bg-white rounded-xl border border-dark/8 shadow-sm overflow-hidden">
-          <div className="overflow-x-auto">
+        <div className="bg-white rounded-xl border border-dark/8 shadow-sm overflow-hidden min-w-0">
+          <p className="mobile-scroll-hint px-5 pt-3 md:hidden border-b border-dark/5">
+            Swipe horizontally to see more columns
+          </p>
+          <div className="mobile-table-scroll md:overflow-visible">
             <table className="w-full text-sm min-w-[900px]">
               <thead>
                 <tr className="border-b border-dark/8 bg-muted/30">

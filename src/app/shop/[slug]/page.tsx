@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { notFound, useParams } from 'next/navigation'
 import Link from 'next/link'
 import { ChevronRight } from 'lucide-react'
@@ -10,6 +10,8 @@ import { discountPercent } from '@/lib/utils'
 import ProductCard from '@/components/shop/ProductCard'
 import ProductGallery from './_components/ProductGallery'
 import ProductPurchasePanel from './_components/ProductPurchasePanel'
+import ProductMobileStickyBar from './_components/ProductMobileStickyBar'
+import type { ProductVariant } from '@/lib/types'
 import ProductDetailsTabs from './_components/ProductDetailsTabs'
 import OrganizingTips from './_components/OrganizingTips'
 
@@ -24,6 +26,16 @@ export default function ProductDetailPage() {
 
   const product = MOCK_PRODUCTS.find((p) => p.slug === slug)
   const [activeImage, setActiveImage] = useState(0)
+  const [selectedVariant, setSelectedVariant] = useState<ProductVariant | undefined>(undefined)
+  const [quantity, setQuantity] = useState(1)
+
+  useEffect(() => {
+    if (!product) return
+    setSelectedVariant(
+      product.variants?.find((v) => v.inStock) ?? product.variants?.[0],
+    )
+    setQuantity(1)
+  }, [product?.id])
 
   if (!product) {
     notFound()
@@ -38,8 +50,8 @@ export default function ProductDetailPage() {
   ).slice(0, 4)
 
   return (
-    <main className="bg-surface">
-      <div className="section-container py-8 md:py-12">
+    <main className="bg-surface pb-mobile-sticky lg:pb-0">
+      <div className="section-container py-8 md:py-12 min-w-0">
         <nav aria-label="Breadcrumb" className="flex items-center flex-wrap gap-1.5 text-dark/40 text-sm mb-8">
           <Link href="/" className="hover:text-dark transition-colors">
             Home
@@ -67,8 +79,20 @@ export default function ProductDetailPage() {
             onSelect={setActiveImage}
             saleBadge={saleBadge}
           />
-          <ProductPurchasePanel product={product} />
+          <ProductPurchasePanel
+            product={product}
+            selectedVariant={selectedVariant}
+            onVariantChange={setSelectedVariant}
+            quantity={quantity}
+            onQuantityChange={setQuantity}
+          />
         </div>
+
+        <ProductMobileStickyBar
+          product={product}
+          selectedVariant={selectedVariant}
+          quantity={quantity}
+        />
 
         <ProductDetailsTabs product={product} />
         <OrganizingTips category={product.category} />
