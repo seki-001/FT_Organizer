@@ -102,11 +102,11 @@ export interface TopService {
 }
 
 export const ADMIN_TOP_SERVICES: TopService[] = [
-  { service: 'General Decluttering',    bookings: 12 },
-  { service: 'Whole House Organizing',  bookings:  8 },
-  { service: 'Office Organizing',       bookings:  5 },
-  { service: 'Moving House',            bookings:  4 },
-  { service: 'Paperwork Management',    bookings:  3 },
+  { service: 'Professional Organizing & Decluttering', bookings: 12 },
+  { service: 'Relocation & Transition Services',       bookings:  8 },
+  { service: 'Storage Design & Installation',          bookings:  5 },
+  { service: 'Home Management Services',               bookings:  4 },
+  { service: 'Cleaning & Housekeeping Services',       bookings:  3 },
 ]
 
 // ─── Low stock products ───────────────────────────────────────────────────────

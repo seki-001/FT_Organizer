@@ -1,58 +1,23 @@
-import { notFound } from 'next/navigation'
+import { notFound, redirect } from 'next/navigation'
 import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
+import { CheckCircle2 } from 'lucide-react'
 import {
-  Trash2, Home, Truck, Archive, Package, FileText,
-  Video, MessageSquare, Sparkles, Layout, Briefcase,
-  CheckCircle2,
-  type LucideIcon,
-} from 'lucide-react'
-import { SERVICES } from '@/lib/constants'
-import { formatPrice, slugToTitle } from '@/lib/utils'
+  SERVICES,
+  SITE_VISIT,
+  BOOKING_PROCESS_STEPS,
+  SERVICE_GALLERY,
+  DEFAULT_GALLERY,
+  resolveServiceSlug,
+  getServiceBySlug,
+} from '@/lib/constants'
+import { getServiceIcon } from '@/lib/service-icons'
+import { formatPrice } from '@/lib/utils'
 import ServiceCard from '@/components/ui/ServiceCard'
 import FooterCTABand from '@/components/sections/FooterCTABand'
 import type { Testimonial } from '@/lib/types'
 
-// ─── Icon map ────────────────────────────────────────────────────────────────
-
-const ICON_MAP: Record<string, LucideIcon> = {
-  Trash2, Home, Truck, Archive, Package, FileText,
-  Video, MessageSquare, Sparkles, Layout, Briefcase,
-}
-
-// ─── Shared placeholder data ──────────────────────────────────────────────────
-
-const PLACEHOLDER_INCLUDES = [
-  'Initial walkthrough and space assessment',
-  'Hands-on decluttering with you or on your behalf',
-  'Custom organising systems designed for your space',
-  'Product recommendations for storage solutions',
-  'Post-session tidy-up and disposal coordination',
-]
-
-const PLACEHOLDER_STEPS = [
-  {
-    title: 'Book & Consultation',
-    description:
-      'Submit your booking request. We\'ll contact you within 24 hours to discuss your space, timeline and specific needs.',
-  },
-  {
-    title: 'On-Site Assessment',
-    description:
-      'Faith or a team member visits your space to assess the scope of work and provide a confirmed quote.',
-  },
-  {
-    title: 'The Transformation',
-    description:
-      'We get to work — sorting, decluttering and installing custom organising systems while you relax.',
-  },
-  {
-    title: 'Handover & Guidance',
-    description:
-      'We walk you through every new system so you can maintain the order effortlessly long after we leave.',
-  },
-]
 
 const PLACEHOLDER_TESTIMONIALS: Testimonial[] = [
   {
@@ -85,12 +50,12 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>
 }): Promise<Metadata> {
   const { slug } = await params
-  const service = SERVICES.find((s) => s.slug === slug)
+  const service = getServiceBySlug(slug)
   if (!service) return { title: 'Service Not Found | Faith The Organizer' }
 
   return {
     title: `${service.title} | Faith The Organizer`,
-    description: `Professional ${service.title.toLowerCase()} service in Nairobi by Faith The Organizer. Starting from ${formatPrice(service.priceFrom)}. From Clutter to Order.`,
+    description: `${service.description} Serving ${SITE_VISIT.serviceArea}. Site visits from ${formatPrice(SITE_VISIT.feeKsh)}.`,
   }
 }
 
@@ -127,67 +92,17 @@ export default async function ServicePage({
   params: Promise<{ slug: string }>
 }) {
   const { slug } = await params
-  const service = SERVICES.find((s) => s.slug === slug)
+  const resolvedSlug = resolveServiceSlug(slug)
+  if (resolvedSlug !== slug) {
+    redirect(`/services/${resolvedSlug}`)
+  }
+
+  const service = getServiceBySlug(slug)
   if (!service) notFound()
 
-  const Icon = ICON_MAP[service.icon] ?? Briefcase
-  const relatedServices = SERVICES.filter((s) => s.slug !== slug).slice(0, 3)
-
-  const gallery = (() => {
-    const map: Record<string, { before: string; after: string }> = {
-      'general-decluttering': {
-        before: '/images/services/decluttering-before-1.jpg',
-        after: '/images/services/decluttering-after-1.jpg',
-      },
-      'whole-house-organizing': {
-        before: '/images/services/whole-house-before-1.jpg',
-        after: '/images/services/whole-house-after-1.jpg',
-      },
-      'moving-house': {
-        before: '/images/services/moving-before-1.jpg',
-        after: '/images/services/moving-after-1.jpg',
-      },
-      'shelving-and-storage': {
-        before: '/images/services/shelving-before-1.jpg',
-        after: '/images/services/shelving-after-1.jpg',
-      },
-      'packing-and-removal': {
-        before: '/images/services/packing-before-1.jpg',
-        after: '/images/services/packing-after-1.jpg',
-      },
-      'paperwork-management': {
-        before: '/images/services/paperwork-before-1.jpg',
-        after: '/images/services/paperwork-after-1.jpg',
-      },
-      'office-organizing': {
-        before: '/images/services/office-before-1.jpg',
-        after: '/images/services/office-after-1.jpg',
-      },
-
-      // Hero-only services: reuse the same image so the gallery layout still works.
-      'online-coaching': {
-        before: '/images/services/coaching-hero.jpg',
-        after: '/images/services/coaching-hero.jpg',
-      },
-      'online-consulting': {
-        before: '/images/services/coaching-hero.jpg',
-        after: '/images/services/coaching-hero.jpg',
-      },
-      'home-staging': {
-        before: '/images/services/staging-before-1.jpg',
-        after: '/images/services/staging-after-1.jpg',
-      },
-      'space-planning': {
-        before: '/images/services/space-planning-hero.jpg',
-        after: '/images/services/space-planning-hero.jpg',
-      },
-    }
-
-    return map[service.slug] ?? {
-      before: '/images/services/decluttering-before-1.jpg',
-      after: '/images/services/decluttering-after-1.jpg',
-    }
-  })()
+  const Icon = getServiceIcon(service.icon)
+  const relatedServices = SERVICES.filter((s) => s.slug !== service.slug).slice(0, 3)
+  const gallery = SERVICE_GALLERY[service.slug] ?? DEFAULT_GALLERY
 
   return (
     <>
@@ -216,8 +131,16 @@ export default async function ServicePage({
                 <h1 className="font-display text-4xl md:text-5xl font-bold text-white leading-tight">
                   {service.title}
                 </h1>
+                <p className="text-white/75 text-base leading-relaxed max-w-2xl">
+                  {service.description}
+                </p>
                 <p className="font-mono text-2xl text-primary font-medium">
                   From {formatPrice(service.priceFrom)}
+                </p>
+                <p className="text-white/50 text-sm max-w-xl">
+                  Site visits across {SITE_VISIT.serviceArea} — {formatPrice(SITE_VISIT.feeKsh)} (
+                  {SITE_VISIT.redeemablePercent}% redeemable if retained). Mainly {SITE_VISIT.primaryDays};
+                  closed weekends.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-3 mt-2">
                   <Link
@@ -246,13 +169,10 @@ export default async function ServicePage({
                 <h2 className="font-display text-3xl md:text-4xl text-dark mb-4">
                   What&apos;s Included
                 </h2>
-                <p className="text-dark/60 leading-relaxed">
-                  Every {service.title.toLowerCase()} session is tailored to your specific
-                  space and needs. Here is what you can expect when you book with us.
-                </p>
+                <p className="text-dark/60 leading-relaxed">{service.description}</p>
               </div>
               <ul className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {PLACEHOLDER_INCLUDES.map((item) => (
+                {service.includes.map((item) => (
                   <li key={item} className="flex items-start gap-3">
                     <CheckCircle2
                       size={20}
@@ -287,7 +207,7 @@ export default async function ServicePage({
                 aria-hidden="true"
               />
 
-              {PLACEHOLDER_STEPS.map((step, index) => (
+              {BOOKING_PROCESS_STEPS.map((step, index) => (
                 <div key={step.title} className="relative flex flex-col items-center text-center gap-4">
                   {/* Number circle */}
                   <div className="flex items-center justify-center w-12 h-12 rounded-full bg-dark text-white font-bold text-lg flex-shrink-0 relative z-10">
@@ -362,15 +282,15 @@ export default async function ServicePage({
               </div>
 
               <p className="text-dark/60 text-sm leading-relaxed max-w-sm">
-                Final price depends on space size, condition, and location.
-                Get a free quote with no obligation.
+                Site visit fee: {formatPrice(SITE_VISIT.feeKsh)}. {SITE_VISIT.redeemableNote} Final
+                project pricing depends on scope and location across {SITE_VISIT.serviceArea}.
               </p>
 
               <ul className="flex flex-col gap-3 text-left w-full max-w-xs">
                 {[
-                  'Size and number of rooms',
-                  'Level of clutter and current condition',
-                  'Your location within Nairobi',
+                  'Scope, rooms, and condition of the space',
+                  `Service area (${SITE_VISIT.serviceArea}) and travel`,
+                  'Site visit scheduling — mainly Mondays; weekends closed',
                 ].map((factor) => (
                   <li key={factor} className="flex items-start gap-3 text-dark/70 text-sm">
                     <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-dark/30 flex-shrink-0" aria-hidden="true" />

@@ -12,7 +12,7 @@ import BrandLogo from '@/components/ui/BrandLogo'
 import FooterNewsletter from '@/components/layout/FooterNewsletter'
 import { COMPANY, SERVICES, SHOP_CATEGORIES } from '@/lib/constants'
 
-const FOOTER_SERVICES = SERVICES.slice(0, 8)
+const FOOTER_SERVICES = SERVICES
 
 const POLICY_LINKS = [
   { label: 'Privacy Policy', href: '/privacy-policy' },

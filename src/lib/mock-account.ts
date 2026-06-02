@@ -74,7 +74,7 @@ export const MOCK_ORDERS: Order[] = [
 export const MOCK_BOOKINGS: Booking[] = [
   {
     id:           'BK-230891',
-    service:      'whole-house-organizing',
+    service:      'professional-organizing-decluttering',
     date:         '2025-04-05',
     name:         'Demo User',
     email:        'demo@example.com',
@@ -87,7 +87,7 @@ export const MOCK_BOOKINGS: Booking[] = [
   },
   {
     id:           'BK-112047',
-    service:      'office-organizing',
+    service:      'professional-organizing-decluttering',
     date:         '2025-02-20',
     name:         'Demo User',
     email:        'demo@example.com',
@@ -99,7 +99,7 @@ export const MOCK_BOOKINGS: Booking[] = [
   },
   {
     id:           'BK-779534',
-    service:      'general-decluttering',
+    service:      'professional-organizing-decluttering',
     date:         '2025-04-18',
     name:         'Demo User',
     email:        'demo@example.com',

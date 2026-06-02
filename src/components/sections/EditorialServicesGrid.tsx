@@ -3,14 +3,21 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { ArrowRight, Sparkles, Briefcase, Video } from 'lucide-react'
+import { ArrowRight, Truck, Archive } from 'lucide-react'
+import { SITE_VISIT } from '@/lib/constants'
 import { formatPrice } from '@/lib/utils'
 import { useScrollAnimation } from '@/hooks/useScrollAnimation'
 import { staggerContainer, staggerItem, EASE_STANDARD } from '@/lib/animations'
 
-// ─── Reusable card wrapper ────────────────────────────────────────────────────
-
-function CardLink({ slug, children, className }: { slug: string; children: React.ReactNode; className: string }) {
+function CardLink({
+  slug,
+  children,
+  className,
+}: {
+  slug: string
+  children: React.ReactNode
+  className: string
+}) {
   return (
     <motion.div
       variants={staggerItem}
@@ -25,10 +32,18 @@ function CardLink({ slug, children, className }: { slug: string; children: React
   )
 }
 
-// ─── Card A — Image card ──────────────────────────────────────────────────────
-
-function ImageCard({ slug, title, price, image, height = 'h-72' }: {
-  slug: string; title: string; price: number; image: string; height?: string
+function ImageCard({
+  slug,
+  title,
+  price,
+  image,
+  height = 'h-72',
+}: {
+  slug: string
+  title: string
+  price: number
+  image: string
+  height?: string
 }) {
   return (
     <Link href={`/services/${slug}`} className={`relative ${height} rounded-2xl overflow-hidden block group`}>
@@ -48,18 +63,14 @@ function ImageCard({ slug, title, price, image, height = 'h-72' }: {
   )
 }
 
-// ─── Component ────────────────────────────────────────────────────────────────
-
 export default function EditorialServicesGrid() {
   const { ref: headerRef, isInView: headerInView } = useScrollAnimation({ amount: 0.2 })
-  const { ref: row1Ref,   isInView: row1InView   } = useScrollAnimation({ amount: 0.1 })
-  const { ref: row2Ref,   isInView: row2InView   } = useScrollAnimation({ amount: 0.1 })
+  const { ref: row1Ref, isInView: row1InView } = useScrollAnimation({ amount: 0.1 })
+  const { ref: row2Ref, isInView: row2InView } = useScrollAnimation({ amount: 0.1 })
 
   return (
     <section className="py-16 md:py-24 bg-surface">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-
-        {/* ── Section Header ──────────────────────────────────────────────── */}
         <motion.div
           ref={headerRef}
           initial={{ opacity: 0, y: 20 }}
@@ -68,14 +79,13 @@ export default function EditorialServicesGrid() {
           className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-10"
         >
           <h2 className="font-display text-4xl md:text-5xl text-dark leading-tight">
-            Organize Every Corner
+            Services Across East Africa
           </h2>
           <p className="text-dark/50 text-base max-w-xs leading-relaxed sm:text-right">
-            From a single drawer to an entire home — we handle it all.
+            Organizing, storage, home management, relocation, events, training, and more.
           </p>
         </motion.div>
 
-        {/* ── Row 1 ───────────────────────────────────────────────────────── */}
         <motion.div
           ref={row1Ref}
           variants={staggerContainer}
@@ -83,28 +93,24 @@ export default function EditorialServicesGrid() {
           animate={row1InView ? 'animate' : 'initial'}
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-4 mb-4"
         >
-          {/* Card A — Large image: General Decluttering */}
           <motion.div variants={staggerItem} className="sm:col-span-2 lg:col-span-5">
             <ImageCard
-              slug="general-decluttering"
-              title="General Decluttering"
-              price={5000}
+              slug="professional-organizing-decluttering"
+              title="Professional Organizing & Decluttering"
+              price={8000}
               image="/images/services/decluttering-after-1.jpg"
             />
           </motion.div>
 
-          {/* Card B — Red featured: Whole House */}
-          <CardLink
-            slug="whole-house-organizing"
-            className="lg:col-span-4"
-          >
+          <CardLink slug="relocation-transition" className="lg:col-span-4">
             <div className="bg-primary rounded-2xl p-6 sm:p-8 h-72 flex flex-col justify-between hover:bg-primary/95 transition-colors">
-              <Sparkles size={36} className="text-white/30" aria-hidden="true" />
+              <Truck size={36} className="text-white/30" aria-hidden="true" />
               <div>
                 <h3 className="font-display text-2xl sm:text-3xl text-white leading-snug">
-                  Whole House Organizing
+                  Relocation & Transition
                 </h3>
-                <p className="font-mono text-white/65 text-sm mt-2">From {formatPrice(15000)}</p>
+                <p className="text-white/65 text-sm mt-2 font-mono">From {formatPrice(12000)}</p>
+                <p className="text-white/50 text-xs mt-2">Including diaspora support</p>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-white/50 text-xs uppercase tracking-widest">Explore</span>
@@ -115,22 +121,16 @@ export default function EditorialServicesGrid() {
             </div>
           </CardLink>
 
-          {/* Card C — Muted: Moving House */}
-          <CardLink
-            slug="moving-house"
-            className="lg:col-span-3"
-          >
+          <CardLink slug="home-management" className="lg:col-span-3">
             <div className="bg-muted rounded-2xl p-6 h-72 flex flex-col justify-between hover:bg-dark/5 transition-colors">
               <div>
                 <span className="inline-block bg-dark text-white text-xs font-medium rounded-full px-3 py-1">
-                  Most Booked
+                  Home & Lifestyle
                 </span>
               </div>
               <div>
-                <h3 className="font-display text-xl sm:text-2xl text-dark leading-snug">
-                  Moving House
-                </h3>
-                <p className="font-mono text-primary text-sm mt-2">{formatPrice(8000)}</p>
+                <h3 className="font-display text-xl sm:text-2xl text-dark leading-snug">Home Management</h3>
+                <p className="font-mono text-primary text-sm mt-2">{formatPrice(10000)}</p>
               </div>
               <p className="text-dark/40 text-sm flex items-center gap-1 group-hover:gap-2 transition-all">
                 Learn more <ArrowRight size={13} />
@@ -139,7 +139,6 @@ export default function EditorialServicesGrid() {
           </CardLink>
         </motion.div>
 
-        {/* ── Row 2 ───────────────────────────────────────────────────────── */}
         <motion.div
           ref={row2Ref}
           variants={staggerContainer}
@@ -147,52 +146,48 @@ export default function EditorialServicesGrid() {
           animate={row2InView ? 'animate' : 'initial'}
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-4"
         >
-          {/* Card D — Dark: Office Organizing */}
-          <CardLink
-            slug="office-organizing"
-            className="lg:col-span-3"
-          >
+          <CardLink slug="training-professional-development" className="lg:col-span-3">
             <div className="bg-dark rounded-2xl p-6 h-64 flex flex-col justify-between hover:bg-dark/90 transition-colors">
-              <Briefcase size={30} className="text-primary" aria-hidden="true" />
+              <Archive size={30} className="text-primary" aria-hidden="true" />
               <div>
                 <h3 className="font-display text-xl sm:text-2xl text-white leading-snug">
-                  Office Organizing
+                  Training & Development
                 </h3>
-                <p className="text-white/45 text-sm mt-2">Workspaces that work</p>
+                <p className="text-white/45 text-sm mt-2">For teams and professionals</p>
               </div>
             </div>
           </CardLink>
 
-          {/* Card E — Large image: Shelving & Storage */}
           <motion.div variants={staggerItem} className="sm:col-span-2 lg:col-span-6">
             <ImageCard
-              slug="shelving-and-storage"
-              title="Shelving & Storage"
-              price={6000}
+              slug="storage-design-installation"
+              title="Storage Design & Installation"
+              price={10000}
               image="/images/services/shelving-after-1.jpg"
               height="h-64"
             />
           </motion.div>
 
-          {/* Card F — Muted: Online Coaching */}
-          <CardLink
-            slug="online-coaching"
-            className="lg:col-span-3"
-          >
-            <div className="bg-muted rounded-2xl p-6 h-64 flex flex-col justify-between hover:bg-dark/5 transition-colors">
-              <Video size={30} className="text-primary" aria-hidden="true" />
+          <motion.div variants={staggerItem} className="lg:col-span-3">
+            <div className="bg-muted rounded-2xl p-6 h-64 flex flex-col justify-between">
               <div>
-                <h3 className="font-display text-xl text-dark leading-snug">
-                  Online Coaching
-                </h3>
-                <p className="text-dark/45 text-sm mt-2">Transform your space remotely</p>
-                <p className="font-mono text-primary text-sm mt-4">{formatPrice(3000)}</p>
+                <h3 className="font-display text-xl text-dark leading-snug">Book a Site Visit</h3>
+                <p className="text-dark/45 text-sm mt-2">
+                  Mainly {SITE_VISIT.primaryDays} · {SITE_VISIT.serviceArea}
+                </p>
+                <p className="font-mono text-primary text-sm mt-4">{formatPrice(SITE_VISIT.feeKsh)}</p>
+                <p className="text-dark/40 text-xs mt-2">{SITE_VISIT.redeemablePercent}% redeemable if retained</p>
               </div>
+              <Link
+                href="/book"
+                className="text-primary text-sm font-semibold flex items-center gap-1 hover:gap-2 transition-all"
+              >
+                Book now <ArrowRight size={13} />
+              </Link>
             </div>
-          </CardLink>
+          </motion.div>
         </motion.div>
 
-        {/* ── View all services CTA ────────────────────────────────────────── */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={row2InView ? { opacity: 1 } : {}}
@@ -203,12 +198,10 @@ export default function EditorialServicesGrid() {
             href="/services"
             className="inline-flex items-center gap-2 text-dark/50 hover:text-dark text-sm font-medium transition-colors group"
           >
-            View all {' '}
-            <span className="text-primary font-semibold">11 services</span>
+            View all <span className="text-primary font-semibold">9 services</span>
             <ArrowRight size={14} className="text-primary group-hover:translate-x-1 transition-transform" />
           </Link>
         </motion.div>
-
       </div>
     </section>
   )

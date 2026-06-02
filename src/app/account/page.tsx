@@ -5,7 +5,7 @@ import { ShoppingBag, Calendar, Heart, ArrowRight } from 'lucide-react'
 import { useSession } from '@/context/AuthContext'
 import { useWishlist } from '@/context/WishlistContext'
 import { MOCK_ORDERS, MOCK_BOOKINGS } from '@/lib/mock-account'
-import { SERVICES } from '@/lib/constants'
+import { SERVICES, resolveServiceSlug } from '@/lib/constants'
 import { formatPrice } from '@/lib/utils'
 import { cn } from '@/lib/utils'
 
@@ -157,7 +157,7 @@ export default function AccountDashboardPage() {
           <div className="bg-white rounded-2xl border border-dark/8 shadow-sm p-5 flex flex-col sm:flex-row sm:items-center gap-4">
             <div className="flex-1 flex flex-col gap-1">
               <p className="font-semibold text-dark">
-                {SERVICES.find((s) => s.slug === nextBooking.service)?.title ?? nextBooking.service}
+                {SERVICES.find((s) => s.slug === resolveServiceSlug(nextBooking.service))?.title ?? nextBooking.service}
               </p>
               <p className="text-dark/50 text-sm">
                 {new Date(nextBooking.date).toLocaleDateString('en-KE', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}

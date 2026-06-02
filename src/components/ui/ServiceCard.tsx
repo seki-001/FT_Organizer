@@ -1,24 +1,6 @@
 import Link from 'next/link'
-import {
-  Trash2, Home, Truck, Archive, Package, FileText,
-  Video, MessageSquare, Sparkles, Layout, Briefcase,
-  type LucideIcon,
-} from 'lucide-react'
+import { getServiceIcon } from '@/lib/service-icons'
 import { formatPrice } from '@/lib/utils'
-
-const ICON_MAP: Record<string, LucideIcon> = {
-  Trash2,
-  Home,
-  Truck,
-  Archive,
-  Package,
-  FileText,
-  Video,
-  MessageSquare,
-  Sparkles,
-  Layout,
-  Briefcase,
-}
 
 interface ServiceCardProps {
   slug: string
@@ -28,7 +10,7 @@ interface ServiceCardProps {
 }
 
 export default function ServiceCard({ slug, title, icon, priceFrom }: ServiceCardProps) {
-  const Icon = ICON_MAP[icon] ?? Briefcase
+  const Icon = getServiceIcon(icon)
 
   return (
     <article className="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow duration-200 overflow-hidden flex flex-col p-6 gap-4 min-w-[240px] xl:min-w-0 snap-start">

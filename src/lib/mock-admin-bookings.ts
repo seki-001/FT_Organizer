@@ -21,7 +21,7 @@ export const MOCK_ADMIN_BOOKINGS: AdminBooking[] = [
 
   {
     id:             'BK-2601A1',
-    service:        'whole-house-organizing',
+    service:        'professional-organizing-decluttering',
     date:           '2026-04-08',
     name:           'Wanjiku Kamau',
     email:          'wanjiku.kamau@gmail.com',
@@ -75,7 +75,7 @@ export const MOCK_ADMIN_BOOKINGS: AdminBooking[] = [
 
   {
     id:             'BK-2601A4',
-    service:        'moving-house',
+    service:        'relocation-transition',
     date:           '2026-04-22',
     name:           'Kiptoo Ruto',
     email:          'kiptoo.ruto@outlook.com',
@@ -109,7 +109,7 @@ export const MOCK_ADMIN_BOOKINGS: AdminBooking[] = [
 
   {
     id:             'BK-2601B4',
-    service:        'shelving-and-storage',
+    service:        'storage-design-installation',
     date:           '2026-04-28',
     name:           'Moses Kipchoge',
     email:          'moses.kipchoge@run.co.ke',
@@ -128,7 +128,7 @@ export const MOCK_ADMIN_BOOKINGS: AdminBooking[] = [
 
   {
     id:             'BK-2601A2',
-    service:        'general-decluttering',
+    service:        'professional-organizing-decluttering',
     date:           '2026-04-15',
     name:           'Otieno Odhiambo',
     email:          'otieno.odhiambo@email.com',
@@ -144,7 +144,7 @@ export const MOCK_ADMIN_BOOKINGS: AdminBooking[] = [
 
   {
     id:             'BK-2601A6',
-    service:        'shelving-and-storage',
+    service:        'storage-design-installation',
     date:           '2026-04-20',
     name:           'Brian Otieno',
     email:          'brian.otieno@ymail.com',
@@ -176,7 +176,7 @@ export const MOCK_ADMIN_BOOKINGS: AdminBooking[] = [
 
   {
     id:             'BK-2601B3',
-    service:        'whole-house-organizing',
+    service:        'professional-organizing-decluttering',
     date:           '2026-05-02',
     name:           'Hannah Njenga',
     email:          'hannah.njenga@gmail.com',
@@ -194,7 +194,7 @@ export const MOCK_ADMIN_BOOKINGS: AdminBooking[] = [
 
   {
     id:             'BK-2601A3',
-    service:        'office-organizing',
+    service:        'professional-organizing-decluttering',
     date:           '2026-03-10',
     name:           'Amina Hassan',
     email:          'amina.hassan@business.co.ke',
@@ -229,7 +229,7 @@ export const MOCK_ADMIN_BOOKINGS: AdminBooking[] = [
 
   {
     id:             'BK-2601B2',
-    service:        'office-organizing',
+    service:        'professional-organizing-decluttering',
     date:           '2026-02-25',
     name:           'Patrick Omondi',
     email:          'patrick.omondi@ngo.org',
@@ -247,7 +247,7 @@ export const MOCK_ADMIN_BOOKINGS: AdminBooking[] = [
 
   {
     id:             'BK-2601B1',
-    service:        'general-decluttering',
+    service:        'professional-organizing-decluttering',
     date:           '2026-03-28',
     name:           'Sophia Mutua',
     email:          'sophia.mutua@gmail.com',
@@ -264,7 +264,7 @@ export const MOCK_ADMIN_BOOKINGS: AdminBooking[] = [
 
   {
     id:             'BK-2601B5',
-    service:        'moving-house',
+    service:        'relocation-transition',
     date:           '2026-03-30',
     name:           'Rosemary Wekesa',
     email:          'rosemary.wekesa@gmail.com',

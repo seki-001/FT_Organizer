@@ -1,16 +1,19 @@
-export const SERVICES = [
-  { slug: 'general-decluttering', title: 'General Decluttering', icon: 'Trash2', priceFrom: 5000 },
-  { slug: 'whole-house-organizing', title: 'Whole House Organizing', icon: 'Home', priceFrom: 15000 },
-  { slug: 'moving-house', title: 'Moving House', icon: 'Truck', priceFrom: 8000 },
-  { slug: 'shelving-and-storage', title: 'Shelving & Storage', icon: 'Archive', priceFrom: 6000 },
-  { slug: 'packing-and-removal', title: 'Packing & Removal', icon: 'Package', priceFrom: 7000 },
-  { slug: 'paperwork-management', title: 'Paperwork Management', icon: 'FileText', priceFrom: 4000 },
-  { slug: 'online-coaching', title: 'Online Coaching', icon: 'Video', priceFrom: 3000 },
-  { slug: 'online-consulting', title: 'Online Consulting', icon: 'MessageSquare', priceFrom: 2500 },
-  { slug: 'home-staging', title: 'Home Staging', icon: 'Sparkles', priceFrom: 12000 },
-  { slug: 'space-planning', title: 'Space Planning', icon: 'Layout', priceFrom: 8000 },
-  { slug: 'office-organizing', title: 'Office Organizing', icon: 'Briefcase', priceFrom: 10000 },
-]
+export {
+  SERVICES,
+  SERVICE_GROUPS,
+  SITE_VISIT,
+  LEGACY_SERVICE_SLUGS,
+  resolveServiceSlug,
+  getServiceBySlug,
+  getServicesByGroup,
+  getFeaturedService,
+  SERVICE_GALLERY,
+  DEFAULT_GALLERY,
+  BOOKING_PROCESS_STEPS,
+  type CatalogService,
+  type ServiceGroup,
+  type ServiceGroupId,
+} from './services-data'
 
 export const NAV_LINKS = [
   { label: 'Home', href: '/' },

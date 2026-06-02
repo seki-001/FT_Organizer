@@ -14,7 +14,7 @@ import AdminPageHeader  from '@/components/admin/AdminPageHeader'
 import BookingSlideOver from './_components/BookingSlideOver'
 import { MOCK_ADMIN_BOOKINGS } from '@/lib/mock-admin-bookings'
 import type { AdminBooking }   from '@/lib/mock-admin-bookings'
-import { SERVICES } from '@/lib/constants'
+import { SERVICES, resolveServiceSlug } from '@/lib/constants'
 import { cn } from '@/lib/utils'
 
 // ─── Lookup tables ────────────────────────────────────────────────────────────
@@ -89,7 +89,7 @@ function SelectFilter({
 function BookingCardContent({
   booking, isDragOverlay = false,
 }: { booking: AdminBooking; isDragOverlay?: boolean }) {
-  const service = SERVICES.find(s => s.slug === booking.service)
+  const service = SERVICES.find(s => s.slug === resolveServiceSlug(booking.service))
   const dateStr = new Date(booking.date).toLocaleDateString('en-KE', { day: 'numeric', month: 'short' })
 
   return (
@@ -343,7 +343,7 @@ export default function AdminBookingsPage() {
     const rows = [
       ['ID', 'Customer', 'Email', 'Phone', 'Service', 'Date', 'Property', 'Size', 'Area', 'Status', 'Submitted'],
       ...bookings.map(b => {
-        const svc = SERVICES.find(s => s.slug === b.service)
+        const svc = SERVICES.find(s => s.slug === resolveServiceSlug(b.service))
         return [b.id, b.name, b.email, b.phone, svc?.title ?? b.service,
           b.date, b.propertyType, b.propertySize, b.area, b.status,
           new Date(b.createdAt).toLocaleDateString('en-KE')]
@@ -506,7 +506,7 @@ export default function AdminBookingsPage() {
                       </td>
                     </tr>
                   ) : filteredBookings.map((b, i) => {
-                    const svc    = SERVICES.find(s => s.slug === b.service)
+                    const svc    = SERVICES.find(s => s.slug === resolveServiceSlug(b.service))
                     const meta   = STATUS_META[b.status]
                     return (
                       <tr

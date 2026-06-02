@@ -9,10 +9,20 @@ import ServicesTrust from './_components/ServicesTrust'
 export const metadata: Metadata = {
   title: 'Services | Faith The Organizer',
   description:
-    'Explore all organizing services offered by Faith The Organizer in Nairobi — home decluttering, office organizing, moving house, home staging and more. From Clutter to Order.',
+    'Nine professional services across East Africa — organizing, storage, cleaning, relocation, home management, events, training, staffing, and curated products. From Clutter to Order.',
 }
 
 const FAQ_ITEMS: AccordionItem[] = [
+  {
+    question: 'How do site visits work?',
+    answer:
+      'Site visits are KSh 3,000 and are mainly scheduled on Mondays across East Africa. Saturdays and Sundays are closed. If you proceed with Faith The Organizer, 50% of the site visit fee is redeemable toward your project.',
+  },
+  {
+    question: 'Do you support diaspora clients?',
+    answer:
+      'Yes. Relocation & Transition Services includes diaspora relocation support — remote planning, coordination, and setup for moves into or within East Africa.',
+  },
   {
     question: 'How long does a typical organizing session take?',
     answer:
@@ -24,9 +34,9 @@ const FAQ_ITEMS: AccordionItem[] = [
       'We recommend being present for the initial walkthrough, but many clients are comfortable leaving us to work independently. We will discuss your preference during the consultation.',
   },
   {
-    question: 'What areas of Nairobi do you cover?',
+    question: 'What areas do you serve?',
     answer:
-      'We cover all areas within Nairobi county and surrounding suburbs — including Karen, Westlands, Runda, Kileleshwa, Lavington, Eastlands, and more. Contact us for travel rates outside the ring road.',
+      'We are based in Nairobi and serve clients across East Africa. Contact us to confirm travel for your location outside Nairobi.',
   },
   {
     question: 'Is my privacy protected?',

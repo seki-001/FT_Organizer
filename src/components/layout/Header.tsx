@@ -20,12 +20,12 @@ const ORDERED_NAV = NAV_LINKS
 // ─── Room cards for the Services mega menu ────────────────────────────────────
 
 const ROOMS = [
-  { label: 'Kitchen',           slug: 'general-decluttering',   image: '/images/rooms/kitchen.jpg'         },
-  { label: 'Living Room',       slug: 'whole-house-organizing',  image: '/images/rooms/living-room.jpg'     },
-  { label: 'Bedroom & Closet',  slug: 'shelving-and-storage',    image: '/images/rooms/bedroom.jpg'         },
-  { label: 'Home Office',       slug: 'office-organizing',       image: '/images/rooms/home-office.jpg'          },
-  { label: 'Moving',            slug: 'moving-house',            image: '/images/rooms/moving.jpg'          },
-  { label: 'Whole Home',        slug: 'whole-house-organizing',  image: '/images/rooms/whole-home.jpg'      },
+  { label: 'Kitchen',          slug: 'professional-organizing-decluttering', image: '/images/rooms/kitchen.jpg'     },
+  { label: 'Living Room',      slug: 'professional-organizing-decluttering', image: '/images/rooms/living-room.jpg' },
+  { label: 'Bedroom & Closet', slug: 'storage-design-installation',          image: '/images/rooms/bedroom.jpg'     },
+  { label: 'Home Office',      slug: 'professional-organizing-decluttering', image: '/images/rooms/home-office.jpg' },
+  { label: 'Relocation',       slug: 'relocation-transition',                image: '/images/rooms/moving.jpg'      },
+  { label: 'Whole Home',       slug: 'professional-organizing-decluttering', image: '/images/rooms/whole-home.jpg'  },
 ]
 
 // ─── Search overlay ───────────────────────────────────────────────────────────

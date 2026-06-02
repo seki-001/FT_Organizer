@@ -38,7 +38,8 @@ export default function ServicesHero() {
           transition={{ duration: 0.5, ease: EASE_STANDARD, delay: 0.18 }}
           className="text-dark/50 text-lg mt-5 max-w-lg leading-relaxed"
         >
-          We organize Nairobi homes and offices — from a single drawer to an entire house.
+          Nine integrated services across East Africa — organizing, storage, relocation, and calm
+          home management. Site visits from KSh 3,000.
         </motion.p>
 
         {/* Scroll indicator */}

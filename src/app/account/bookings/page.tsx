@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { Calendar, MessageCircle, Home, Briefcase, Building2 } from 'lucide-react'
 import { MOCK_BOOKINGS } from '@/lib/mock-account'
-import { SERVICES, COMPANY } from '@/lib/constants'
+import { SERVICES, COMPANY, resolveServiceSlug } from '@/lib/constants'
 import { cn } from '@/lib/utils'
 import type { Booking } from '@/lib/types'
 
@@ -52,7 +52,7 @@ const SIZE_LABELS: Record<string, string> = {
 // ─── Booking card ─────────────────────────────────────────────────────────────
 
 function BookingCard({ booking }: { booking: Booking }) {
-  const service  = SERVICES.find((s) => s.slug === booking.service)
+  const service  = SERVICES.find((s) => s.slug === resolveServiceSlug(booking.service))
   const PropIcon = PROPERTY_ICONS[booking.propertyType]
 
   return (

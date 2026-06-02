@@ -5,32 +5,25 @@ import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useState } from 'react'
 import { ArrowRight } from 'lucide-react'
-import { SERVICES } from '@/lib/constants'
+import { SERVICES, SERVICE_GROUPS } from '@/lib/constants'
 import { formatPrice } from '@/lib/utils'
 import { useScrollAnimation } from '@/hooks/useScrollAnimation'
 import { staggerContainer, staggerItem, EASE_STANDARD } from '@/lib/animations'
 
-// ─── Room image + category data mapped to each service ───────────────────────
-
-const SERVICE_META: Record<string, { category: string; image: string }> = {
-  'general-decluttering':   { category: 'Home & Living',    image: '/images/services/decluttering-after-1.jpg'     },
-  'whole-house-organizing': { category: 'Full Home',         image: '/images/services/whole-house-after-1.jpg'      },
-  'moving-house':           { category: 'Relocation',        image: '/images/services/moving-after-1.jpg'          },
-  'shelving-and-storage':   { category: 'Bedroom & Closet',  image: '/images/services/shelving-after-1.jpg'         },
-  'packing-and-removal':    { category: 'Relocation',        image: '/images/services/packing-after-1.jpg'          },
-  'paperwork-management':   { category: 'Home Office',       image: '/images/services/paperwork-after-1.jpg'        },
-  'online-coaching':        { category: 'Online',            image: '/images/services/coaching-hero.jpg'         },
-  'online-consulting':      { category: 'Online',            image: '/images/services/coaching-hero.jpg'         },
-  'home-staging':           { category: 'Interior',          image: '/images/services/staging-after-1.jpg'     },
-  'space-planning':         { category: 'Design',            image: '/images/services/space-planning-hero.jpg'   },
-  'office-organizing':      { category: 'Workplace',         image: '/images/services/office-after-1.jpg'           },
-}
-
-// ─── Single room card ─────────────────────────────────────────────────────────
-
-function RoomCard({ slug, title, priceFrom }: { slug: string; title: string; priceFrom: number }) {
+function RoomCard({
+  slug,
+  title,
+  priceFrom,
+  categoryLabel,
+  image,
+}: {
+  slug: string
+  title: string
+  priceFrom: number
+  categoryLabel: string
+  image: string
+}) {
   const [hovered, setHovered] = useState(false)
-  const meta = SERVICE_META[slug] ?? { category: 'Service', image: '/images/services/whole-house-after-1.jpg' }
 
   return (
     <motion.article
@@ -42,14 +35,13 @@ function RoomCard({ slug, title, priceFrom }: { slug: string; title: string; pri
     >
       <Link href={`/services/${slug}`} className="absolute inset-0 z-10" aria-label={`View ${title}`} />
 
-      {/* Background image with zoom */}
       <motion.div
         className="absolute inset-0"
         animate={{ scale: hovered ? 1.05 : 1 }}
         transition={{ duration: 0.6, ease: 'easeOut' }}
       >
         <Image
-          src={meta.image}
+          src={image}
           alt={title}
           fill
           className="object-cover"
@@ -57,7 +49,6 @@ function RoomCard({ slug, title, priceFrom }: { slug: string; title: string; pri
         />
       </motion.div>
 
-      {/* Gradient overlay — darkens on hover */}
       <motion.div
         className="absolute inset-0"
         animate={{
@@ -68,26 +59,13 @@ function RoomCard({ slug, title, priceFrom }: { slug: string; title: string; pri
         transition={{ duration: 0.3 }}
       />
 
-      {/* Hover border ring */}
-      <motion.div
-        className="absolute inset-0 rounded-2xl pointer-events-none"
-        animate={{ boxShadow: hovered ? 'inset 0 0 0 2px rgba(255,255,255,0.2)' : 'inset 0 0 0 0px transparent' }}
-        transition={{ duration: 0.2 }}
-      />
-
-      {/* Content — bottom left */}
       <div className="absolute bottom-0 left-0 right-0 p-5 sm:p-6 z-10">
         <p className="text-white/60 text-[10px] uppercase tracking-wider font-medium mb-1.5">
-          {meta.category}
+          {categoryLabel}
         </p>
-        <h2 className="font-display text-xl sm:text-2xl text-white font-bold leading-snug">
-          {title}
-        </h2>
-        <p className="text-white/75 text-sm font-mono mt-1">
-          From {formatPrice(priceFrom)}
-        </p>
+        <h2 className="font-display text-xl sm:text-2xl text-white font-bold leading-snug">{title}</h2>
+        <p className="text-white/75 text-sm font-mono mt-1">From {formatPrice(priceFrom)}</p>
 
-        {/* Hover button — slides up */}
         <AnimatePresence>
           {hovered && (
             <motion.div
@@ -108,45 +86,58 @@ function RoomCard({ slug, title, priceFrom }: { slug: string; title: string; pri
   )
 }
 
-// ─── Grid ─────────────────────────────────────────────────────────────────────
-
 export default function ServicesRoomGrid() {
   const { ref, isInView } = useScrollAnimation({ amount: 0.05 })
 
   return (
     <section className="py-16 bg-surface">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-
-        {/* Wrapper drives scroll detection */}
         <motion.div ref={ref}>
+          <motion.p
+            initial={{ opacity: 0, y: 16 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.45, ease: EASE_STANDARD }}
+            className="text-dark/40 text-[11px] font-semibold uppercase tracking-[0.18em] text-center mb-4"
+          >
+            Our Services
+          </motion.p>
+          <motion.p
+            initial={{ opacity: 0, y: 16 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.45, ease: EASE_STANDARD, delay: 0.05 }}
+            className="text-dark/55 text-center text-sm max-w-xl mx-auto mb-12 leading-relaxed"
+          >
+            Nine integrated services across East Africa — from organizing and storage to relocation,
+            events, training, and curated products.
+          </motion.p>
 
-        {/* Section label */}
-        <motion.p
-          initial={{ opacity: 0, y: 16 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.45, ease: EASE_STANDARD }}
-          className="text-dark/40 text-[11px] font-semibold uppercase tracking-[0.18em] text-center mb-8"
-        >
-          Choose Your Space
-        </motion.p>
-
-        {/* Staggered card grid */}
-        <motion.div
-          variants={staggerContainer}
-          initial="initial"
-          animate={isInView ? 'animate' : 'initial'}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-        >
-          {SERVICES.map(service => (
-            <RoomCard
-              key={service.slug}
-              slug={service.slug}
-              title={service.title}
-              priceFrom={service.priceFrom}
-            />
-          ))}
-        </motion.div>
-
+          <div className="flex flex-col gap-14">
+            {SERVICE_GROUPS.map((group) => {
+              const groupServices = SERVICES.filter((s) => s.groupId === group.id)
+              return (
+                <div key={group.id}>
+                  <h3 className="font-display text-2xl text-dark mb-6">{group.label}</h3>
+                  <motion.div
+                    variants={staggerContainer}
+                    initial="initial"
+                    animate={isInView ? 'animate' : 'initial'}
+                    className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+                  >
+                    {groupServices.map((service) => (
+                      <RoomCard
+                        key={service.slug}
+                        slug={service.slug}
+                        title={service.title}
+                        priceFrom={service.priceFrom}
+                        categoryLabel={service.categoryLabel}
+                        image={service.image}
+                      />
+                    ))}
+                  </motion.div>
+                </div>
+              )
+            })}
+          </div>
         </motion.div>
       </div>
     </section>

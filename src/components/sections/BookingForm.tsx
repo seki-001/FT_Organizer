@@ -6,21 +6,12 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Link from 'next/link'
 import {
-  Trash2, Home, Truck, Archive, Package, FileText,
-  Video, MessageSquare, Sparkles, Layout, Briefcase,
   ChevronLeft, ChevronRight, Shield, CheckCircle, Loader2,
-  type LucideIcon,
 } from 'lucide-react'
 import { BookingFormSchema, type BookingFormValues } from '@/lib/validations'
-import { SERVICES, COMPANY } from '@/lib/constants'
+import { SERVICES, SERVICE_GROUPS, SITE_VISIT, COMPANY, resolveServiceSlug } from '@/lib/constants'
+import { getServiceIcon } from '@/lib/service-icons'
 import { formatPrice, cn } from '@/lib/utils'
-
-// ─── Icon map ─────────────────────────────────────────────────────────────────
-
-const ICON_MAP: Record<string, LucideIcon> = {
-  Trash2, Home, Truck, Archive, Package, FileText,
-  Video, MessageSquare, Sparkles, Layout, Briefcase,
-}
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -230,9 +221,9 @@ function Calendar({
           if (day === null) return <div key={`empty-${idx}`} />
 
           const date = new Date(year, month, day)
-          const isSun   = date.getDay() === 0
-          const isPast  = date < today
-          const disabled = isSun || isPast
+          const isWeekend = date.getDay() === 0 || date.getDay() === 6
+          const isPast    = date < today
+          const disabled  = isWeekend || isPast
 
           const isoStr  = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`
           const selected = value === isoStr
@@ -279,7 +270,7 @@ function ReviewRow({ label, value }: { label: string; value: string }) {
 
 export default function BookingForm({ onStepChange }: { onStepChange?: (step: number) => void } = {}) {
   const searchParams = useSearchParams()
-  const preselectedSlug = searchParams.get('service') ?? ''
+  const preselectedSlug = resolveServiceSlug(searchParams.get('service') ?? '')
 
   const [step, setStep]         = useState(1)
   const [loading, setLoading]   = useState(false)
@@ -317,7 +308,7 @@ export default function BookingForm({ onStepChange }: { onStepChange?: (step: nu
   const selectedDate    = watch('date')
   const watchedValues   = watch()
 
-  const serviceObj = SERVICES.find((s) => s.slug === selectedService)
+  const serviceObj = SERVICES.find((s) => s.slug === resolveServiceSlug(selectedService))
 
   // ── Step navigation ──────────────────────────────────────────────────────
 
@@ -415,40 +406,59 @@ export default function BookingForm({ onStepChange }: { onStepChange?: (step: nu
             <p className="text-dark/50 text-sm">Select the service you&apos;d like to book.</p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            {SERVICES.map((service) => {
-              const Icon    = ICON_MAP[service.icon] ?? Briefcase
-              const checked = selectedService === service.slug
-              return (
-                <button
-                  key={service.slug}
-                  type="button"
-                  onClick={() => setValue('service', service.slug, { shouldValidate: true })}
-                  aria-pressed={checked}
-                  className={cn(
-                    'flex items-center gap-4 p-4 rounded-xl border-2 text-left transition-all duration-150 min-h-[44px]',
-                    checked
-                      ? 'border-primary bg-primary/5'
-                      : 'border-dark/10 hover:border-dark/25 bg-white'
-                  )}
-                >
-                  <div className={cn(
-                    'flex items-center justify-center w-10 h-10 rounded-full flex-shrink-0',
-                    checked ? 'bg-primary text-white' : 'bg-muted text-dark/40'
-                  )}>
-                    <Icon size={18} aria-hidden="true" />
-                  </div>
-                  <div className="flex flex-col gap-0.5 min-w-0">
-                    <span className={cn('font-medium text-sm leading-snug', checked ? 'text-primary' : 'text-dark')}>
-                      {service.title}
-                    </span>
-                    <span className={cn('font-mono text-xs', checked ? 'text-primary/70' : 'text-dark/40')}>
-                      From {formatPrice(service.priceFrom)}
-                    </span>
-                  </div>
-                </button>
-              )
-            })}
+          <div className="flex flex-col gap-8">
+            {SERVICE_GROUPS.map((group) => (
+              <div key={group.id} className="flex flex-col gap-3">
+                <p className="text-xs font-semibold uppercase tracking-widest text-dark/40">{group.label}</p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                  {SERVICES.filter((s) => s.groupId === group.id).map((service) => {
+                    const Icon = getServiceIcon(service.icon)
+                    const checked = selectedService === service.slug
+                    return (
+                      <button
+                        key={service.slug}
+                        type="button"
+                        onClick={() => setValue('service', service.slug, { shouldValidate: true })}
+                        aria-pressed={checked}
+                        className={cn(
+                          'flex items-center gap-4 p-4 rounded-xl border-2 text-left transition-all duration-150 min-h-[44px]',
+                          checked
+                            ? 'border-primary bg-primary/5'
+                            : 'border-dark/10 hover:border-dark/25 bg-white',
+                        )}
+                      >
+                        <div
+                          className={cn(
+                            'flex items-center justify-center w-10 h-10 rounded-full flex-shrink-0',
+                            checked ? 'bg-primary text-white' : 'bg-muted text-dark/40',
+                          )}
+                        >
+                          <Icon size={18} aria-hidden="true" />
+                        </div>
+                        <div className="flex flex-col gap-0.5 min-w-0">
+                          <span
+                            className={cn(
+                              'font-medium text-sm leading-snug',
+                              checked ? 'text-primary' : 'text-dark',
+                            )}
+                          >
+                            {service.title}
+                          </span>
+                          <span
+                            className={cn(
+                              'font-mono text-xs',
+                              checked ? 'text-primary/70' : 'text-dark/40',
+                            )}
+                          >
+                            From {formatPrice(service.priceFrom)}
+                          </span>
+                        </div>
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
+            ))}
           </div>
           <FieldError message={errors.service?.message} />
         </div>
@@ -461,7 +471,14 @@ export default function BookingForm({ onStepChange }: { onStepChange?: (step: nu
             <h2 className="font-display text-2xl md:text-3xl text-dark mb-1">
               When works for you?
             </h2>
-            <p className="text-dark/50 text-sm">Select a preferred date. Sundays are unavailable.</p>
+            <p className="text-dark/50 text-sm">
+              Site visits are mainly on {SITE_VISIT.primaryDays}. {SITE_VISIT.closedDays.join(' and ')}{' '}
+              are closed. Serving {SITE_VISIT.serviceArea}.
+            </p>
+          </div>
+
+          <div className="rounded-xl border border-primary/15 bg-primary/5 px-4 py-3 text-sm text-dark/70 max-w-lg mx-auto w-full text-center">
+            Site visit fee: {formatPrice(SITE_VISIT.feeKsh)}. {SITE_VISIT.redeemableNote}
           </div>
 
           <div className="bg-white rounded-2xl border border-dark/10 p-6 max-w-sm mx-auto w-full">

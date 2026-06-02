@@ -9,7 +9,7 @@ import {
   ExternalLink, type LucideIcon,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { SERVICES, COMPANY } from '@/lib/constants'
+import { SERVICES, COMPANY, resolveServiceSlug } from '@/lib/constants'
 import type { AdminBooking } from '@/lib/mock-admin-bookings'
 
 // ─── Lookups ──────────────────────────────────────────────────────────────────
@@ -76,7 +76,7 @@ function normalisePhone(phone: string): string {
 }
 
 function buildQuoteWhatsApp(booking: AdminBooking, amount: string): string {
-  const service = SERVICES.find(s => s.slug === booking.service)
+  const service = SERVICES.find(s => s.slug === resolveServiceSlug(booking.service))
   const title   = service?.title ?? booking.service
   const amtText = amount ? `KSh ${Number(amount).toLocaleString('en-KE')}` : '[quote amount]'
   const text    = [
@@ -208,7 +208,7 @@ export default function BookingSlideOver({ booking, onClose, onStatusUpdate, onN
 
   // ── Render ────────────────────────────────────────────────────────────────
 
-  const service    = booking ? SERVICES.find(s => s.slug === booking.service) : null
+  const service    = booking ? SERVICES.find(s => s.slug === resolveServiceSlug(booking.service)) : null
   const statusMeta = booking ? STATUS_META[booking.status] : null
   const PropIcon: LucideIcon = booking ? (PROPERTY_ICONS[booking.propertyType] ?? Home) : Home
 
