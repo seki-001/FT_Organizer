@@ -75,7 +75,7 @@ export const MOCK_BOOKINGS: Booking[] = [
   {
     id:           'BK-230891',
     service:      'professional-organizing-decluttering',
-    date:         '2025-04-05',
+    date:         '2026-06-09',
     name:         'Demo User',
     email:        'demo@example.com',
     phone:        '0700 000 000',
@@ -99,8 +99,8 @@ export const MOCK_BOOKINGS: Booking[] = [
   },
   {
     id:           'BK-779534',
-    service:      'professional-organizing-decluttering',
-    date:         '2025-04-18',
+    service:      'storage-design-installation',
+    date:         '2026-07-14',
     name:         'Demo User',
     email:        'demo@example.com',
     phone:        '0700 000 000',

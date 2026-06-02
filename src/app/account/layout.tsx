@@ -121,7 +121,7 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
 
           {/* Desktop sidebar */}
           <aside className="hidden md:flex flex-col w-60 flex-shrink-0">
-            <div className="sticky top-24 bg-white rounded-2xl shadow-sm border border-dark/5 p-4 flex flex-col gap-1">
+            <div className="sticky top-24 card-surface border border-dark/8 p-4 flex flex-col gap-1">
               {/* User info */}
               <div className="flex items-center gap-3 px-4 py-3 mb-2 border-b border-dark/8">
                 <div className="w-9 h-9 rounded-full bg-primary text-white flex items-center justify-center font-bold text-sm uppercase flex-shrink-0">
