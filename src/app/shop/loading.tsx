@@ -1,39 +1,27 @@
-// Product grid skeleton — 12 cards matching ProductCard proportions
 export default function ShopLoading() {
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-      {/* Hero skeleton */}
-      <div className="bg-muted rounded-2xl h-28 w-full animate-pulse mb-8" />
-
-      {/* Category tabs skeleton */}
-      <div className="flex gap-2 mb-6">
-        {Array.from({ length: 5 }).map((_, i) => (
-          <div key={i} className="bg-muted rounded-full h-9 w-24 animate-pulse" />
-        ))}
-      </div>
-
-      {/* Toolbar skeleton */}
-      <div className="flex justify-between items-center mb-6">
-        <div className="bg-muted rounded h-4 w-28 animate-pulse" />
-        <div className="bg-muted rounded-lg h-9 w-36 animate-pulse" />
-      </div>
-
-      {/* Product grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-        {Array.from({ length: 12 }).map((_, i) => (
-          <div key={i} className="bg-white rounded-xl overflow-hidden border border-dark/5 shadow-sm">
-            {/* Image area — aspect-square */}
-            <div className="aspect-square bg-muted animate-pulse" />
-            {/* Content */}
-            <div className="p-4 flex flex-col gap-3">
-              <div className="bg-muted rounded h-3.5 w-3/4 animate-pulse" />
-              <div className="bg-muted rounded h-3 w-1/2 animate-pulse" />
-              <div className="bg-muted rounded h-4 w-1/3 animate-pulse" />
-              <div className="bg-muted rounded-lg h-9 w-full animate-pulse mt-1" />
+    <main className="bg-surface">
+      <div className="bg-muted h-48 md:h-64 animate-pulse" />
+      <div className="section-container py-10">
+        <div className="flex gap-2 mb-8 overflow-hidden">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div key={i} className="h-10 w-24 rounded-full bg-muted animate-pulse shrink-0" />
+          ))}
+        </div>
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div key={i} className="card-surface border border-dark/8 overflow-hidden">
+              <div className="aspect-[4/5] bg-muted animate-pulse" />
+              <div className="p-4 space-y-3">
+                <div className="h-3 w-1/3 bg-muted rounded animate-pulse" />
+                <div className="h-4 w-4/5 bg-muted rounded animate-pulse" />
+                <div className="h-4 w-1/2 bg-muted rounded animate-pulse" />
+                <div className="h-11 w-full bg-muted rounded-button animate-pulse mt-2" />
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
-    </div>
+    </main>
   )
 }
