@@ -2,7 +2,29 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ─── CSS reset ────────────────────────────────────────────────────────────── */
+/* ─── Design tokens (Figma redesign) ───────────────────────────────────────── */
+
+:root {
+  --color-primary: #CC1212;
+  --color-danger: #991010;
+  --color-accent: #E8A020;
+  --color-warning: #E8A020;
+  --color-success: #2D7A47;
+  --color-dark: #111111;
+  --color-soft-black: #1A1A1A;
+  --color-surface: #FAFAF8;
+  --color-cream: #F7F2EC;
+  --color-muted: #F4F4F4;
+  --color-card: #FFFFFF;
+  --color-border: rgba(26, 26, 26, 0.12);
+  --radius-button: 0.75rem;
+  --radius-card: 1.25rem;
+  --radius-modal: 1.5rem;
+  --focus-ring: #CC1212;
+  --tap-min: 44px;
+}
+
+/* ─── Reset ─────────────────────────────────────────────────────────────────── */
 
 *,
 *::before,
@@ -17,47 +39,87 @@
 
 html {
   scroll-behavior: smooth;
+  font-size: 16px;
 }
 
-body {
-  @apply font-sans bg-surface text-base leading-relaxed min-h-screen;
+/* ─── Base typography ───────────────────────────────────────────────────────── */
+
+@layer base {
+  body {
+    @apply font-sans bg-surface text-dark text-base leading-relaxed min-h-screen antialiased;
+  }
+
+  h1,
+  h2,
+  h3 {
+    @apply font-display font-semibold text-dark;
+  }
+
+  h1 {
+    @apply text-display-md md:text-display-lg leading-tight;
+  }
+
+  h2 {
+    @apply text-display-sm md:text-display-md leading-snug;
+  }
+
+  h3 {
+    @apply text-xl md:text-2xl leading-snug;
+  }
+
+  h4 {
+    @apply font-sans text-lg font-medium text-dark leading-normal;
+  }
+
+  label {
+    @apply font-sans text-sm font-medium text-dark;
+  }
+
+  /* Prices and order references — mono only */
+  .font-price,
+  [data-price] {
+    @apply font-mono tabular-nums;
+  }
 }
 
-img,
-picture,
-video,
-canvas,
-svg {
-  display: block;
-  max-width: 100%;
-}
-
-input,
-button,
-textarea,
-select {
-  font: inherit;
-}
-
-/* ─── Focus rings ──────────────────────────────────────────────────────────── */
-/*
- * Site-wide focus ring using brand red.
- * Applied on keyboard focus only (:focus-visible) so mouse users never
- * see an outline — but keyboard/screen-reader users always do.
- */
+/* ─── Focus (keyboard only) ─────────────────────────────────────────────────── */
 
 *:focus-visible {
-  outline: 2px solid #CC1212;
+  outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
-  border-radius: 4px;
 }
 
-/* ─── Image zoom container ─────────────────────────────────────────────────── */
-/*
- * Add class="img-zoom" to the wrapper element.
- * The inner <img> or <Image> will smoothly scale on hover.
- * Works with Next.js Image (position: absolute fill).
- */
+/* ─── Component utilities ───────────────────────────────────────────────────── */
+
+@layer components {
+  .section-container {
+    @apply max-w-content mx-auto px-6;
+  }
+
+  .section-padding {
+    @apply py-section-sm md:py-section;
+  }
+
+  .card-surface {
+    @apply bg-card rounded-card border border-border shadow-card;
+  }
+
+  .tap-target {
+    @apply min-h-[var(--tap-min)] min-w-[var(--tap-min)];
+  }
+
+  .input-base {
+    @apply w-full rounded-button border border-border bg-card px-4 py-3 text-sm text-dark
+      placeholder:text-dark/40 transition-colors
+      focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:border-primary;
+  }
+
+  .input-error {
+    @apply border-danger focus-visible:ring-danger/30 focus-visible:border-danger;
+  }
+}
+
+/* ─── Image zoom ────────────────────────────────────────────────────────────── */
 
 .img-zoom {
   overflow: hidden;
@@ -71,15 +133,10 @@ select {
   transform: scale(1.05);
 }
 
-/* ─── Animated underline link ──────────────────────────────────────────────── */
-/*
- * Add class="animated-link" to any anchor or span.
- * A brand-red underline grows from left to right on hover.
- * Works on any text colour.
- */
+/* ─── Animated underline link ───────────────────────────────────────────────── */
 
 .animated-link {
-  background-image: linear-gradient(#CC1212, #CC1212);
+  background-image: linear-gradient(var(--color-primary), var(--color-primary));
   background-size: 0% 1.5px;
   background-repeat: no-repeat;
   background-position: left bottom;
@@ -90,17 +147,13 @@ select {
   background-size: 100% 1.5px;
 }
 
-/* ─── Scroll margin for anchor targets ────────────────────────────────────── */
-/*
- * All section anchor targets get top padding equal to the sticky header height
- * so that #section links don't hide behind the header (80px on desktop).
- */
+/* ─── Scroll margin for anchor targets ──────────────────────────────────────── */
 
 [id] {
   scroll-margin-top: 80px;
 }
 
-/* ─── Scrollbar hide utility ───────────────────────────────────────────────── */
+/* ─── Scrollbar hide ────────────────────────────────────────────────────────── */
 
 .scrollbar-hide {
   -ms-overflow-style: none;
@@ -110,11 +163,7 @@ select {
   display: none;
 }
 
-/* ─── WhatsApp pulse ring ──────────────────────────────────────────────────── */
-/*
- * A subtle expanding ring animation around the WhatsApp button.
- * Fires every 3 seconds, draws attention without being distracting.
- */
+/* ─── WhatsApp pulse ─────────────────────────────────────────────────────────── */
 
 @keyframes wa-pulse {
   0%   { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.45); }
@@ -126,12 +175,7 @@ select {
   animation: wa-pulse 3s ease-out infinite;
 }
 
-/* ─── Reduced motion ───────────────────────────────────────────────────────── */
-/*
- * Respect the user's OS "reduce motion" preference.
- * framer-motion checks this internally, but this catches any
- * raw CSS transitions and animations as well.
- */
+/* ─── Reduced motion ──────────────────────────────────────────────────────────── */
 
 @media (prefers-reduced-motion: reduce) {
   *,
