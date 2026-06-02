@@ -129,7 +129,7 @@ function Sidebar({
   const router   = useRouter()
 
   function handleSignOut() {
-    router.push('/login')
+    router.push('/admin/login')
   }
 
   return (

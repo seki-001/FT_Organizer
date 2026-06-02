@@ -4,8 +4,8 @@ import {
   TrendingUp, TrendingDown, ShoppingBag, Calendar, Users,
   ArrowRight, AlertTriangle, BarChart2,
 } from 'lucide-react'
-import WelcomeBanner from './_components/WelcomeBanner'
-import RevenueChart  from './_components/RevenueChart'
+import WelcomeBanner from '../_components/WelcomeBanner'
+import RevenueChart  from '../_components/RevenueChart'
 import {
   ADMIN_KPI,
   ADMIN_REVENUE_BY_WEEK,
