@@ -45,27 +45,27 @@ export const ADMIN_NAV_SECTIONS: AdminNavSection[] = [
     items: [
       { label: 'Clients', href: '/admin/customers', icon: Users, implemented: true },
       { label: 'Bookings', href: '/admin/bookings', icon: Calendar, implemented: true },
-      { label: 'Quotations', href: '/admin/quotations', icon: FileText },
-      { label: 'Follow-ups', href: '/admin/follow-ups', icon: ListChecks },
-      { label: 'Loyalty Program', href: '/admin/loyalty', icon: Gift },
+      { label: 'Quotations', href: '/admin/quotations', icon: FileText, implemented: true },
+      { label: 'Follow-ups', href: '/admin/follow-ups', icon: ListChecks, implemented: true },
+      { label: 'Loyalty Program', href: '/admin/loyalty', icon: Gift, implemented: true },
     ],
   },
   {
     label: 'Finance',
     items: [
-      { label: 'Invoices', href: '/admin/invoices', icon: Receipt },
+      { label: 'Invoices', href: '/admin/invoices', icon: Receipt, implemented: true },
       { label: 'Orders', href: '/admin/orders', icon: ShoppingBag, implemented: true },
-      { label: 'Payments', href: '/admin/payments', icon: CreditCard },
-      { label: 'Debtors', href: '/admin/debtors', icon: AlertCircle },
-      { label: 'Expenses', href: '/admin/expenses', icon: Wallet },
+      { label: 'Payments', href: '/admin/payments', icon: CreditCard, implemented: true },
+      { label: 'Debtors', href: '/admin/debtors', icon: AlertCircle, implemented: true },
+      { label: 'Expenses', href: '/admin/expenses', icon: Wallet, implemented: true },
     ],
   },
   {
     label: 'Inventory & shop',
     items: [
       { label: 'Products', href: '/admin/products', icon: Package, implemented: true },
-      { label: 'Inventory', href: '/admin/inventory', icon: Boxes },
-      { label: 'Purchases', href: '/admin/purchases', icon: ShoppingCart },
+      { label: 'Inventory', href: '/admin/inventory', icon: Boxes, implemented: true },
+      { label: 'Purchases', href: '/admin/purchases', icon: ShoppingCart, implemented: true },
     ],
   },
   {

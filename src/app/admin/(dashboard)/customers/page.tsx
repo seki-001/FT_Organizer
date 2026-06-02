@@ -1,7 +1,10 @@
 'use client'
 
 import { useMemo, useState } from 'react'
+import Link from 'next/link'
 import { Search, Eye, MessageCircle } from 'lucide-react'
+import AdminDemoNotice from '@/components/admin/AdminDemoNotice'
+import StatusBadge from '@/components/ui/StatusBadge'
 import AdminPageHeader from '@/components/admin/AdminPageHeader'
 import { MOCK_CUSTOMERS } from '@/lib/mock-admin-customers'
 import { cn, formatPrice } from '@/lib/utils'
@@ -75,10 +78,11 @@ export default function AdminCustomersPage() {
   return (
     <>
       <div className="flex flex-col gap-6">
+        <AdminDemoNotice />
 
         <AdminPageHeader
-          title="Customers"
-          subtitle={`${customers.length} registered customer${customers.length !== 1 ? 's' : ''}`}
+          title="Clients"
+          subtitle={`${customers.length} registered client${customers.length !== 1 ? 's' : ''} — preview data`}
         />
 
         {/* Filters */}
@@ -119,14 +123,14 @@ export default function AdminCustomersPage() {
             <table className="w-full text-sm min-w-[760px]">
               <thead>
                 <tr className="border-b border-dark/8 bg-muted/30">
-                  {['Customer', 'Email', 'Phone', 'Orders', 'Total Spent', 'Last Order', 'Actions'].map(h => (
+                  {['Client', 'Type', 'Email', 'Phone', 'Orders', 'Total Spent', 'Last Order', 'Actions'].map(h => (
                     <th key={h} className="text-left px-5 py-3 text-[11px] font-semibold text-dark/40 uppercase tracking-wide whitespace-nowrap">{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
                 {filtered.length === 0 ? (
-                  <tr><td colSpan={7} className="px-5 py-12 text-center text-dark/40 text-sm">No customers match your search.</td></tr>
+                  <tr><td colSpan={8} className="px-5 py-12 text-center text-dark/40 text-sm">No clients match your search.</td></tr>
                 ) : filtered.map((customer, i) => {
                   const colorCls = AVATAR_COLORS[i % AVATAR_COLORS.length]
                   const isNew    = new Date(customer.joinedAt) >= thisMonth
@@ -146,9 +150,15 @@ export default function AdminCustomersPage() {
                               <p className="font-medium text-dark text-sm">{customer.name}</p>
                               {isNew && <span className="text-[10px] font-bold bg-primary/10 text-primary px-1.5 py-0.5 rounded-full">New</span>}
                             </div>
-                            <p className="text-xs text-dark/40">{customer.area}</p>
+                            <Link href={`/admin/customers/${customer.id}`} onClick={e => e.stopPropagation()} className="text-xs text-primary hover:underline">
+                              {customer.area}
+                            </Link>
                           </div>
                         </div>
+                      </td>
+
+                      <td className="px-5 py-3.5">
+                        <StatusBadge label={customer.clientType} variant="neutral" />
                       </td>
 
                       {/* Email */}
@@ -172,10 +182,11 @@ export default function AdminCustomersPage() {
                       {/* Actions */}
                       <td className="px-5 py-3.5">
                         <div className="flex items-center gap-1" onClick={e => e.stopPropagation()}>
-                          <button onClick={() => setSelectedId(customer.id)}
-                            className="w-8 h-8 flex items-center justify-center rounded-lg text-dark/40 hover:text-primary hover:bg-primary/8 transition-colors">
+                          <Link href={`/admin/customers/${customer.id}`}
+                            className="w-8 h-8 flex items-center justify-center rounded-lg text-dark/40 hover:text-primary hover:bg-primary/8 transition-colors"
+                            title="Open client profile">
                             <Eye size={14} />
-                          </button>
+                          </Link>
                           <a href={whatsappUrl(customer.name)} target="_blank" rel="noopener noreferrer"
                             className="w-8 h-8 flex items-center justify-center rounded-lg text-dark/40 hover:text-[#25D366] hover:bg-[#25D366]/10 transition-colors">
                             <MessageCircle size={14} />

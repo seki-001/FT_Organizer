@@ -18,6 +18,7 @@ const STATUS_OPTIONS: { value: AdminBooking['status']; label: string }[] = [
   { value: 'new',       label: 'New'       },
   { value: 'quoted',    label: 'Quoted'    },
   { value: 'confirmed', label: 'Confirmed' },
+  { value: 'retained',  label: 'Retained'  },
   { value: 'completed', label: 'Completed' },
   { value: 'cancelled', label: 'Cancelled' },
 ]
@@ -26,6 +27,7 @@ const STATUS_META: Record<AdminBooking['status'], { label: string; class: string
   new:       { label: 'New',       class: 'bg-accent/15 text-amber-700'    },
   quoted:    { label: 'Quoted',    class: 'bg-blue-100 text-blue-700'      },
   confirmed: { label: 'Confirmed', class: 'bg-success/15 text-success'     },
+  retained:  { label: 'Retained',  class: 'bg-primary/10 text-primary'     },
   completed: { label: 'Completed', class: 'bg-dark/10 text-dark/60'        },
   cancelled: { label: 'Cancelled', class: 'bg-danger/10 text-danger'       },
 }

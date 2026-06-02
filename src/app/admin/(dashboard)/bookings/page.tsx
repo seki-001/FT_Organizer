@@ -12,6 +12,8 @@ import {
 } from 'lucide-react'
 import AdminPageHeader  from '@/components/admin/AdminPageHeader'
 import BookingSlideOver from './_components/BookingSlideOver'
+import BookingsCalendarView from './_components/BookingsCalendarView'
+import AdminDemoNotice from '@/components/admin/AdminDemoNotice'
 import { MOCK_ADMIN_BOOKINGS } from '@/lib/mock-admin-bookings'
 import type { AdminBooking }   from '@/lib/mock-admin-bookings'
 import { SERVICES, resolveServiceSlug } from '@/lib/constants'
@@ -28,6 +30,7 @@ const PIPELINE_COLUMNS: {
   { status: 'new',       label: 'New',       bg: 'bg-amber-50',   dot: 'bg-amber-400'  },
   { status: 'quoted',    label: 'Quoted',    bg: 'bg-blue-50',    dot: 'bg-blue-400'   },
   { status: 'confirmed', label: 'Confirmed', bg: 'bg-emerald-50', dot: 'bg-emerald-500'},
+  { status: 'retained',  label: 'Retained',  bg: 'bg-primary/5',  dot: 'bg-primary'    },
   { status: 'completed', label: 'Completed', bg: 'bg-dark/[.03]', dot: 'bg-dark/30'    },
   { status: 'cancelled', label: 'Cancelled', bg: 'bg-red-50',     dot: 'bg-red-400'    },
 ]
@@ -36,6 +39,7 @@ const STATUS_META: Record<AdminBooking['status'], { label: string; class: string
   new:       { label: 'New',       class: 'bg-amber-100 text-amber-700'  },
   quoted:    { label: 'Quoted',    class: 'bg-blue-100 text-blue-700'    },
   confirmed: { label: 'Confirmed', class: 'bg-success/15 text-success'   },
+  retained:  { label: 'Retained',  class: 'bg-primary/10 text-primary'   },
   completed: { label: 'Completed', class: 'bg-dark/10 text-dark/60'      },
   cancelled: { label: 'Cancelled', class: 'bg-danger/10 text-danger'     },
 }
@@ -213,7 +217,7 @@ export default function AdminBookingsPage() {
   const [bookings,    setBookings]    = useState<AdminBooking[]>(MOCK_ADMIN_BOOKINGS)
   const [selectedId,  setSelectedId]  = useState<string | null>(null)
   const [activeId,    setActiveId]    = useState<string | null>(null)
-  const [view,        setView]        = useState<'pipeline' | 'list'>('pipeline')
+  const [view,        setView]        = useState<'pipeline' | 'calendar' | 'list'>('pipeline')
 
   // List view filters
   const [search,        setSearch]        = useState('')
@@ -240,7 +244,7 @@ export default function AdminBookingsPage() {
 
   const bookingsByStatus = useMemo(() => {
     const groups: Record<string, AdminBooking[]> = {
-      new: [], quoted: [], confirmed: [], completed: [], cancelled: [],
+      new: [], quoted: [], confirmed: [], retained: [], completed: [], cancelled: [],
     }
     bookings.forEach(b => { groups[b.status]?.push(b) })
     return groups
@@ -364,9 +368,11 @@ export default function AdminBookingsPage() {
       <div className="flex flex-col gap-6">
 
         {/* Header */}
+        <AdminDemoNotice />
+
         <AdminPageHeader
           title="Bookings"
-          subtitle="Manage service appointments"
+          subtitle="Site visits, service jobs, and calendar (preview data)"
           action={{ label: 'Export CSV', icon: Download, variant: 'outline', onClick: handleExport }}
         />
 
@@ -391,7 +397,7 @@ export default function AdminBookingsPage() {
 
           {/* Tab toggle */}
           <div className="flex gap-1 bg-muted/40 rounded-lg p-1 w-fit">
-            {(['pipeline', 'list'] as const).map(v => (
+            {(['pipeline', 'calendar', 'list'] as const).map(v => (
               <button
                 key={v}
                 type="button"
@@ -401,8 +407,10 @@ export default function AdminBookingsPage() {
                   view === v ? 'bg-white text-dark shadow-sm' : 'text-dark/50 hover:text-dark',
                 )}
               >
-                {v === 'pipeline' ? <LayoutGrid size={14} aria-hidden="true" /> : <List size={14} aria-hidden="true" />}
-                {v === 'pipeline' ? 'Pipeline' : 'List'}
+                {v === 'pipeline' && <LayoutGrid size={14} aria-hidden="true" />}
+                {v === 'calendar' && <Calendar size={14} aria-hidden="true" />}
+                {v === 'list' && <List size={14} aria-hidden="true" />}
+                {v === 'pipeline' ? 'Pipeline' : v === 'calendar' ? 'Calendar' : 'List'}
               </button>
             ))}
           </div>
@@ -475,6 +483,10 @@ export default function AdminBookingsPage() {
               )}
             </DragOverlay>
           </DndContext>
+        )}
+
+        {view === 'calendar' && (
+          <BookingsCalendarView bookings={bookings} onSelect={(id) => setSelectedId(id)} />
         )}
 
         {/* ── LIST VIEW ──────────────────────────────────────────────── */}

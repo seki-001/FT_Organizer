@@ -7,6 +7,8 @@ import {
   ChevronLeft, ChevronRight,
 } from 'lucide-react'
 import AdminPageHeader from '@/components/admin/AdminPageHeader'
+import AdminDemoNotice from '@/components/admin/AdminDemoNotice'
+import FilterBar from '@/components/admin/ui/FilterBar'
 import OrderSlideOver  from './_components/OrderSlideOver'
 import { MOCK_ADMIN_ORDERS } from '@/lib/mock-admin-orders'
 import { cn, formatPrice } from '@/lib/utils'
@@ -15,6 +17,12 @@ import type { Order } from '@/lib/types'
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 const PER_PAGE = 20
+
+const ORDER_TYPE_FILTERS = [
+  { id: 'all', label: 'All orders' },
+  { id: 'shop', label: 'Shop' },
+  { id: 'service', label: 'Service' },
+]
 
 const STATUS_CLASS: Record<string, string> = {
   processing: 'bg-amber-100 text-amber-700',
@@ -101,6 +109,7 @@ export default function AdminOrdersPage() {
   const [statusFilter,   setStatusFilter]   = useState('all')
   const [dateFilter,     setDateFilter]     = useState('all')
   const [paymentFilter,  setPaymentFilter]  = useState('all')
+  const [orderType,      setOrderType]      = useState('all')
   const [currentPage,    setCurrentPage]    = useState(1)
 
   // Derived: selected order (live from orders array)
@@ -128,9 +137,10 @@ export default function AdminOrdersPage() {
         if (dateFilter === 'week'  && created < new Date(now.getTime() - 7  * 86_400_000)) return false
         if (dateFilter === 'month' && created < new Date(now.getTime() - 30 * 86_400_000)) return false
       }
+      if (orderType === 'service') return false
       return true
     })
-  }, [orders, search, statusFilter, paymentFilter, dateFilter])
+  }, [orders, search, statusFilter, paymentFilter, dateFilter, orderType])
 
   const totalPages     = Math.max(1, Math.ceil(filteredOrders.length / PER_PAGE))
   const paginatedOrders = filteredOrders.slice((currentPage - 1) * PER_PAGE, currentPage * PER_PAGE)
@@ -160,11 +170,19 @@ export default function AdminOrdersPage() {
   return (
     <>
       <div className="flex flex-col gap-6">
+        <AdminDemoNotice />
 
         <AdminPageHeader
           title="Orders"
-          subtitle="Manage and update customer orders"
+          subtitle="Shop fulfillment, delivery, and payment status (preview)"
           action={{ label: 'Export CSV', icon: Download, variant: 'outline' }}
+        />
+
+        <FilterBar
+          options={[...ORDER_TYPE_FILTERS]}
+          value={orderType}
+          onChange={(v) => changeFilter(setOrderType)(v)}
+          ariaLabel="Order type"
         />
 
         {/* Status summary row */}

@@ -2,7 +2,10 @@ import type { Booking } from '@/lib/types'
 
 // ─── Extended type for admin use ──────────────────────────────────────────────
 
-export interface AdminBooking extends Booking {
+export type AdminBookingStatus = Booking['status'] | 'retained'
+
+export interface AdminBooking extends Omit<Booking, 'status'> {
+  status: AdminBookingStatus
   /** Nairobi neighbourhood / location */
   area:           string
   /** Preferred appointment time */
@@ -69,6 +72,26 @@ export const MOCK_ADMIN_BOOKINGS: AdminBooking[] = [
     timePreference: 'morning',
     quoteAmount:    3500,
     createdAt:      '2026-03-07T10:30:00.000Z',
+  },
+
+  // ── RETAINED (site visit fee redeemed, job booked) ─────────────────────────
+
+  {
+    id:             'BK-2601R1',
+    service:        'professional-organizing-decluttering',
+    date:           '2026-04-14',
+    name:           'Wanjiku Kamau',
+    email:          'wanjiku.kamau@gmail.com',
+    phone:          '+254 722 123 456',
+    propertyType:   'apartment',
+    propertySize:   'medium',
+    notes:          'Retained after site visit — full kitchen and pantry scope.',
+    status:         'retained',
+    area:           'Westlands',
+    timePreference: 'morning',
+    quoteAmount:    25500,
+    internalNotes:  'Site visit fee redeemed per 50% rule.',
+    createdAt:      '2026-03-12T08:00:00.000Z',
   },
 
   // ── QUOTED ─────────────────────────────────────────────────────────────────

@@ -8,6 +8,7 @@ import {
   Star, StarOff,
 } from 'lucide-react'
 import AdminPageHeader from '@/components/admin/AdminPageHeader'
+import AdminDemoNotice from '@/components/admin/AdminDemoNotice'
 import { MOCK_PRODUCTS } from '@/lib/mock-products'
 import { cn, formatPrice, discountPercent } from '@/lib/utils'
 import type { Product } from '@/lib/types'
@@ -249,10 +250,11 @@ export default function AdminProductsPage() {
   return (
     <>
       <div className="flex flex-col gap-6">
+        <AdminDemoNotice />
 
         <AdminPageHeader
           title="Products"
-          subtitle="Manage your shop inventory"
+          subtitle="Product catalogue, stock, and pricing (preview)"
           action={{ label: 'Add Product', href: '/admin/products/new', icon: PlusCircle }}
         />
 

@@ -16,7 +16,39 @@ export interface CustomerBooking {
   propertyType: string
 }
 
-/** Full customer record (used in detail slide-over) */
+export type ClientType = 'residential' | 'commercial' | 'referral'
+
+export interface CustomerQuotation {
+  id: string
+  date: string
+  total: number
+  status: 'draft' | 'sent' | 'accepted' | 'rejected' | 'expired'
+}
+
+export interface CustomerInvoice {
+  id: string
+  date: string
+  total: number
+  status: 'unpaid' | 'partial' | 'paid' | 'overdue'
+}
+
+export interface CustomerPayment {
+  id: string
+  date: string
+  amount: number
+  method: string
+  status: 'paid' | 'pending' | 'failed'
+}
+
+export interface CustomerFollowUp {
+  id: string
+  date: string
+  channel: string
+  status: string
+  note?: string
+}
+
+/** Full client record (used in detail views) */
 export interface Customer {
   id:          string
   name:        string
@@ -29,12 +61,30 @@ export interface Customer {
   orders:      CustomerOrder[]
   bookings:    CustomerBooking[]
   area:        string
+  city:        string
+  country:     string
+  clientType:  ClientType
+  tags:        string[]
+  notes:       string
+  loyaltyTier: string
+  loyaltyPoints: number
+  quotations:  CustomerQuotation[]
+  invoices:    CustomerInvoice[]
+  payments:    CustomerPayment[]
+  followUps:   CustomerFollowUp[]
 }
 
 export const MOCK_CUSTOMERS: Customer[] = [
   {
     id: 'cust-001', name: 'Wanjiku Kamau', email: 'wanjiku.kamau@email.com', phone: '+254 712 345 678',
     joinedAt: '2025-06-14', totalOrders: 8, totalSpent: 42_800, lastOrderAt: '2026-03-16', area: 'Westlands',
+    city: 'Nairobi', country: 'Kenya', clientType: 'residential',
+    tags: ['VIP', 'Repeat'], notes: 'Prefers morning visits. Has dog at home.',
+    loyaltyTier: 'Gold', loyaltyPoints: 1840,
+    quotations: [{ id: 'QUO-1042', date: '2026-05-28', total: 25_500, status: 'sent' }],
+    invoices: [{ id: 'INV-2050', date: '2026-05-30', total: 25_500, status: 'paid' }],
+    payments: [{ id: 'PAY-8819', date: '2026-05-31', amount: 25_500, method: 'M-Pesa', status: 'paid' }],
+    followUps: [{ id: 'FU-88', date: '2026-06-01', channel: 'WhatsApp', status: 'completed', note: 'Very happy with closet work' }],
     orders: [
       { id: 'ORD-F9K2P4', date: '2026-03-16', amount: 4_800, status: 'processing', items: 'Pantry Organiser Set, Label Maker' },
       { id: 'ORD-A1B2C3', date: '2026-02-10', amount: 7_200, status: 'delivered',  items: 'Wardrobe Shelf Dividers x4' },
@@ -50,6 +100,8 @@ export const MOCK_CUSTOMERS: Customer[] = [
   {
     id: 'cust-002', name: 'Aisha Mohamed', email: 'aisha.m@gmail.com', phone: '+254 723 456 789',
     joinedAt: '2025-09-03', totalOrders: 4, totalSpent: 18_400, lastOrderAt: '2026-03-16', area: 'Kilimani',
+    city: 'Nairobi', country: 'Kenya', clientType: 'residential', tags: ['Kitchen'], notes: '',
+    loyaltyTier: 'Silver', loyaltyPoints: 620, quotations: [], invoices: [], payments: [], followUps: [],
     orders: [
       { id: 'ORD-H3N7R1', date: '2026-03-16', amount: 2_200, status: 'processing', items: 'Acrylic Fridge Organiser' },
       { id: 'ORD-M3N4O5', date: '2026-01-30', amount: 6_700, status: 'delivered',  items: 'Kitchen Drawer Organiser Set' },
@@ -63,6 +115,12 @@ export const MOCK_CUSTOMERS: Customer[] = [
   {
     id: 'cust-003', name: 'John Mutiso', email: 'jmutiso@work.co.ke', phone: '+254 734 567 890',
     joinedAt: '2025-07-22', totalOrders: 6, totalSpent: 31_600, lastOrderAt: '2026-03-14', area: 'South B',
+    city: 'Nairobi', country: 'Kenya', clientType: 'commercial', tags: ['Office'], notes: 'Corporate billing contact: finance@work.co.ke',
+    loyaltyTier: 'Gold', loyaltyPoints: 1200,
+    quotations: [{ id: 'QUO-1038', date: '2026-05-20', total: 18_000, status: 'accepted' }],
+    invoices: [{ id: 'INV-2038', date: '2026-05-22', total: 18_000, status: 'partial' }],
+    payments: [{ id: 'PAY-8821', date: '2026-06-01', amount: 9_000, method: 'M-Pesa', status: 'paid' }],
+    followUps: [],
     orders: [
       { id: 'ORD-D5T8Q2', date: '2026-03-14', amount: 6_500, status: 'packed',     items: 'Garage Storage System' },
       { id: 'ORD-V2W3X4', date: '2026-02-28', amount: 3_800, status: 'delivered',  items: 'Filing Cabinet + Desk Tray' },
@@ -79,6 +137,11 @@ export const MOCK_CUSTOMERS: Customer[] = [
   {
     id: 'cust-004', name: 'Grace Njeri', email: 'grace.njeri@yahoo.com', phone: '+254 745 678 901',
     joinedAt: '2024-11-10', totalOrders: 14, totalSpent: 87_500, lastOrderAt: '2026-03-13', area: 'Runda',
+    city: 'Nairobi', country: 'Kenya', clientType: 'residential', tags: ['VIP', 'Estate'],
+    notes: 'Large villa — allow full day for visits.', loyaltyTier: 'Gold', loyaltyPoints: 2100,
+    quotations: [{ id: 'QUO-1031', date: '2026-06-01', total: 42_000, status: 'draft' }],
+    invoices: [{ id: 'INV-2041', date: '2026-05-18', total: 12_800, status: 'overdue' }],
+    payments: [], followUps: [],
     orders: [
       { id: 'ORD-G1M4L9', date: '2026-03-13', amount: 12_800, status: 'dispatched', items: 'Luxury Closet System x2 + Laundry' },
       { id: 'ORD-H4I5J6', date: '2026-02-01', amount:  9_200, status: 'delivered',  items: 'Master Suite Organiser Set' },
@@ -94,6 +157,8 @@ export const MOCK_CUSTOMERS: Customer[] = [
   {
     id: 'cust-005', name: 'Peter Ochieng', email: 'p.ochieng@safaricom.co.ke', phone: '+254 756 789 012',
     joinedAt: '2025-04-18', totalOrders: 5, totalSpent: 24_700, lastOrderAt: '2026-03-13', area: 'Ngong Road',
+    city: 'Nairobi', country: 'Kenya', clientType: 'commercial', tags: [], notes: '',
+    loyaltyTier: 'Silver', loyaltyPoints: 480, quotations: [], invoices: [], payments: [], followUps: [],
     orders: [
       { id: 'ORD-K7P3V5', date: '2026-03-13', amount: 3_400, status: 'dispatched', items: 'Bathroom Organiser x3' },
       { id: 'ORD-T6U7V8', date: '2026-02-14', amount: 5_600, status: 'delivered',  items: 'Kitchen Drawer + Pantry Bins' },
@@ -108,6 +173,8 @@ export const MOCK_CUSTOMERS: Customer[] = [
   {
     id: 'cust-006', name: 'Fatuma Hassan', email: 'fatuma.h@hotmail.com', phone: '+254 767 890 123',
     joinedAt: '2026-01-05', totalOrders: 2, totalSpent: 10_700, lastOrderAt: '2026-03-11', area: 'Parklands',
+    city: 'Nairobi', country: 'Kenya', clientType: 'residential', tags: ['New'], notes: '',
+    loyaltyTier: 'Bronze', loyaltyPoints: 120, quotations: [], invoices: [], payments: [], followUps: [],
     orders: [
       { id: 'ORD-C9B6W8', date: '2026-03-11', amount: 5_100, status: 'delivered', items: 'Complete Pantry Organisation Set' },
       { id: 'ORD-F8G9H0', date: '2026-02-03', amount: 5_600, status: 'delivered', items: 'Wardrobe System — Starter Kit' },
@@ -117,6 +184,8 @@ export const MOCK_CUSTOMERS: Customer[] = [
   {
     id: 'cust-007', name: 'James Kariuki', email: 'james.kariuki@proton.me', phone: '+254 778 901 234',
     joinedAt: '2024-08-30', totalOrders: 11, totalSpent: 64_300, lastOrderAt: '2026-03-10', area: 'Karen',
+    city: 'Nairobi', country: 'Kenya', clientType: 'referral', tags: ['Referral', 'VIP'], notes: 'Referred by Grace Njeri.',
+    loyaltyTier: 'Gold', loyaltyPoints: 1650, quotations: [], invoices: [], payments: [], followUps: [],
     orders: [
       { id: 'ORD-J2X5A3', date: '2026-03-10', amount: 8_900, status: 'delivered',  items: 'Karen Home Full Kit' },
       { id: 'ORD-I1J2K3', date: '2026-01-25', amount: 6_200, status: 'delivered',  items: 'Garage + Utility Room Set' },
@@ -133,6 +202,8 @@ export const MOCK_CUSTOMERS: Customer[] = [
   {
     id: 'cust-008', name: 'Mercy Waweru', email: 'mercy.w@gmail.com', phone: '+254 789 012 345',
     joinedAt: '2026-03-01', totalOrders: 1, totalSpent: 3_200, lastOrderAt: '2026-03-08', area: 'Kasarani',
+    city: 'Nairobi', country: 'Kenya', clientType: 'residential', tags: ['New'], notes: '',
+    loyaltyTier: 'Bronze', loyaltyPoints: 40, quotations: [], invoices: [], payments: [], followUps: [],
     orders: [
       { id: 'ORD-U3V4W5', date: '2026-03-08', amount: 3_200, status: 'delivered', items: 'Starter Organiser Bundle' },
     ],
@@ -141,6 +212,8 @@ export const MOCK_CUSTOMERS: Customer[] = [
   {
     id: 'cust-009', name: 'David Mwangi', email: 'dmwangi@co.ke', phone: '+254 790 123 456',
     joinedAt: '2026-03-10', totalOrders: 1, totalSpent: 2_800, lastOrderAt: '2026-03-10', area: 'Thika Road',
+    city: 'Nairobi', country: 'Kenya', clientType: 'residential', tags: [], notes: '',
+    loyaltyTier: 'Bronze', loyaltyPoints: 28, quotations: [], invoices: [], payments: [], followUps: [],
     orders: [
       { id: 'ORD-X6Y7Z8', date: '2026-03-10', amount: 2_800, status: 'processing', items: 'Kitchen Bin Set + Drawer Dividers' },
     ],
@@ -151,6 +224,8 @@ export const MOCK_CUSTOMERS: Customer[] = [
   {
     id: 'cust-010', name: 'Amina Osman', email: 'aminaosman@icloud.com', phone: '+254 701 234 567',
     joinedAt: '2025-02-11', totalOrders: 7, totalSpent: 38_100, lastOrderAt: '2026-02-28', area: 'Lavington',
+    city: 'Nairobi', country: 'Kenya', clientType: 'residential', tags: [], notes: '',
+    loyaltyTier: 'Silver', loyaltyPoints: 890, quotations: [], invoices: [], payments: [], followUps: [],
     orders: [
       { id: 'ORD-A9B0C1', date: '2026-02-28', amount: 4_900, status: 'delivered',  items: 'Bathroom Storage System' },
       { id: 'ORD-D2E3F4', date: '2026-01-19', amount: 6_800, status: 'delivered',  items: 'Kitchen Command Centre Set' },
