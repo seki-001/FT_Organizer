@@ -1,173 +1,141 @@
 'use client'
 
 import Image from 'next/image'
-import Link  from 'next/link'
-import { ArrowRight } from 'lucide-react'
+import Link from 'next/link'
+import { ArrowRight, MapPin } from 'lucide-react'
 import { motion, useScroll, useTransform } from 'framer-motion'
+import { SITE_VISIT } from '@/lib/constants'
+import { formatPrice } from '@/lib/utils'
 import { EASE_STANDARD } from '@/lib/animations'
-
-// ─── Animation variants ───────────────────────────────────────────────────────
-
-const FADE_IN  = { initial: { opacity: 0 },         animate: { opacity: 1 } }
-const FADE_UP  = { initial: { opacity: 0, y: 24 },  animate: { opacity: 1, y: 0 } }
-
-function transition(duration: number, delay = 0) {
-  return { duration, ease: EASE_STANDARD, delay }
-}
-
-// ─── Component ────────────────────────────────────────────────────────────────
 
 export default function HeroSection() {
   const { scrollY } = useScroll()
-  const imageY = useTransform(scrollY, [0, 500], [0, -50])
+  const imageY = useTransform(scrollY, [0, 500], [0, -40])
 
   return (
-    <section className="relative bg-surface overflow-hidden">
-
-      {/* ── Two-panel layout ───────────────────────────────────────────────── */}
-      <div className="flex flex-col lg:flex-row min-h-[88vh] lg:min-h-[92vh]">
-
-        {/* ── Left panel — content (55%) ──────────────────────────────────── */}
-        <div className="flex-[55] flex items-center px-6 sm:px-12 lg:px-16 xl:px-20 py-20 lg:py-28 order-2 lg:order-1">
-          <div className="w-full max-w-xl">
-
-            {/* Label */}
+    <section className="relative bg-cream overflow-hidden">
+      <div className="section-container">
+        <div className="flex flex-col lg:flex-row lg:items-center gap-12 lg:gap-16 py-14 md:py-20 lg:py-24 min-h-0 lg:min-h-[85vh]">
+          <div className="flex-1 order-2 lg:order-1 max-w-xl lg:max-w-2xl">
             <motion.p
-              {...FADE_IN}
-              transition={transition(0.3)}
-              className="text-primary text-xs font-semibold tracking-[0.2em] uppercase mb-5"
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, ease: EASE_STANDARD }}
+              className="text-dark/50 text-xs font-semibold tracking-[0.2em] uppercase mb-4"
             >
-              Nairobi&apos;s #1 Home Organizer
+              {SITE_VISIT.serviceArea} · Professional Organizing
             </motion.p>
 
-            {/* Headline */}
             <motion.h1
-              {...FADE_UP}
-              transition={transition(0.5, 0.1)}
-              className="font-display text-5xl lg:text-6xl xl:text-7xl text-dark leading-[1.05] font-bold"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.05, ease: EASE_STANDARD }}
+              className="font-display text-4xl sm:text-5xl lg:text-6xl xl:text-[3.5rem] text-dark leading-[1.08] font-bold"
             >
               From Clutter
               <br />
-              <span className="text-primary">to Order.</span>
+              to Order.
             </motion.h1>
 
-            {/* Sub-text */}
             <motion.p
-              {...FADE_UP}
-              transition={transition(0.5, 0.2)}
-              className="text-dark/60 text-lg mt-6 max-w-sm leading-relaxed"
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.12, ease: EASE_STANDARD }}
+              className="mt-5 text-dark/65 text-lg leading-relaxed max-w-lg"
             >
-              We transform Nairobi homes and offices into calm, functional spaces. 
-              Professional organizing, decluttering and more.
+              Premium home and office organizing across East Africa — calm spaces, practical systems,
+              and support from first site visit through follow-up.
             </motion.p>
 
-            {/* CTA row */}
             <motion.div
-              {...FADE_UP}
-              transition={transition(0.5, 0.3)}
-              className="flex flex-wrap items-center gap-2 mt-8"
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2, ease: EASE_STANDARD }}
+              className="mt-8 flex flex-col sm:flex-row flex-wrap gap-3"
             >
-              <motion.div whileHover={{ y: -3 }} transition={{ duration: 0.2 }}>
-                <Link
-                  href="/book"
-                  className="inline-flex items-center bg-primary hover:bg-primary/90 text-white font-medium px-7 py-3.5 rounded-lg transition-colors duration-200 text-sm"
-                >
-                  Book a Service
-                </Link>
-              </motion.div>
-
               <Link
-                href="/shop"
-                className="group inline-flex items-center gap-2 text-dark/70 hover:text-primary font-medium px-4 py-3.5 transition-colors duration-200 text-sm"
+                href="/book"
+                className="inline-flex items-center justify-center gap-2 bg-primary text-white font-semibold text-sm px-7 min-h-[48px] rounded-button hover:bg-danger transition-colors shadow-soft"
               >
-                Shop Products
-                <ArrowRight
-                  size={15}
-                  className="translate-x-0 group-hover:translate-x-1.5 transition-transform duration-200"
-                />
+                Book Site Visit
+                <ArrowRight size={16} aria-hidden="true" />
+              </Link>
+              <Link
+                href="/services"
+                className="inline-flex items-center justify-center gap-2 border-2 border-dark/15 bg-white text-dark font-medium text-sm px-7 min-h-[48px] rounded-button hover:border-dark/30 transition-colors"
+              >
+                Explore Services
               </Link>
             </motion.div>
 
-            {/* Trust indicators */}
             <motion.div
-              {...FADE_IN}
-              transition={transition(0.5, 0.5)}
-              className="flex items-center gap-0 mt-12 flex-wrap"
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.28, ease: EASE_STANDARD }}
+              className="mt-8 rounded-card border border-dark/8 bg-surface/80 p-4 sm:p-5 flex flex-col gap-2"
             >
-              {[
-                '500+ Homes',
-                '7 Years',
-                '4.9★ Rating',
-              ].map((item, i) => (
-                <span key={item} className="flex items-center gap-0">
-                  {i > 0 && <span className="w-px h-3.5 bg-dark/15 mx-4 flex-shrink-0" aria-hidden="true" />}
-                  <span className="text-xs text-dark/50 uppercase tracking-wider font-medium whitespace-nowrap">
-                    {item}
-                  </span>
-                </span>
-              ))}
+              <p className="text-sm font-medium text-dark flex items-center gap-2">
+                <MapPin size={16} className="text-primary shrink-0" aria-hidden="true" />
+                Site visit fee: {formatPrice(SITE_VISIT.feeKsh)}
+              </p>
+              <p className="text-sm text-dark/60 leading-relaxed">
+                {SITE_VISIT.redeemablePercent}% redeemable toward your project if you retain us. Site
+                visits are mainly on {SITE_VISIT.primaryDays}; weekends closed.
+              </p>
+            </motion.div>
+          </div>
+
+          <div className="flex-1 order-1 lg:order-2 relative min-h-[280px] sm:min-h-[360px] lg:min-h-[480px] rounded-card overflow-hidden">
+            <motion.div className="absolute inset-0" style={{ y: imageY }}>
+              <Image
+                src="/images/hero/hero-main.jpg"
+                alt="Calm, organized living space — Faith The Organizer"
+                fill
+                priority
+                className="object-cover"
+                sizes="(max-width: 1024px) 100vw, 50vw"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-dark/25 via-transparent to-transparent lg:bg-gradient-to-l lg:from-cream/20 lg:via-transparent lg:to-transparent" />
             </motion.div>
 
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.4, ease: EASE_STANDARD }}
+              className="absolute bottom-4 left-4 right-4 sm:left-auto sm:right-6 sm:max-w-[240px] bg-white/95 backdrop-blur-sm rounded-card p-4 shadow-card border border-dark/5"
+            >
+              <p className="text-[10px] font-semibold text-dark/40 uppercase tracking-widest mb-2">
+                Portfolio preview
+              </p>
+              <div className="flex items-center gap-2 mb-2">
+                <div className="relative w-10 h-10 rounded-lg overflow-hidden bg-muted shrink-0">
+                  <Image
+                    src="/images/hero/transformation-before.jpg"
+                    alt=""
+                    fill
+                    className="object-cover"
+                    sizes="40px"
+                  />
+                </div>
+                <ArrowRight size={12} className="text-dark/25 shrink-0" aria-hidden="true" />
+                <div className="relative w-10 h-10 rounded-lg overflow-hidden bg-muted shrink-0">
+                  <Image
+                    src="/images/hero/transformation-after.jpg"
+                    alt=""
+                    fill
+                    className="object-cover"
+                    sizes="40px"
+                  />
+                </div>
+              </div>
+              <p className="text-xs text-dark/55 leading-relaxed">
+                Sample before & after imagery.{' '}
+                <Link href="/portfolio" className="text-primary font-medium hover:underline">
+                  View portfolio →
+                </Link>
+              </p>
+            </motion.div>
           </div>
-        </div>
-
-        {/* ── Right panel — image (45%) ────────────────────────────────────── */}
-        <div className="flex-[45] relative overflow-hidden order-1 lg:order-2 min-h-[55vw] sm:min-h-[420px] lg:min-h-0">
-
-          {/* Hero image — slides in from right, parallax on scroll */}
-          <motion.div
-            className="absolute inset-0"
-            initial={{ x: 60, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            style={{ y: imageY }}
-            transition={{ duration: 0.7, ease: EASE_STANDARD }}
-          >
-            <Image
-              src="/images/hero/hero-main.jpg"
-              alt="Organized living room background — Faith The Organizer"
-              fill
-              priority
-              className="object-cover"
-              sizes="(max-width: 1024px) 100vw, 45vw"
-            />
-          </motion.div>
-
-          {/* Floating transformation card */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, ease: EASE_STANDARD, delay: 0.6 }}
-            className="absolute bottom-6 left-6 sm:bottom-8 sm:left-8 z-10 bg-white rounded-2xl p-4 shadow-xl max-w-[220px]"
-          >
-            <p className="text-[10px] font-semibold text-dark/40 uppercase tracking-widest mb-2.5">
-              Latest Transformation
-            </p>
-            {/* Before / After thumbnails */}
-            <div className="flex items-center gap-2 mb-3">
-              <div className="relative w-10 h-10 rounded-lg overflow-hidden bg-muted flex-shrink-0">
-                <Image
-                  src="/images/hero/transformation-before.jpg"
-                  alt="Cluttered room before Faith The Organizer service"
-                  fill
-                  className="object-cover"
-                  sizes="40px"
-                />
-              </div>
-              <ArrowRight size={12} className="text-dark/25 flex-shrink-0" />
-              <div className="relative w-10 h-10 rounded-lg overflow-hidden bg-muted flex-shrink-0">
-                <Image
-                  src="/images/hero/transformation-after.jpg"
-                  alt="Clean organized room after Faith The Organizer service"
-                  fill
-                  className="object-cover"
-                  sizes="40px"
-                />
-              </div>
-            </div>
-            <p className="text-xs font-medium text-dark leading-snug">Karen, Nairobi</p>
-            <p className="text-[11px] text-dark/45 mt-0.5">3-bedroom home</p>
-          </motion.div>
-
         </div>
       </div>
     </section>

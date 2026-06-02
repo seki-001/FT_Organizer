@@ -15,7 +15,7 @@ const TESTIMONIALS: Testimonial[] = [
     location: 'Westlands, Nairobi',
     rating: 5,
     text: 'Incredible service! Faith and her team were punctual, courteous, and so thorough. My home feels like a completely different space. I cannot believe the transformation — every drawer, shelf and cabinet is now perfectly organized. Highly recommend!',
-    service: 'Whole House Organizing',
+    service: 'Professional Organizing',
   },
   {
     id: '2',
@@ -23,7 +23,7 @@ const TESTIMONIALS: Testimonial[] = [
     location: 'Runda, Nairobi',
     rating: 5,
     text: 'Amazing, quick and thorough. Faith understood exactly what I needed and delivered beyond my expectations. She reorganized my kitchen and home office in a single day. The systems she put in place are so intuitive — everything has a home now.',
-    service: 'Home Organizing',
+    service: 'Organizing & Decluttering',
   },
   {
     id: '3',
@@ -31,7 +31,7 @@ const TESTIMONIALS: Testimonial[] = [
     location: 'Kyuna, Nairobi',
     rating: 5,
     text: "Exceptional service from start to finish. Professional, detailed and genuinely passionate about organizing. Faith transformed our office space into a productive, clutter-free environment. Our team's morale and efficiency have noticeably improved.",
-    service: 'Office Organizing',
+    service: 'Home Management',
   },
 ]
 
@@ -99,11 +99,15 @@ export default function TestimonialsSection() {
           transition={{ duration: 0.5, ease: EASE_STANDARD }}
           className="text-center mb-12"
         >
+          <p className="text-xs font-semibold uppercase tracking-widest text-primary mb-3">
+            Client stories
+          </p>
           <h2 className="font-display text-3xl md:text-4xl text-dark mb-4">
             What Our Clients Say
           </h2>
           <p className="text-dark/60 text-lg max-w-2xl mx-auto">
-            Real stories from Nairobi homeowners and offices we&apos;ve transformed
+            Representative feedback from clients we have served in Nairobi. Names and details are
+            real; individual results vary by project scope.
           </p>
         </motion.div>
 

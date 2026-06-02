@@ -178,8 +178,8 @@ export default function FeaturedProductsEditorial() {
   const { ref: row2Ref,   isInView: row2InView   } = useScrollAnimation({ amount: 0.1 })
 
   return (
-    <section className="py-16 md:py-24 bg-surface">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="section-padding bg-white">
+      <div className="section-container">
 
         {/* ── Header ─────────────────────────────────────────────────────── */}
         <motion.div
@@ -240,16 +240,17 @@ export default function FeaturedProductsEditorial() {
             variants={staggerItem}
             className="lg:col-span-4"
           >
-            <div className="bg-primary rounded-2xl p-7 sm:p-8 h-52 flex flex-col justify-between">
+            <div className="bg-cream border border-dark/8 rounded-2xl p-7 sm:p-8 h-52 flex flex-col justify-between">
               <div>
-                <p className="text-xs tracking-widest uppercase text-white/55 font-medium">
-                  Free Delivery
+                <p className="text-xs tracking-widest uppercase text-dark/45 font-medium">
+                  Shop
                 </p>
-                <h3 className="font-display text-2xl sm:text-3xl text-white leading-snug mt-2">
-                  In Nairobi CBD
+                <h3 className="font-display text-2xl sm:text-3xl text-dark leading-snug mt-2">
+                  Organizing products
                 </h3>
+                <p className="text-sm text-dark/55 mt-2">Curated storage solutions</p>
               </div>
-              <Truck size={44} className="text-white/30 self-end" aria-hidden="true" />
+              <Truck size={44} className="text-dark/20 self-end" aria-hidden="true" />
             </div>
           </motion.div>
 

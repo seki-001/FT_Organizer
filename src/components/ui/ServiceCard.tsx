@@ -7,9 +7,10 @@ interface ServiceCardProps {
   title: string
   icon: string
   priceFrom: number
+  description?: string
 }
 
-export default function ServiceCard({ slug, title, icon, priceFrom }: ServiceCardProps) {
+export default function ServiceCard({ slug, title, icon, priceFrom, description }: ServiceCardProps) {
   const Icon = getServiceIcon(icon)
 
   return (
@@ -23,8 +24,8 @@ export default function ServiceCard({ slug, title, icon, priceFrom }: ServiceCar
       <h3 className="font-semibold text-dark leading-snug">{title}</h3>
 
       {/* Placeholder description */}
-      <p className="text-dark/60 text-sm leading-relaxed line-clamp-2">
-        Professional, stress-free organizing tailored to your needs and timeline.
+      <p className="text-dark/60 text-sm leading-relaxed line-clamp-3">
+        {description ?? 'Professional, calm support tailored to your space and timeline.'}
       </p>
 
       {/* Price + link row */}
