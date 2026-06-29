@@ -205,7 +205,7 @@ export default function EditorialServicesGrid() {
             className="inline-flex items-center gap-2 text-dark/50 hover:text-dark text-sm font-medium transition-colors group"
           >
             View all {' '}
-            <span className="text-primary font-semibold">11 services</span>
+            <span className="text-primary font-semibold">12 services</span>
             <ArrowRight size={14} className="text-primary group-hover:translate-x-1 transition-transform" />
           </Link>
         </motion.div>

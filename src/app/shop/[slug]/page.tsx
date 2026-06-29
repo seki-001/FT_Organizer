@@ -192,7 +192,7 @@ export default function ProductPage() {
 
   if (loading) {
     return (
-      <main className="bg-surface min-h-screen flex items-center justify-center">
+      <main className="glass-grid-bg min-h-screen flex items-center justify-center">
         <p className="text-dark/50 text-sm">Loading product…</p>
       </main>
     )
@@ -227,7 +227,7 @@ export default function ProductPage() {
 
   return (
     <>
-      <main className="bg-surface min-h-screen pb-24">
+      <main className="glass-grid-bg min-h-screen pb-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
 
           {/* 1. BREADCRUMB ─────────────────────────────────────────────── */}

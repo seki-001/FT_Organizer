@@ -7,12 +7,12 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import Link from 'next/link'
 import {
   Trash2, Home, Truck, Archive, Package, FileText,
-  Video, MessageSquare, Sparkles, Layout, Briefcase,
+  Video, MessageSquare, Sparkles, Layout, Briefcase, MapPin,
   ChevronLeft, ChevronRight, Shield, CheckCircle, Loader2,
   type LucideIcon,
 } from 'lucide-react'
 import { BookingFormSchema, type BookingFormValues } from '@/lib/validations'
-import { SERVICES, COMPANY } from '@/lib/constants'
+import { SERVICES, COMPANY, SITE_VISIT_SLUG, SITE_VISIT_FEE } from '@/lib/constants'
 import { formatPrice, cn } from '@/lib/utils'
 import { bookingFormClasses } from '@/lib/form-theme'
 
@@ -20,7 +20,7 @@ import { bookingFormClasses } from '@/lib/form-theme'
 
 const ICON_MAP: Record<string, LucideIcon> = {
   Trash2, Home, Truck, Archive, Package, FileText,
-  Video, MessageSquare, Sparkles, Layout, Briefcase,
+  Video, MessageSquare, Sparkles, Layout, Briefcase, MapPin,
 }
 
 // ─── Constants ────────────────────────────────────────────────────────────────
@@ -166,10 +166,12 @@ function Calendar({
   value,
   onChange,
   dark,
+  mondaysOnly = false,
 }: {
   value: string
   onChange: (iso: string) => void
   dark: boolean
+  mondaysOnly?: boolean
 }) {
   const c = bookingFormClasses(dark)
   const today = new Date()
@@ -237,9 +239,12 @@ function Calendar({
           if (day === null) return <div key={`empty-${idx}`} />
 
           const date = new Date(year, month, day)
+          const isMonday = date.getDay() === 1
           const isSun   = date.getDay() === 0
           const isPast  = date < today
-          const disabled = isSun || isPast
+          const disabled = mondaysOnly
+            ? !isMonday || isPast
+            : isSun || isPast
 
           const isoStr  = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`
           const selected = value === isoStr
@@ -331,8 +336,14 @@ export default function BookingForm({
   const watchedValues   = watch()
 
   const serviceObj = SERVICES.find((s) => s.slug === selectedService)
+  const isSiteVisit = selectedService === SITE_VISIT_SLUG
 
-  // ── Step navigation ──────────────────────────────────────────────────────
+  useEffect(() => {
+    if (!selectedDate) return
+    const d = new Date(selectedDate)
+    const invalid = isSiteVisit ? d.getDay() !== 1 : d.getDay() === 0
+    if (invalid) setValue('date', '')
+  }, [isSiteVisit, selectedDate, setValue])
 
   async function nextStep() {
     let valid = false
@@ -435,6 +446,7 @@ export default function BookingForm({
             {SERVICES.map((service) => {
               const Icon    = ICON_MAP[service.icon] ?? Briefcase
               const checked = selectedService === service.slug
+              const isVisit = service.siteVisit === true
               return (
                 <button
                   key={service.slug}
@@ -444,6 +456,8 @@ export default function BookingForm({
                   className={cn(
                     'flex items-center gap-4 p-4 rounded-2xl border-2 text-left transition-all duration-150 min-h-[44px]',
                     c.serviceCard(checked),
+                    isVisit && !checked && 'border-primary/25 bg-primary/[0.03]',
+                    isVisit && checked && 'ring-2 ring-primary/20',
                   )}
                 >
                   <div className={cn(
@@ -457,8 +471,13 @@ export default function BookingForm({
                       {service.title}
                     </span>
                     <span className={cn('font-mono text-xs', c.servicePrice(checked))}>
-                      From {formatPrice(service.priceFrom)}
+                      {isVisit ? formatPrice(service.priceFrom) : `From ${formatPrice(service.priceFrom)}`}
                     </span>
+                    {isVisit && (
+                      <span className={cn('text-[11px] leading-snug mt-0.5', checked ? 'text-white/75' : 'text-dark/45')}>
+                        Mondays only · credited when work begins
+                      </span>
+                    )}
                   </div>
                 </button>
               )
@@ -475,14 +494,28 @@ export default function BookingForm({
             <h2 className={cn('font-display text-2xl md:text-3xl mb-1', c.title)}>
               When works for you?
             </h2>
-            <p className={cn('text-sm', c.sub)}>Select a preferred date. Sundays are unavailable.</p>
+            <p className={cn('text-sm', c.sub)}>
+              {isSiteVisit
+                ? 'Site visits are available on Mondays only. Select your preferred Monday.'
+                : 'Select a preferred date. Sundays are unavailable.'}
+            </p>
           </div>
+
+          {isSiteVisit && (
+            <div className={cn('rounded-xl px-4 py-3 text-sm', c.cardMuted)}>
+              <p className={cn('font-medium', c.title)}>Site visit fee: {formatPrice(SITE_VISIT_FEE)}</p>
+              <p className={cn('text-xs mt-1 leading-relaxed', c.sub)}>
+                Payable when you book. The full amount is credited toward your organizing project once work begins.
+              </p>
+            </div>
+          )}
 
           <div className={cn('rounded-2xl p-6 max-w-sm mx-auto w-full', c.card)}>
             <Calendar
               value={selectedDate}
               onChange={(iso) => setValue('date', iso, { shouldValidate: true })}
               dark={dark}
+              mondaysOnly={isSiteVisit}
             />
           </div>
 
@@ -608,6 +641,13 @@ export default function BookingForm({
             <ReviewRow label="Email"         value={watchedValues.email} dark={dark} />
             <ReviewRow label="Property type" value={watchedValues.propertyType ?? ''} dark={dark} />
             <ReviewRow label="Size"          value={watchedValues.propertySize ?? ''} dark={dark} />
+            {isSiteVisit && (
+              <ReviewRow
+                label="Visit fee"
+                value={`${formatPrice(SITE_VISIT_FEE)} — credited when work begins`}
+                dark={dark}
+              />
+            )}
             {watchedValues.notes && (
               <ReviewRow label="Notes" value={watchedValues.notes} dark={dark} />
             )}

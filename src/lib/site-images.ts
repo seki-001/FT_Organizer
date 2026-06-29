@@ -71,6 +71,7 @@ export const ROOM_IMAGES = {
 } as const
 
 export const SERVICE_IMAGES: Record<string, string> = {
+  'site-visit': SITE_IMAGES.sceneConsultation,
   'general-decluttering': SITE_IMAGES.sceneLivingRoom,
   'whole-house-organizing': SITE_IMAGES.sceneStorage,
   'moving-house': SITE_IMAGES.movingPacking,
@@ -95,20 +96,20 @@ export const CATEGORY_IMAGES: Record<string, string> = {
   'laundry-cleaning': '/images/categories/cat-laundry-cleaning.png',
   'shelves-drawers': '/images/categories/cat-shelves-drawers.png',
   baskets: '/images/categories/cat-baskets.png',
-  'storage-containers': SITE_IMAGES.sceneStorage,
+  'storage-containers': SITE_IMAGES.drawerDividers,
   travel: SITE_IMAGES.vacuumBags,
-  'grooming-hygiene': SITE_IMAGES.sprayBottles,
-  hardware: SITE_IMAGES.underSinkInstalled,
+  'grooming-hygiene': SITE_IMAGES.makeupDrawer,
+  hardware: SITE_IMAGES.underSink,
   gadgets: SITE_IMAGES.deskOrganizer,
-  'interior-decor': SITE_IMAGES.sceneEntryway,
+  'interior-decor': SITE_IMAGES.tissueBox,
   'kids-corner': SITE_IMAGES.fabricOrganizerSet,
-  furniture: SITE_IMAGES.sceneLivingRoom,
+  furniture: SITE_IMAGES.tissueBox,
   'stands-racks': SITE_IMAGES.hangers,
   'car-organizers': SITE_IMAGES.shoeBoxes,
-  dining: SITE_IMAGES.sceneKitchen,
+  dining: SITE_IMAGES.canDispenser,
   spices: SITE_IMAGES.spiceTray,
-  health: SITE_IMAGES.laundryHamper,
-  packaging: SITE_IMAGES.movingPacking,
+  health: SITE_IMAGES.eggContainer,
+  packaging: SITE_IMAGES.iceTray,
 }
 
 export const BLOG_COVERS = {

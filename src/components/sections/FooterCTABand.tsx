@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { ArrowUpRight } from 'lucide-react'
-import { COMPANY } from '@/lib/constants'
+import { COMPANY, SITE_VISIT_SLUG } from '@/lib/constants'
 import { ILLUSTRATIONS } from '@/lib/illustrations'
 import Image from 'next/image'
 
@@ -19,12 +19,14 @@ export default function FooterCTABand() {
           <span className="head-serif italic text-5xl md:text-6xl text-accent block">your space?</span>
         </h2>
         <p className="text-white/50 text-base max-w-md mx-auto mb-10">
-          Book a free consultation. Faith visits your home, assesses the space,
-          and creates a plan — no obligation.
+          Book a site visit on any Monday (KSh 3,500 — credited when work begins) or request a free consultation to plan your project.
         </p>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-          <Link href="/book" className="sfs-btn-primary px-7 py-4">
-            Book Free Consultation <ArrowUpRight size={16} />
+          <Link href={`/book?service=${SITE_VISIT_SLUG}`} className="sfs-btn-primary px-7 py-4">
+            Book Site Visit <ArrowUpRight size={16} />
+          </Link>
+          <Link href="/book" className="glass-btn-ghost-light px-7 py-4">
+            Book a Service
           </Link>
           <a
             href={`https://wa.me/${COMPANY.whatsapp}`}

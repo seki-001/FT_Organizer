@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { SITE_VISIT_SLUG } from '@/lib/constants'
 
 const propertyTypeEnum = z.enum(['apartment', 'house', 'office'])
 const propertySizeEnum = z.enum(['small', 'medium', 'large'])
@@ -12,6 +13,17 @@ export const BookingFormSchema = z.object({
   propertyType: propertyTypeEnum,
   propertySize: propertySizeEnum,
   notes: z.string().optional(),
+}).superRefine((data, ctx) => {
+  if (data.service === SITE_VISIT_SLUG && data.date) {
+    const day = new Date(data.date).getDay()
+    if (day !== 1) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Site visits can only be booked on Mondays',
+        path: ['date'],
+      })
+    }
+  }
 })
 
 export type BookingFormValues = z.infer<typeof BookingFormSchema>

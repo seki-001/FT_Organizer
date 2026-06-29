@@ -1,8 +1,8 @@
 import Link from 'next/link'
-import { Instagram } from 'lucide-react'
-import { COMPANY, SERVICES, SHOP_CATEGORIES } from '@/lib/constants'
+import { COMPANY, SERVICES, SHOP_CATEGORIES, SITE_VISIT_SLUG } from '@/lib/constants'
 import PaymentTrustBadges from '@/components/payments/PaymentTrustBadges'
 import BrandLogo from '@/components/brand/BrandLogo'
+import SocialLinks from '@/components/brand/SocialLinks'
 import { NewsletterBand } from '@/components/ui/commerce'
 import { GlassPanel } from '@/components/ui/glass'
 
@@ -14,21 +14,13 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-4 lg:px-8 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-14">
           <GlassPanel tone="dark" className="md:col-span-1 p-6">
-            <BrandLogo variant="on-dark" className="h-12 sm:h-14 mb-4" href="/" />
+            <div className="mb-4">
+              <BrandLogo variant="on-dark" href="/" size="xl" />
+            </div>
             <p className="text-white/50 text-sm leading-relaxed mb-5">
               Nairobi&apos;s premier home & office organizing service — from clutter to calm.
             </p>
-            <div className="flex items-center gap-3">
-              <a
-                href={COMPANY.instagram}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Instagram"
-                className="glass-icon-btn glass-icon-btn-dark"
-              >
-                <Instagram size={15} />
-              </a>
-            </div>
+            <SocialLinks variant="dark" className="mb-1" />
           </GlassPanel>
 
           {[
@@ -40,6 +32,7 @@ export default function Footer() {
                 { label: 'About', href: '/about' },
                 { label: 'Blog', href: '/blog' },
                 { label: 'Contact', href: '/contact' },
+                { label: 'Book Site Visit', href: `/book?service=${SITE_VISIT_SLUG}` },
                 { label: 'Book a Service', href: '/book' },
                 { label: 'FAQ', href: '/faq' },
               ],

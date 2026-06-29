@@ -6,11 +6,13 @@ import Image from 'next/image'
 import { usePathname, useRouter } from 'next/navigation'
 import {
   LayoutDashboard, ShoppingBag, Package, Tag, Users, Calendar,
-  FileText, Settings, Menu, X, ChevronRight, LogOut, Bell,
+  FileText, Settings, Menu, X, ChevronRight, LogOut,
   BarChart2, Home, Receipt, TrendingDown, Truck, PieChart, Mail, Search,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { clientAvatarForUser } from '@/lib/avatars'
+import BrandLogo from '@/components/brand/BrandLogo'
+import AdminNotifications from './AdminNotifications'
 
 // ─── Nav config ───────────────────────────────────────────────────────────────
 
@@ -145,16 +147,8 @@ function Sidebar({
     <div className="flex flex-col h-full admin-sidebar w-[260px] flex-shrink-0">
 
       {/* Brand */}
-      <div className="px-5 h-16 flex items-center justify-between gap-2 border-b border-[#ECEEF2]">
-        <div className="flex items-center gap-3 min-w-0">
-          <div className="w-9 h-9 rounded-lg bg-primary flex items-center justify-center flex-shrink-0">
-            <Home size={16} className="text-white" aria-hidden="true" />
-          </div>
-          <div className="min-w-0">
-            <p className="text-sm text-dark font-semibold leading-tight truncate">Faith The Organizer</p>
-            <p className="text-dark/40 text-[11px] mt-0.5">Admin</p>
-          </div>
-        </div>
+      <div className="px-4 h-16 flex items-center justify-between gap-2 border-b border-[#ECEEF2]">
+        <BrandLogo variant="on-light" size="sm" href="/admin" className="max-w-[132px]" />
         {onClose && (
           <button
             type="button"
@@ -328,14 +322,7 @@ export default function AdminShell({
           </div>
 
           <div className="flex items-center gap-1 flex-shrink-0 ml-auto">
-            <button
-              type="button"
-              aria-label="Notifications"
-              className="flex items-center justify-center w-9 h-9 rounded-lg text-dark/40 hover:text-dark hover:bg-[#F4F5F7] transition-colors relative"
-            >
-              <Bell size={17} aria-hidden="true" />
-              <span className="absolute top-2 right-2 w-1.5 h-1.5 rounded-full bg-primary" aria-hidden="true" />
-            </button>
+            <AdminNotifications />
             <div className="hidden sm:flex items-center gap-2.5 ml-2 pl-3 border-l border-[#ECEEF2]">
               <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0 bg-[#F4F5F7]">
                 <Image

@@ -7,6 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { Loader2, Mail, ArrowLeft } from 'lucide-react'
 import { COMPANY } from '@/lib/constants'
+import BrandLogo from '@/components/brand/BrandLogo'
 
 const ForgotSchema = z.object({
   email: z.string().email('Enter a valid email address'),
@@ -48,14 +49,16 @@ export default function ForgotPasswordPage() {
   return (
     <main className="min-h-screen glass-grid-bg flex items-center justify-center px-4 py-16">
       <div className="w-full max-w-md glass-card p-8 flex flex-col gap-6">
-        <div className="text-center flex flex-col gap-1">
-          <p className="text-primary font-bold text-sm tracking-wide">{COMPANY.name}</p>
-          <h1 className="font-display text-3xl font-bold text-dark">Forgot Password</h1>
-          <p className="text-dark/50 text-sm">
-            {sent
-              ? 'Check your email for a reset link.'
-              : 'Enter your email and we will send you a reset link.'}
-          </p>
+        <div className="text-center flex flex-col items-center gap-3">
+          <BrandLogo variant="on-light" size="lg" href="/" className="mx-auto object-center max-w-[180px]" />
+          <div className="flex flex-col gap-1">
+            <h1 className="font-display text-3xl font-bold text-dark">Forgot Password</h1>
+            <p className="text-dark/50 text-sm">
+              {sent
+                ? 'Check your email for a reset link.'
+                : 'Enter your email and we will send you a reset link.'}
+            </p>
+          </div>
         </div>
 
         {apiError && (

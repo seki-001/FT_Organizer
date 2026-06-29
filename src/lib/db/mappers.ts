@@ -43,10 +43,7 @@ export function rowToAdminBooking(row: Tables<'bookings'>): AdminBooking {
 }
 
 export function rowToProduct(row: Tables<'products'>): Product {
-  const dbImages = Array.isArray(row.images) ? (row.images as string[]) : []
-  const images = dbImages.length > 0
-    ? dbImages
-    : imagesForProduct(row.slug, row.category)
+  const images = imagesForProduct(row.slug, row.category)
   return {
     id: row.id,
     slug: row.slug,

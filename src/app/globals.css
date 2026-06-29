@@ -197,12 +197,13 @@ select {
 .avatar-cluster > * {
   width: 40px;
   height: 40px;
-  border-radius: 50%;
-  border: 2px solid rgba(255, 255, 255, 0.92);
+  border-radius: 9999px;
   overflow: hidden;
-  position: relative;
+  border: 2px solid rgba(255, 255, 255, 0.92);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
   flex-shrink: 0;
   background: #fff;
+  position: relative;
 }
 
 /* ─── Smooth section transitions (no hard dividers) ─────────────────────── */
@@ -359,15 +360,22 @@ select {
     inset 0 1px 0 rgba(255, 255, 255, 0.85);
 }
 
-/* Mega menus & dropdowns — lighter, more see-through */
+/* Mega menus & dropdowns — readable over hero imagery */
 .glass-panel-dropdown {
-  background: rgba(255, 255, 255, 0.36);
-  backdrop-filter: blur(26px) saturate(195%);
-  -webkit-backdrop-filter: blur(26px) saturate(195%);
-  border: 1px solid rgba(255, 255, 255, 0.52);
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.85);
   box-shadow:
-    0 16px 48px rgba(45, 45, 45, 0.06),
-    inset 0 1px 0 rgba(255, 255, 255, 0.62);
+    0 16px 48px rgba(45, 45, 45, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+.glass-panel-dropdown .glass-subtle {
+  background: rgba(255, 255, 255, 0.78);
+  backdrop-filter: blur(12px) saturate(160%);
+  -webkit-backdrop-filter: blur(12px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.7);
 }
 
 /* Subtle glass for inner panels, chips, card footers */
@@ -416,6 +424,7 @@ select {
   box-shadow:
     0 4px 30px rgba(45, 45, 45, 0.08),
     inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  overflow: visible;
 }
 
 .glass-nav-pill {

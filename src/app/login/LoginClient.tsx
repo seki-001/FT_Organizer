@@ -10,6 +10,7 @@ import { Eye, EyeOff, Loader2 } from 'lucide-react'
 import { useAuth } from '@/context/AuthContext'
 import { COMPANY } from '@/lib/constants'
 import { humanizeAuthError } from '@/lib/auth-errors'
+import BrandLogo from '@/components/brand/BrandLogo'
 
 const LoginSchema = z.object({
   email:    z.string().email('Enter a valid email address'),
@@ -60,10 +61,12 @@ export default function LoginClient() {
     <main className="min-h-screen glass-grid-bg flex items-center justify-center px-4 py-16">
       <div className="w-full max-w-md glass-card p-8 flex flex-col gap-6">
 
-        <div className="text-center flex flex-col gap-1">
-          <p className="text-primary font-bold text-sm tracking-wide">{COMPANY.name}</p>
-          <h1 className="font-display text-3xl font-bold text-dark">Welcome Back</h1>
-          <p className="text-dark/50 text-sm">Sign in to your account</p>
+        <div className="text-center flex flex-col items-center gap-3">
+          <BrandLogo variant="on-light" size="lg" href="/" className="mx-auto object-center max-w-[180px]" />
+          <div className="flex flex-col gap-1">
+            <h1 className="font-display text-3xl font-bold text-dark">Welcome Back</h1>
+            <p className="text-dark/50 text-sm">Sign in to your {COMPANY.name} account</p>
+          </div>
         </div>
 
         {apiError && (

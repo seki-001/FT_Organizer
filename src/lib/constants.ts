@@ -1,6 +1,25 @@
 import { CATEGORY_IMAGES } from '@/lib/site-images'
 
-export const SERVICES = [
+export const SITE_VISIT_SLUG = 'site-visit' as const
+export const SITE_VISIT_FEE = 3500
+
+export type ServiceItem = {
+  slug: string
+  title: string
+  icon: string
+  priceFrom: number
+  /** Monday-only on-site assessment — fee credited when work begins */
+  siteVisit?: boolean
+}
+
+export const SERVICES: ServiceItem[] = [
+  {
+    slug: SITE_VISIT_SLUG,
+    title: 'Book Site Visit',
+    icon: 'MapPin',
+    priceFrom: SITE_VISIT_FEE,
+    siteVisit: true,
+  },
   { slug: 'general-decluttering', title: 'General Decluttering', icon: 'Trash2', priceFrom: 5000 },
   { slug: 'whole-house-organizing', title: 'Whole House Organizing', icon: 'Home', priceFrom: 15000 },
   { slug: 'moving-house', title: 'Moving House', icon: 'Truck', priceFrom: 8000 },
@@ -82,4 +101,5 @@ export const COMPANY = {
   instagram: 'https://www.instagram.com/faiththeorganizer',
   facebook: 'https://www.facebook.com/FaithTheOrganizer/',
   youtube: 'https://www.youtube.com/channel/UC2_ZGDGcf92Sb-MrqC-0N1g',
+  tiktok: 'https://www.tiktok.com/@faiththeorganizer',
 }

@@ -26,6 +26,7 @@ const SERVICE_META: Record<string, { category: string; image: string }> = {
   'home-staging':           { category: 'Interior',          image: serviceImage('home-staging') },
   'space-planning':         { category: 'Design',            image: serviceImage('space-planning') },
   'office-organizing':      { category: 'Workplace',         image: serviceImage('office-organizing') },
+  'site-visit':             { category: 'Assessment',        image: serviceImage('site-visit') },
 }
 
 // ─── Single room card ─────────────────────────────────────────────────────────
@@ -137,7 +138,7 @@ export default function ServicesRoomGrid() {
           animate={isInView ? 'animate' : 'initial'}
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
         >
-          {SERVICES.map(service => (
+          {SERVICES.filter((s) => !s.siteVisit).map(service => (
             <RoomCard
               key={service.slug}
               slug={service.slug}

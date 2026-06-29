@@ -9,6 +9,7 @@ import { z } from 'zod'
 import { Eye, EyeOff, Loader2, CheckCircle2 } from 'lucide-react'
 import { useAuth } from '@/context/AuthContext'
 import { COMPANY } from '@/lib/constants'
+import BrandLogo from '@/components/brand/BrandLogo'
 
 // ─── Schema ───────────────────────────────────────────────────────────────────
 
@@ -75,10 +76,12 @@ export default function RegisterPage() {
       <div className="w-full max-w-md glass-card p-8 flex flex-col gap-6">
 
         {/* Brand */}
-        <div className="text-center flex flex-col gap-1">
-          <p className="text-primary font-bold text-sm tracking-wide">{COMPANY.name}</p>
-          <h1 className="font-display text-3xl font-bold text-dark">Create an Account</h1>
-          <p className="text-dark/50 text-sm">Join us and start organizing</p>
+        <div className="text-center flex flex-col items-center gap-3">
+          <BrandLogo variant="on-light" size="lg" href="/" className="mx-auto object-center max-w-[180px]" />
+          <div className="flex flex-col gap-1">
+            <h1 className="font-display text-3xl font-bold text-dark">Create an Account</h1>
+            <p className="text-dark/50 text-sm">Join {COMPANY.name} and start organizing</p>
+          </div>
         </div>
 
         {/* API error */}

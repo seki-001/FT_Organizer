@@ -7,6 +7,10 @@ export const metadata = {
     template: '%s | FTO Admin',
     default:  'Dashboard | FTO Admin',
   },
+  robots: {
+    index: false,
+    follow: false,
+  },
 }
 
 export default async function AdminLayout({

@@ -10,6 +10,7 @@ import { Eye, EyeOff, Loader2, Lock } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { COMPANY } from '@/lib/constants'
 import { humanizeAuthError } from '@/lib/auth-errors'
+import BrandLogo from '@/components/brand/BrandLogo'
 
 const ResetSchema = z.object({
   password: z.string().min(8, 'Password must be at least 8 characters'),
@@ -49,12 +50,14 @@ export default function ResetPasswordPage() {
   }
 
   return (
-    <main className="min-h-screen bg-surface flex items-center justify-center px-4 py-16">
-      <div className="w-full max-w-md glass-card-light p-8 flex flex-col gap-6">
-        <div className="text-center flex flex-col gap-1">
-          <p className="text-primary font-bold text-sm tracking-wide">{COMPANY.name}</p>
-          <h1 className="font-display text-3xl font-bold text-dark">New Password</h1>
-          <p className="text-dark/50 text-sm">Choose a new password for your account.</p>
+    <main className="min-h-screen glass-grid-bg flex items-center justify-center px-4 py-16">
+      <div className="w-full max-w-md glass-card p-8 flex flex-col gap-6">
+        <div className="text-center flex flex-col items-center gap-3">
+          <BrandLogo variant="on-light" size="lg" href="/" className="mx-auto object-center max-w-[180px]" />
+          <div className="flex flex-col gap-1">
+            <h1 className="font-display text-3xl font-bold text-dark">New Password</h1>
+            <p className="text-dark/50 text-sm">Choose a new password for your {COMPANY.name} account.</p>
+          </div>
         </div>
 
         {apiError && (

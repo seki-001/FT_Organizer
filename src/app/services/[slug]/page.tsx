@@ -4,11 +4,11 @@ import Image from 'next/image'
 import Link from 'next/link'
 import {
   Trash2, Home, Truck, Archive, Package, FileText,
-  Video, MessageSquare, Sparkles, Layout, Briefcase,
+  Video, MessageSquare, Sparkles, Layout, Briefcase, MapPin,
   CheckCircle2,
   type LucideIcon,
 } from 'lucide-react'
-import { SERVICES } from '@/lib/constants'
+import { SERVICES, SITE_VISIT_FEE } from '@/lib/constants'
 import { formatPrice } from '@/lib/utils'
 import ServiceCard from '@/components/ui/ServiceCard'
 import FooterCTABand from '@/components/sections/FooterCTABand'
@@ -19,10 +19,18 @@ import type { Testimonial } from '@/lib/types'
 
 const ICON_MAP: Record<string, LucideIcon> = {
   Trash2, Home, Truck, Archive, Package, FileText,
-  Video, MessageSquare, Sparkles, Layout, Briefcase,
+  Video, MessageSquare, Sparkles, Layout, Briefcase, MapPin,
 }
 
 // ─── Shared placeholder data ──────────────────────────────────────────────────
+
+const SITE_VISIT_INCLUDES = [
+  'On-site walkthrough of your space',
+  'Assessment of organizing needs and priorities',
+  'Discussion of timeline, scope and budget',
+  'Personalized recommendations before you commit',
+  `KSh ${SITE_VISIT_FEE.toLocaleString()} fee credited when your project begins`,
+]
 
 const PLACEHOLDER_INCLUDES = [
   'Initial walkthrough and space assessment',
@@ -132,7 +140,9 @@ export default async function ServicePage({
   if (!service) notFound()
 
   const Icon = ICON_MAP[service.icon] ?? Briefcase
-  const relatedServices = SERVICES.filter((s) => s.slug !== slug).slice(0, 3)
+  const isSiteVisit = service.siteVisit === true
+  const includes = isSiteVisit ? SITE_VISIT_INCLUDES : PLACEHOLDER_INCLUDES
+  const relatedServices = SERVICES.filter((s) => s.slug !== slug && !s.siteVisit).slice(0, 3)
 
   return (
     <>
@@ -159,8 +169,13 @@ export default async function ServicePage({
                   </span>
                 </h1>
                 <p className="font-mono text-xl text-white/60">
-                  From {formatPrice(service.priceFrom)}
+                  {isSiteVisit ? formatPrice(service.priceFrom) : `From ${formatPrice(service.priceFrom)}`}
                 </p>
+                {isSiteVisit && (
+                  <p className="text-white/50 text-sm max-w-lg leading-relaxed">
+                    Available on Mondays only. Your visit fee is fully redeemable when organizing work begins.
+                  </p>
+                )}
                 <div className="flex flex-col sm:flex-row gap-3 mt-2">
                   <Link
                     href={`/book?service=${service.slug}`}
@@ -199,7 +214,7 @@ export default async function ServicePage({
                 </p>
               </div>
               <ul className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-white/4 border border-white/8 rounded-3xl p-6">
-                {PLACEHOLDER_INCLUDES.map((item) => (
+                {includes.map((item) => (
                   <li key={item} className="flex items-start gap-3">
                     <CheckCircle2
                       size={20}

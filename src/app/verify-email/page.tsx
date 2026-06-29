@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { Mail } from 'lucide-react'
-import { COMPANY } from '@/lib/constants'
+import BrandLogo from '@/components/brand/BrandLogo'
 
 export default function VerifyEmailPage() {
   return (
@@ -12,8 +12,9 @@ export default function VerifyEmailPage() {
           <Mail size={28} className="text-primary" aria-hidden="true" />
         </div>
 
+        <BrandLogo variant="on-light" size="lg" href="/" className="mx-auto object-center max-w-[180px]" />
+
         <div className="flex flex-col gap-2">
-          <p className="text-primary font-bold text-sm tracking-wide">{COMPANY.name}</p>
           <h1 className="font-display text-3xl font-bold text-dark">Check Your Email</h1>
           <p className="text-dark/60 text-sm leading-relaxed">
             We sent a confirmation link to your inbox. Click the link to activate your account,

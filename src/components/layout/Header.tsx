@@ -652,7 +652,7 @@ export default function Header() {
         >
           <div className="h-14 sm:h-16 flex items-center justify-between gap-3 px-3 sm:px-5">
 
-            <BrandLogo variant="on-light" priority />
+            <BrandLogo variant="on-light" priority className="max-w-[220px] sm:max-w-[250px]" />
 
             {/* Desktop nav — pill container */}
             <nav aria-label="Primary navigation" className="hidden lg:flex items-center glass-nav-pill rounded-full p-1">

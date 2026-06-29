@@ -6,6 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { ContactFormSchema, type ContactFormValues } from '@/lib/validations'
 import { Phone, Mail, MapPin, MessageSquare } from 'lucide-react'
 import { COMPANY } from '@/lib/constants'
+import SocialLinks from '@/components/brand/SocialLinks'
 
 export default function ContactPage() {
   const [submitted, setSubmitted] = useState(false)
@@ -60,8 +61,8 @@ export default function ContactPage() {
                 </div>
               </a>
             ))}
+            <SocialLinks variant="dark" />
             <a
-              href={`https://wa.me/${COMPANY.whatsapp}`}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-3 p-5 rounded-2xl bg-[#25D366]/10 border border-[#25D366]/20 hover:border-[#25D366]/40 transition-colors"

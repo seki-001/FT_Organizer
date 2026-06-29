@@ -301,7 +301,7 @@ function ShopCatalogueInner() {
   ]
 
   return (
-    <main className="bg-surface min-h-screen">
+    <main className="glass-grid-bg min-h-screen">
 
       {/* ── 1. HERO — Sweet Flower split layout ─────────────────────────────── */}
       <section className="relative bg-white overflow-hidden border-b border-dark/8">
@@ -348,7 +348,7 @@ function ShopCatalogueInner() {
 
       {/* Featured carousel */}
       {!loading && products.filter((p) => p.featured).length > 0 && (
-        <section className="bg-surface py-10 border-b border-dark/8">
+        <section className="glass-grid-bg py-10 border-b border-dark/8">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <SectionHeader
               label="Featured"
@@ -518,7 +518,7 @@ function ShopCatalogueInner() {
 
 export default function ShopCataloguePage() {
   return (
-    <Suspense fallback={<div className="bg-surface min-h-screen" />}>
+    <Suspense fallback={<div className="glass-grid-bg min-h-screen" />}>
       <ShopCatalogueInner />
     </Suspense>
   )

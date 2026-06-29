@@ -36,12 +36,12 @@ export default function AboutTeaser() {
             <MediaBlend
               photo={IMG.gallery.testimonial1}
               illustration={ILLUSTRATIONS.homeRenovation}
-              photoAlt="Faith consulting with clients"
+              photoAlt="Faith Kaimba consulting with clients"
               illustrationAlt="Styled entryway and home decor"
               photoPosition="left"
             />
             <p className="text-dark/45 text-xs mt-3 text-center lg:text-left">
-              Faith Kariuki — Founder &amp; Lead Organizer
+              Faith Kaimba — Founder &amp; Lead Organizer
             </p>
           </div>
         </div>

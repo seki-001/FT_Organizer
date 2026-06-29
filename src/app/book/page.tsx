@@ -9,7 +9,7 @@ import { COMPANY } from '@/lib/constants'
 import { cn } from '@/lib/utils'
 
 const STEPS = [
-  { n: 1, label: 'Choose Service',   hint: 'Pick from 11 services'     },
+  { n: 1, label: 'Choose Service',   hint: 'Site visit or full service' },
   { n: 2, label: 'Select a Date',    hint: 'Choose a convenient date'  },
   { n: 3, label: 'Your Details',     hint: 'Name, email & phone'       },
   { n: 4, label: 'Review & Confirm', hint: 'Double-check everything'   },

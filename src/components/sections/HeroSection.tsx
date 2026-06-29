@@ -21,21 +21,21 @@ export default function HeroSection() {
           className="object-cover object-[center_42%]"
           sizes="100vw"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-dark/90 via-dark/50 to-dark/10" />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#F7F7F8] via-dark/25 to-dark/15" />
+        <div className="absolute inset-0 bg-gradient-to-r from-dark/95 via-dark/65 to-dark/25" />
+        <div className="absolute inset-0 bg-gradient-to-t from-dark/70 via-dark/20 to-transparent" />
       </div>
 
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 min-h-[min(88vh,820px)] flex items-end lg:items-center pb-14 sm:pb-16 lg:pb-0 pt-28 lg:pt-24">
+      <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 min-h-[min(88vh,820px)] flex items-end lg:items-center pb-14 sm:pb-16 lg:pb-0 pt-28 lg:pt-24">
         <div className="w-full max-w-xl lg:max-w-2xl">
           <OfferBadge variant="glass-dark" className="mb-5 w-fit">
             Nairobi&apos;s Premier Organizing Service
           </OfferBadge>
 
           <motion.h1
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 1, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.15 }}
-            className="text-white mb-5 sm:mb-6"
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="text-white mb-5 sm:mb-6 drop-shadow-[0_2px_16px_rgba(0,0,0,0.35)]"
           >
             <span className="block head-sans text-4xl sm:text-5xl lg:text-6xl xl:text-[4.25rem] leading-[1.02] tracking-tight">
               From Clutter
@@ -46,19 +46,19 @@ export default function HeroSection() {
           </motion.h1>
 
           <motion.p
-            initial={{ opacity: 0 }}
+            initial={{ opacity: 1 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 0.5, delay: 0.3 }}
-            className="text-white/75 text-sm sm:text-base leading-relaxed max-w-md mb-7 sm:mb-8"
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="text-white/85 text-sm sm:text-base leading-relaxed max-w-md mb-7 sm:mb-8 drop-shadow-[0_1px_8px_rgba(0,0,0,0.3)]"
           >
             Professional home &amp; office organizing in Nairobi — real results, friendly service,
             and spaces that finally work for your life.
           </motion.p>
 
           <motion.div
-            initial={{ opacity: 0, y: 12 }}
+            initial={{ opacity: 1, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.4 }}
+            transition={{ duration: 0.5, delay: 0.25 }}
             className="flex flex-wrap gap-3 mb-8"
           >
             <Link href="/book" className="sfs-btn-primary text-sm sm:text-base px-6 py-3.5">
@@ -70,9 +70,9 @@ export default function HeroSection() {
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0, y: 8 }}
+            initial={{ opacity: 1, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.5 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
             className="flex items-center gap-3"
           >
             <div className="avatar-cluster">

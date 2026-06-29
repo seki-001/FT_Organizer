@@ -1,13 +1,9 @@
 import type { Metadata } from 'next'
 import { Playfair_Display, Inter, DM_Mono } from 'next/font/google'
-import Header from '@/components/layout/Header'
-import Footer from '@/components/layout/Footer'
-import WhatsAppFloat from '@/components/ui/WhatsAppFloat'
-import CookieBanner from '@/components/ui/CookieBanner'
-import CartDrawer from '@/components/shop/CartDrawer'
+import { AuthProvider } from '@/context/AuthContext'
 import { CartProvider } from '@/context/CartContext'
 import { WishlistProvider } from '@/context/WishlistContext'
-import { AuthProvider } from '@/context/AuthContext'
+import StorefrontChrome from '@/components/layout/StorefrontChrome'
 import './globals.css'
 
 const playfair = Playfair_Display({
@@ -68,12 +64,9 @@ export default function RootLayout({
         <AuthProvider>
           <CartProvider>
             <WishlistProvider>
-              <Header />
-              {children}
-              <Footer />
-              <CartDrawer />
-              <WhatsAppFloat />
-              <CookieBanner />
+              <StorefrontChrome>
+                {children}
+              </StorefrontChrome>
             </WishlistProvider>
           </CartProvider>
         </AuthProvider>
