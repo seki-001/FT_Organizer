@@ -142,14 +142,15 @@ select {
   font-size: 0.8125rem;
   font-weight: 500;
   border: 1px solid rgba(26, 26, 26, 0.12);
-  background: transparent;
+  background: #ffffff;
+  color: rgba(26, 26, 26, 0.75);
   cursor: pointer;
   transition: background 0.2s, border-color 0.2s, color 0.2s;
 }
 .pill-tag.active,
 .pill-tag:hover {
-  background: #1a1a1a;
-  border-color: #1a1a1a;
+  background: #E8191A;
+  border-color: #E8191A;
   color: #ffffff;
 }
 .pill-tag-dark {

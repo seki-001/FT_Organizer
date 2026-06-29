@@ -218,14 +218,13 @@ function ServicesMegaMenu({
             <div className="grid grid-cols-3 gap-3">
               {ROOMS.map(room => (
                 <Link key={room.label} href={`/services/${room.slug}`} onClick={onClose}
-                  className="group relative rounded-xl overflow-hidden h-32 block img-zoom">
+                  className="group relative rounded-xl overflow-hidden h-28 block ring-1 ring-dark/8 hover:ring-primary/40 transition-all duration-200">
                   <Image
-                    src={room.image} alt={room.label} fill className="object-cover"
+                    src={room.image} alt={room.label} fill className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
                     sizes="(max-width: 1280px) 200px, 250px"
                   />
-                  {/* Gradient overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-dark/80 via-dark/20 to-transparent group-hover:from-dark/90 transition-colors duration-300" />
-                  <span className="absolute bottom-0 left-0 right-0 px-3 pb-2.5 text-white text-sm font-semibold">
+                  <div className="absolute inset-0 bg-gradient-to-t from-dark/75 via-dark/15 to-transparent" />
+                  <span className="absolute bottom-0 left-0 right-0 px-3 pb-2 text-white text-sm font-semibold">
                     {room.label}
                   </span>
                 </Link>
@@ -241,9 +240,9 @@ function ServicesMegaMenu({
             <div className="flex flex-col flex-1">
               {SERVICES.map(service => (
                 <Link key={service.slug} href={`/services/${service.slug}`} onClick={onClose}
-                  className="group flex items-center justify-between py-1.5 border-b border-dark/5 last:border-0 hover:pl-1 transition-all duration-150">
+                  className="group flex items-center justify-between py-2 px-2 -mx-2 rounded-lg hover:bg-surface transition-colors duration-150">
                   <span className="flex items-center gap-2 text-sm text-dark/70 group-hover:text-primary transition-colors">
-                    <ArrowRight size={11} className="text-dark/20 group-hover:text-primary -translate-x-1 group-hover:translate-x-0 transition-all duration-200 flex-shrink-0" />
+                    <ArrowRight size={11} className="text-dark/25 group-hover:text-primary transition-colors flex-shrink-0" />
                     {service.title}
                   </span>
                   <span className="text-dark/35 text-xs font-mono ml-2 flex-shrink-0">
@@ -273,12 +272,16 @@ function ServicesMegaMenu({
 
 // ─── Shop mega menu ───────────────────────────────────────────────────────────
 
+const SHOP_POPULAR_SLUGS = ['kitchen', 'pantry', 'closet-bedroom', 'bathroom', 'baskets', 'storage-containers'] as const
+
 function ShopMegaMenu({
   onClose,
   onMouseEnter,
   onMouseLeave,
 }: { onClose: () => void; onMouseEnter: () => void; onMouseLeave: () => void }) {
-  const featured = MOCK_PRODUCTS.slice(0, 2)
+  const featured = MOCK_PRODUCTS.filter((p) => p.featured).slice(0, 3)
+  const popular = SHOP_POPULAR_SLUGS.map((slug) => SHOP_CATEGORIES.find((c) => c.slug === slug)).filter(Boolean)
+  const rest = SHOP_CATEGORIES.filter((c) => !SHOP_POPULAR_SLUGS.includes(c.slug as typeof SHOP_POPULAR_SLUGS[number]))
 
   return (
     <motion.div
@@ -290,70 +293,88 @@ function ShopMegaMenu({
       onMouseLeave={onMouseLeave}
       className="absolute top-full left-0 right-0 z-50 bg-white border-b border-dark/8 shadow-xl"
     >
-      <div className="max-w-7xl mx-auto px-8 py-8">
-        <div className="flex gap-10">
+      <div className="max-w-7xl mx-auto px-6 lg:px-8 py-6">
+        <div className="flex gap-8 lg:gap-12">
 
-          {/* Left 60% — Categories */}
-          <div className="flex-[6] min-w-0">
-            <p className="text-[10px] uppercase tracking-widest text-dark/40 font-semibold mb-4">
-              Shop by Category
+          {/* Categories — text-first, no image grid */}
+          <div className="flex-[7] min-w-0">
+            <p className="text-[10px] uppercase tracking-widest text-dark/40 font-semibold mb-3">
+              Popular Categories
             </p>
-            <div className="grid grid-cols-5 gap-3">
-              {SHOP_CATEGORIES.map(cat => (
-                <Link key={cat.slug} href={`/shop?category=${cat.slug}`} onClick={onClose}
-                  className="group flex flex-col items-center gap-2">
-                  <div className="img-zoom w-full rounded-xl overflow-hidden bg-muted h-20">
-                    <Image
-                      src="/images/shop/shop-hero.jpg"
-                      alt={`${cat.label} shop category — Faith The Organizer`} width={200} height={160}
-                      className="w-full h-full object-cover group-hover:opacity-90 transition-opacity"
-                    />
-                  </div>
-                  <span className="text-xs font-medium text-dark/70 group-hover:text-primary transition-colors text-center">
-                    {cat.label}
-                  </span>
+            <div className="flex flex-wrap gap-2 mb-6">
+              {popular.map((cat) => cat && (
+                <Link
+                  key={cat.slug}
+                  href={`/shop?category=${cat.slug}`}
+                  onClick={onClose}
+                  className="inline-flex items-center px-3.5 py-1.5 rounded-full text-xs font-medium border border-dark/12 bg-surface text-dark/75 hover:bg-primary hover:border-primary hover:text-white transition-colors duration-150"
+                >
+                  {cat.label}
                 </Link>
               ))}
             </div>
+
+            <p className="text-[10px] uppercase tracking-widest text-dark/40 font-semibold mb-3">
+              All Categories
+            </p>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-6 gap-y-0.5">
+              {rest.map((cat) => (
+                <Link
+                  key={cat.slug}
+                  href={`/shop?category=${cat.slug}`}
+                  onClick={onClose}
+                  className="group flex items-center gap-2 py-2 text-sm text-dark/65 hover:text-primary transition-colors duration-150"
+                >
+                  <span className="w-1 h-1 rounded-full bg-dark/20 group-hover:bg-primary flex-shrink-0 transition-colors" />
+                  <span className="line-clamp-1">{cat.label}</span>
+                </Link>
+              ))}
+            </div>
+            <Link
+              href="/shop"
+              onClick={onClose}
+              className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:text-primary/80 mt-5 transition-colors"
+            >
+              Browse all products <ArrowRight size={13} />
+            </Link>
           </div>
 
-          {/* Right 40% — Featured products */}
-          <div className="flex-[4] min-w-0 flex flex-col">
-            <p className="text-[10px] uppercase tracking-widest text-dark/40 font-semibold mb-4">
-              Featured Products
+          {/* Featured — compact list with small thumbs only */}
+          <div className="flex-[3] min-w-[200px] max-w-xs flex flex-col border-l border-dark/8 pl-8">
+            <p className="text-[10px] uppercase tracking-widest text-dark/40 font-semibold mb-3">
+              Featured
             </p>
-            <div className="flex flex-col gap-3 flex-1">
-              {featured.map(product => (
-                <Link key={product.slug} href={`/shop/${product.slug}`} onClick={onClose}
-                  className="group flex items-center gap-3 p-2.5 rounded-xl hover:bg-primary/5 border border-transparent hover:border-primary/10 transition-colors">
-                  <div className="relative w-12 h-12 rounded-lg overflow-hidden bg-muted flex-shrink-0">
-                    <Image src={product.images[0]} alt={product.name} fill className="object-cover" sizes="48px" />
+            <div className="flex flex-col gap-1">
+              {featured.map((product) => (
+                <Link
+                  key={product.slug}
+                  href={`/shop/${product.slug}`}
+                  onClick={onClose}
+                  className="group flex items-center gap-3 py-2.5 px-2 -mx-2 rounded-xl hover:bg-surface transition-colors duration-150"
+                >
+                  <div className="relative w-11 h-11 rounded-lg overflow-hidden bg-muted flex-shrink-0 ring-1 ring-dark/8">
+                    <Image src={product.images[0]} alt={product.name} fill className="object-cover" sizes="44px" />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="text-sm font-medium text-dark group-hover:text-primary transition-colors line-clamp-1">
+                    <p className="text-sm font-medium text-dark group-hover:text-primary transition-colors line-clamp-2 leading-snug">
                       {product.name}
                     </p>
-                    <p className="text-xs font-mono text-dark/50 mt-0.5">
+                    <p className="text-xs font-mono text-dark/45 mt-0.5">
                       {formatPrice(product.salePrice ?? product.price)}
                     </p>
                   </div>
                 </Link>
               ))}
             </div>
-            <Link href="/shop" onClick={onClose}
-              className="flex items-center gap-1.5 text-sm font-medium text-dark/50 hover:text-primary mt-4 transition-colors">
-              View All Products <ArrowRight size={13} />
-            </Link>
           </div>
         </div>
 
-        {/* Bottom delivery band */}
-        <div className="mt-6 bg-success/8 border border-success/15 rounded-xl p-3.5 flex items-center gap-3">
-          <Truck size={16} className="text-success flex-shrink-0" />
-          <p className="text-sm text-dark/70">
-            <span className="font-semibold text-dark">Free delivery</span> in Nairobi CBD on all orders over{' '}
-            <span className="font-mono font-semibold">KSh 2,000</span>
-          </p>
+        <div className="mt-5 pt-4 border-t border-dark/8 flex items-center gap-2.5 text-sm text-dark/60">
+          <Truck size={15} className="text-success flex-shrink-0" />
+          <span>
+            <span className="font-semibold text-dark">Free delivery</span> in Nairobi CBD on orders over{' '}
+            <span className="font-mono font-semibold text-dark">KSh 2,000</span>
+          </span>
         </div>
       </div>
     </motion.div>
@@ -365,7 +386,7 @@ function ShopMegaMenu({
 const MOBILE_NAV_ITEMS = [
   { label: 'Home',     href: '/',        hasSubmenu: false },
   { label: 'Services', href: '/services', hasSubmenu: true  },
-  { label: 'Shop',     href: '/shop',    hasSubmenu: false  },
+  { label: 'Shop',     href: '/shop',    hasSubmenu: true  },
   { label: 'Blog',     href: '/blog',    hasSubmenu: false  },
   { label: 'About',    href: '/about',   hasSubmenu: false  },
   { label: 'Contact',  href: '/contact', hasSubmenu: false  },
@@ -387,6 +408,7 @@ function MobileMenu({
   openSearch,
 }: { onClose: () => void; pathname: string; openSearch: () => void }) {
   const [servicesOpen, setServicesOpen] = useState(false)
+  const [shopOpen, setShopOpen] = useState(false)
 
   return (
     <motion.div
@@ -460,7 +482,7 @@ function MobileMenu({
                         <div className="grid grid-cols-2 gap-2 mb-3">
                           {ROOMS.map(room => (
                             <Link key={room.label} href={`/services/${room.slug}`} onClick={onClose}
-                              className="group relative rounded-xl overflow-hidden h-20 img-zoom">
+                              className="group relative rounded-xl overflow-hidden h-20 ring-1 ring-dark/8">
                               <Image src={room.image} alt={room.label} fill className="object-cover" sizes="160px" />
                               <div className="absolute inset-0 bg-gradient-to-t from-dark/75 via-dark/10 to-transparent" />
                               <span className="absolute bottom-0 left-0 right-0 px-2.5 pb-2 text-white text-xs font-semibold">{room.label}</span>
@@ -475,6 +497,59 @@ function MobileMenu({
                             <span className="text-xs font-mono text-dark/35">{formatPrice(service.priceFrom)}</span>
                           </Link>
                         ))}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.div>
+            )
+          }
+
+          if (item.hasSubmenu && item.label === 'Shop') {
+            return (
+              <motion.div key={item.label} variants={MOBILE_ITEM}>
+                <button type="button"
+                  onClick={() => setShopOpen((o) => !o)}
+                  className={cn(
+                    'w-full flex items-center justify-between px-3 py-4 rounded-xl font-display text-2xl font-bold transition-colors',
+                    isActive ? 'text-primary' : 'text-dark hover:text-primary',
+                  )}
+                >
+                  <span>Shop</span>
+                  <motion.span animate={{ rotate: shopOpen ? 180 : 0 }} transition={{ duration: 0.2 }}>
+                    <ChevronDown size={20} className="text-dark/30" />
+                  </motion.span>
+                </button>
+
+                <AnimatePresence>
+                  {shopOpen && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.25, ease: 'easeInOut' }}
+                      className="overflow-hidden"
+                    >
+                      <div className="pl-4 pb-4 flex flex-col gap-3">
+                        <div className="flex flex-wrap gap-2">
+                          {SHOP_POPULAR_SLUGS.map((slug) => {
+                            const cat = SHOP_CATEGORIES.find((c) => c.slug === slug)
+                            if (!cat) return null
+                            return (
+                              <Link
+                                key={cat.slug}
+                                href={`/shop?category=${cat.slug}`}
+                                onClick={onClose}
+                                className="inline-flex px-3 py-1.5 rounded-full text-xs font-medium border border-dark/12 bg-surface text-dark/75 hover:bg-primary hover:border-primary hover:text-white transition-colors"
+                              >
+                                {cat.label}
+                              </Link>
+                            )
+                          })}
+                        </div>
+                        <Link href="/shop" onClick={onClose} className="text-sm font-medium text-primary">
+                          View all products →
+                        </Link>
                       </div>
                     </motion.div>
                   )}
