@@ -1,7 +1,8 @@
 'use client'
 
-import { useState, useMemo, useCallback } from 'react'
+import { useState, useMemo, useCallback, useEffect, Suspense } from 'react'
 import Image from 'next/image'
+import { useSearchParams } from 'next/navigation'
 import { AnimatePresence, motion } from 'framer-motion'
 import { SlidersHorizontal, X, PackageX, ChevronDown } from 'lucide-react'
 import { MOCK_PRODUCTS } from '@/lib/mock-products'
@@ -234,10 +235,22 @@ function CategoryCard({
   )
 }
 
-// ─── Page ─────────────────────────────────────────────────────────────────────
+// ─── Page (inner — reads URL params) ─────────────────────────────────────────
 
-export default function ShopCataloguePage() {
-  const [activeCategory, setActiveCategory] = useState<ProductCategory | 'all'>('all')
+function ShopCatalogueInner() {
+  const searchParams = useSearchParams()
+  const urlCategory = searchParams.get('category') as ProductCategory | null
+
+  const [activeCategory, setActiveCategory] = useState<ProductCategory | 'all'>(
+    urlCategory && SHOP_CATEGORIES.some(c => c.slug === urlCategory) ? urlCategory : 'all'
+  )
+
+  // Sync when URL param changes (e.g. back/forward navigation)
+  useEffect(() => {
+    if (urlCategory && SHOP_CATEGORIES.some(c => c.slug === urlCategory)) {
+      setActiveCategory(urlCategory)
+    }
+  }, [urlCategory])
   const [sort, setSort] = useState<SortOption>('newest')
   const [priceMin, setPriceMin] = useState(0)
   const [priceMax, setPriceMax] = useState(MAX_PRICE)
@@ -465,5 +478,13 @@ export default function ShopCataloguePage() {
         )}
       </AnimatePresence>
     </main>
+  )
+}
+
+export default function ShopCataloguePage() {
+  return (
+    <Suspense fallback={<div className="bg-dark min-h-screen" />}>
+      <ShopCatalogueInner />
+    </Suspense>
   )
 }

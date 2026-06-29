@@ -1,15 +1,11 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import { ArrowRight, AlertTriangle, BarChart2 } from 'lucide-react'
+import WelcomeBanner   from './_components/WelcomeBanner'
+import RevenueChart    from './_components/RevenueChart'
+import LiveKPICards    from './_components/LiveKPICards'
 import {
-  TrendingUp, TrendingDown, ShoppingBag, Calendar, Users,
-  ArrowRight, AlertTriangle, BarChart2,
-} from 'lucide-react'
-import WelcomeBanner from './_components/WelcomeBanner'
-import RevenueChart  from './_components/RevenueChart'
-import {
-  ADMIN_KPI,
   ADMIN_REVENUE_BY_WEEK,
-  ADMIN_RECENT_ORDERS,
   ADMIN_PENDING_BOOKINGS,
   ADMIN_TOP_PRODUCTS,
   ADMIN_LOW_STOCK,
@@ -19,14 +15,6 @@ import { formatPrice } from '@/lib/utils'
 export const metadata: Metadata = { title: 'Dashboard | FTO Admin' }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
-
-const ORDER_STATUS_COLORS: Record<string, string> = {
-  processing: 'bg-accent/15 text-amber-700',
-  packed:     'bg-blue-50 text-blue-700',
-  dispatched: 'bg-primary/10 text-primary',
-  delivered:  'bg-success/10 text-success',
-  cancelled:  'bg-danger/10 text-danger',
-}
 
 const BOOKING_STATUS_COLORS: Record<string, string> = {
   new:       'bg-accent/15 text-amber-700',
@@ -40,53 +28,6 @@ function StatusBadge({ status, colors }: { status: string; colors: Record<string
       {status}
     </span>
   )
-}
-
-function trendPct(current: number, prev: number) {
-  return Math.round(((current - prev) / prev) * 100)
-}
-
-// ─── Stat Card ────────────────────────────────────────────────────────────────
-
-function StatCard({
-  icon: Icon,
-  iconBg,
-  iconColor,
-  value,
-  label,
-  trend,
-  borderColor,
-}: {
-  icon:         React.ElementType
-  iconBg:       string
-  iconColor:    string
-  value:        string
-  label:        string
-  trend:        React.ReactNode
-  borderColor:  string
-}) {
-  return (
-    <div className={`bg-white rounded-2xl border border-dark/8 shadow-sm hover:shadow-md transition-shadow p-6 flex flex-col gap-4 border-l-4 ${borderColor}`}>
-      <div className="flex items-start justify-between gap-3">
-        <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${iconBg}`}>
-          <Icon size={18} className={iconColor} aria-hidden="true" />
-        </div>
-        <div className="text-right min-w-0">
-          <p className="font-mono text-3xl font-bold text-dark leading-none">{value}</p>
-        </div>
-      </div>
-      <div className="flex flex-col gap-1.5">
-        <p className="text-dark/55 text-sm font-medium">{label}</p>
-        {trend}
-      </div>
-    </div>
-  )
-}
-
-function TrendBadge({ pct }: { pct: number }) {
-  return pct >= 0
-    ? <span className="flex items-center gap-1 text-success text-xs font-semibold"><TrendingUp size={11} />+{pct}% vs last month</span>
-    : <span className="flex items-center gap-1 text-danger  text-xs font-semibold"><TrendingDown size={11} />{pct}% vs last month</span>
 }
 
 // ─── Section card ─────────────────────────────────────────────────────────────
@@ -123,9 +64,7 @@ function SectionCard({
   )
 }
 
-const revenuePct = trendPct(ADMIN_KPI.revenueThisMonth, ADMIN_KPI.revenuePrevMonth)
-const ordersPct  = trendPct(ADMIN_KPI.ordersThisMonth,  ADMIN_KPI.ordersPrevMonth)
-const maxUnits   = Math.max(...ADMIN_TOP_PRODUCTS.map(p => p.unitsSold))
+const maxUnits = Math.max(...ADMIN_TOP_PRODUCTS.map(p => p.unitsSold))
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
@@ -145,138 +84,24 @@ export default function AdminDashboard() {
         </Link>
       </div>
 
-      {/* ── Stat cards ───────────────────────────────────────────────────── */}
-      <div className="grid grid-cols-2 xl:grid-cols-4 gap-4">
-        <StatCard
-          icon={TrendingUp}
-          iconBg="bg-primary/10" iconColor="text-primary"
-          value={formatPrice(ADMIN_KPI.revenueThisMonth)}
-          label="Revenue this month"
-          borderColor="border-l-primary"
-          trend={<TrendBadge pct={revenuePct} />}
-        />
-        <StatCard
-          icon={ShoppingBag}
-          iconBg="bg-accent/10" iconColor="text-accent"
-          value={String(ADMIN_KPI.ordersThisMonth)}
-          label="Orders this month"
-          borderColor="border-l-accent"
-          trend={<TrendBadge pct={ordersPct} />}
-        />
-        <StatCard
-          icon={Calendar}
-          iconBg="bg-success/10" iconColor="text-success"
-          value={String(ADMIN_KPI.pendingBookings)}
-          label="Pending bookings"
-          borderColor="border-l-success"
-          trend={
-            <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-accent bg-accent/15 px-2.5 py-0.5 rounded-full w-fit">
-              <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" aria-hidden="true" />
-              Needs attention
-            </span>
-          }
-        />
-        <StatCard
-          icon={Users}
-          iconBg="bg-blue-50" iconColor="text-blue-600"
-          value={String(ADMIN_KPI.totalCustomers)}
-          label="Total customers"
-          borderColor="border-l-blue-400"
-          trend={
-            <span className="text-success text-xs font-semibold">
-              +{ADMIN_KPI.newCustomersThisWeek} new this week
-            </span>
-          }
-        />
-      </div>
+      {/* ── Live KPI cards + Recent POS Sales (from localStorage) ───────── */}
+      <LiveKPICards />
 
-      {/* ── Revenue Chart ────────────────────────────────────────────────── */}
-      <SectionCard title="Revenue — Last 8 Weeks" subtitle="Total KSh earned per week">
-        <div className="px-4 py-6">
-          <RevenueChart data={ADMIN_REVENUE_BY_WEEK} />
+      {/* ── Pending Bookings ─────────────────────────────────────────────── */}
+      <SectionCard title="Pending Bookings" href="/admin/bookings" subtitle="Service bookings awaiting action">
+        <div className="flex flex-col divide-y divide-dark/5">
+          {ADMIN_PENDING_BOOKINGS.map((booking) => (
+            <div key={booking.id} className="px-6 py-4 hover:bg-primary/[0.02] transition-colors">
+              <div className="flex items-start justify-between gap-2 mb-1.5">
+                <p className="font-medium text-dark text-sm leading-snug">{booking.service}</p>
+                <StatusBadge status={booking.status} colors={BOOKING_STATUS_COLORS} />
+              </div>
+              <p className="text-dark/55 text-xs">{booking.customer}</p>
+              <p className="text-dark/35 text-xs font-mono mt-0.5">{booking.date}</p>
+            </div>
+          ))}
         </div>
       </SectionCard>
-
-      {/* ── Recent Orders + Pending Bookings ─────────────────────────────── */}
-      <div className="grid grid-cols-1 xl:grid-cols-5 gap-6">
-
-        {/* Recent Orders */}
-        <div className="xl:col-span-3">
-          <SectionCard title="Recent Orders" href="/admin/orders">
-            {/* Desktop table */}
-            <div className="hidden sm:block overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b border-dark/6 bg-muted/50">
-                    <th className="text-left px-6 py-3 text-[11px] font-semibold text-dark/50 uppercase tracking-wider">Customer</th>
-                    <th className="text-left px-4 py-3 text-[11px] font-semibold text-dark/50 uppercase tracking-wider">Amount</th>
-                    <th className="text-left px-4 py-3 text-[11px] font-semibold text-dark/50 uppercase tracking-wider">Status</th>
-                    <th className="text-left px-4 py-3 text-[11px] font-semibold text-dark/50 uppercase tracking-wider">When</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {ADMIN_RECENT_ORDERS.slice(0, 5).map((order, i) => (
-                    <tr key={order.id} className={`border-b border-dark/5 hover:bg-primary/[0.02] transition-colors ${i % 2 !== 0 ? 'bg-muted/20' : ''}`}>
-                      <td className="px-6 py-3.5">
-                        <p className="font-medium text-dark text-sm">{order.customer}</p>
-                        <p className="text-dark/40 text-xs">{order.area}</p>
-                      </td>
-                      <td className="px-4 py-3.5 font-mono text-sm font-semibold text-dark whitespace-nowrap">
-                        {formatPrice(order.amount)}
-                      </td>
-                      <td className="px-4 py-3.5">
-                        <StatusBadge status={order.status} colors={ORDER_STATUS_COLORS} />
-                      </td>
-                      <td className="px-4 py-3.5 text-dark/40 text-xs whitespace-nowrap">{order.timeAgo}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-
-            {/* Mobile cards */}
-            <div className="sm:hidden flex flex-col divide-y divide-dark/5">
-              {ADMIN_RECENT_ORDERS.slice(0, 4).map((order) => (
-                <div key={order.id} className="px-5 py-4 flex items-start justify-between gap-3">
-                  <div className="min-w-0 flex-1">
-                    <p className="font-medium text-dark text-sm">{order.customer}</p>
-                    <p className="text-dark/40 text-xs mt-0.5">{order.area} · {order.timeAgo}</p>
-                    <div className="mt-2">
-                      <StatusBadge status={order.status} colors={ORDER_STATUS_COLORS} />
-                    </div>
-                  </div>
-                  <p className="font-mono text-sm font-bold text-dark whitespace-nowrap flex-shrink-0">
-                    {formatPrice(order.amount)}
-                  </p>
-                </div>
-              ))}
-              <div className="px-5 py-3">
-                <Link href="/admin/orders" className="text-sm text-primary font-medium hover:underline flex items-center gap-1">
-                  View all orders <ArrowRight size={13} />
-                </Link>
-              </div>
-            </div>
-          </SectionCard>
-        </div>
-
-        {/* Pending Bookings */}
-        <div className="xl:col-span-2">
-          <SectionCard title="Pending Bookings" href="/admin/bookings">
-            <div className="flex flex-col divide-y divide-dark/5">
-              {ADMIN_PENDING_BOOKINGS.map((booking) => (
-                <div key={booking.id} className="px-6 py-4 hover:bg-primary/[0.02] transition-colors">
-                  <div className="flex items-start justify-between gap-2 mb-1.5">
-                    <p className="font-medium text-dark text-sm leading-snug">{booking.service}</p>
-                    <StatusBadge status={booking.status} colors={BOOKING_STATUS_COLORS} />
-                  </div>
-                  <p className="text-dark/55 text-xs">{booking.customer}</p>
-                  <p className="text-dark/35 text-xs font-mono mt-0.5">{booking.date}</p>
-                </div>
-              ))}
-            </div>
-          </SectionCard>
-        </div>
-      </div>
 
       {/* ── Top Products + Low Stock ──────────────────────────────────────── */}
       <div className="grid grid-cols-1 xl:grid-cols-5 gap-6">

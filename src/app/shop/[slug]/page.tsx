@@ -203,16 +203,16 @@ export default function ProductPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
           {/* 1. BREADCRUMB ─────────────────────────────────────────────── */}
-          <nav aria-label="Breadcrumb" className="flex items-center flex-wrap gap-1.5 text-dark/40 text-sm mb-8">
-            <Link href="/"      className="hover:text-dark transition-colors">Home</Link>
+          <nav aria-label="Breadcrumb" className="flex items-center flex-wrap gap-1.5 text-white/40 text-sm mb-8">
+            <Link href="/"      className="hover:text-white transition-colors">Home</Link>
             <ChevronRight size={14} aria-hidden="true" />
-            <Link href="/shop"  className="hover:text-dark transition-colors">Shop</Link>
+            <Link href="/shop"  className="hover:text-white transition-colors">Shop</Link>
             <ChevronRight size={14} aria-hidden="true" />
-            <Link href={`/shop/${product.category}`} className="hover:text-dark transition-colors">
+            <Link href={`/shop?category=${product.category}`} className="hover:text-white transition-colors">
               {categoryLabel(product.category)}
             </Link>
             <ChevronRight size={14} aria-hidden="true" />
-            <span className="text-dark/70">{product.name}</span>
+            <span className="text-white/70">{product.name}</span>
           </nav>
 
           {/* 2. PRODUCT LAYOUT ─────────────────────────────────────────── */}
