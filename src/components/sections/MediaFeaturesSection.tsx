@@ -9,16 +9,14 @@ export default function MediaFeaturesSection() {
   const { ref, isInView } = useScrollAnimation({ amount: 0.2 })
 
   return (
-    <section className="bg-muted py-12">
+    <section className="bg-dark border-t border-white/5 py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-
-        {/* Label */}
         <motion.p
           ref={ref}
           initial={{ opacity: 0, y: 12 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.4, ease: EASE_STANDARD }}
-          className="text-center text-dark/40 text-xs tracking-widest uppercase mb-8"
+          className="text-center section-label text-white/40 mb-8"
         >
           As Seen In
         </motion.p>
@@ -37,7 +35,7 @@ export default function MediaFeaturesSection() {
               className="flex items-center justify-center"
               aria-label={feature.name}
             >
-              <span className="font-bold text-dark/30 text-xl whitespace-nowrap select-none hover:text-dark/50 transition-colors duration-200">
+              <span className="font-bold text-white/25 text-xl whitespace-nowrap select-none hover:text-white/45 transition-colors duration-200">
                 {feature.name}
               </span>
             </motion.div>

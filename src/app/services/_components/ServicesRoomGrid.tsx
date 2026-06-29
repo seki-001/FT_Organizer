@@ -12,25 +12,27 @@ import { staggerContainer, staggerItem, EASE_STANDARD } from '@/lib/animations'
 
 // ─── Room image + category data mapped to each service ───────────────────────
 
+import { IMG } from '@/lib/image-placeholders'
+
 const SERVICE_META: Record<string, { category: string; image: string }> = {
-  'general-decluttering':   { category: 'Home & Living',    image: '/images/services/decluttering-after-1.jpg'     },
-  'whole-house-organizing': { category: 'Full Home',         image: '/images/services/whole-house-after-1.jpg'      },
-  'moving-house':           { category: 'Relocation',        image: '/images/services/moving-after-1.jpg'          },
-  'shelving-and-storage':   { category: 'Bedroom & Closet',  image: '/images/services/shelving-after-1.jpg'         },
-  'packing-and-removal':    { category: 'Relocation',        image: '/images/services/packing-after-1.jpg'          },
-  'paperwork-management':   { category: 'Home Office',       image: '/images/services/paperwork-after-1.jpg'        },
-  'online-coaching':        { category: 'Online',            image: '/images/services/coaching-hero.jpg'         },
-  'online-consulting':      { category: 'Online',            image: '/images/services/coaching-hero.jpg'         },
-  'home-staging':           { category: 'Interior',          image: '/images/services/staging-after-1.jpg'     },
-  'space-planning':         { category: 'Design',            image: '/images/services/space-planning-hero.jpg'   },
-  'office-organizing':      { category: 'Workplace',         image: '/images/services/office-after-1.jpg'           },
+  'general-decluttering':   { category: 'Home & Living',    image: IMG.services.default },
+  'whole-house-organizing': { category: 'Full Home',         image: IMG.gallery.transform1 },
+  'moving-house':           { category: 'Relocation',        image: IMG.gallery.transform2 },
+  'shelving-and-storage':   { category: 'Bedroom & Closet',  image: IMG.gallery.transform2 },
+  'packing-and-removal':    { category: 'Relocation',        image: IMG.gallery.transform5 },
+  'paperwork-management':   { category: 'Home Office',       image: IMG.gallery.transform4 },
+  'online-coaching':        { category: 'Online',            image: IMG.services.default },
+  'online-consulting':      { category: 'Online',            image: IMG.services.default },
+  'home-staging':           { category: 'Interior',          image: IMG.gallery.transform1 },
+  'space-planning':         { category: 'Design',            image: IMG.gallery.transform5 },
+  'office-organizing':      { category: 'Workplace',         image: IMG.gallery.transform4 },
 }
 
 // ─── Single room card ─────────────────────────────────────────────────────────
 
 function RoomCard({ slug, title, priceFrom }: { slug: string; title: string; priceFrom: number }) {
   const [hovered, setHovered] = useState(false)
-  const meta = SERVICE_META[slug] ?? { category: 'Service', image: '/images/services/whole-house-after-1.jpg' }
+  const meta = SERVICE_META[slug] ?? { category: 'Service', image: IMG.services.default }
 
   return (
     <motion.article
@@ -114,18 +116,16 @@ export default function ServicesRoomGrid() {
   const { ref, isInView } = useScrollAnimation({ amount: 0.05 })
 
   return (
-    <section className="py-16 bg-surface">
+    <section className="py-20 bg-dark">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-        {/* Wrapper drives scroll detection */}
         <motion.div ref={ref}>
 
-        {/* Section label */}
         <motion.p
           initial={{ opacity: 0, y: 16 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.45, ease: EASE_STANDARD }}
-          className="text-dark/40 text-[11px] font-semibold uppercase tracking-[0.18em] text-center mb-8"
+          className="section-label text-center mb-8"
         >
           Choose Your Space
         </motion.p>

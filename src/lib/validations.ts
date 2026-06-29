@@ -2,10 +2,8 @@ import { z } from 'zod'
 
 const propertyTypeEnum = z.enum(['apartment', 'house', 'office'])
 const propertySizeEnum = z.enum(['small', 'medium', 'large'])
-const bookingStatusEnum = z.enum(['new', 'quoted', 'confirmed', 'completed', 'cancelled'])
 
 export const BookingFormSchema = z.object({
-  id: z.string().optional(),
   service: z.string().min(1, 'Service is required'),
   date: z.string().min(1, 'Date is required'),
   name: z.string().min(1, 'Name is required'),
@@ -14,8 +12,6 @@ export const BookingFormSchema = z.object({
   propertyType: propertyTypeEnum,
   propertySize: propertySizeEnum,
   notes: z.string().optional(),
-  status: bookingStatusEnum.optional(),
-  createdAt: z.string().optional(),
 })
 
 export type BookingFormValues = z.infer<typeof BookingFormSchema>

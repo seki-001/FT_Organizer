@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Cart | Faith The Organizer',
+  title: 'Cart',
   description: 'Your shopping cart at Faith The Organizer — organizing products delivered across Kenya.',
 }
 

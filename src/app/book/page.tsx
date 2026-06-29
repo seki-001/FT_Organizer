@@ -8,8 +8,6 @@ import BookingForm from '@/components/sections/BookingForm'
 import { COMPANY } from '@/lib/constants'
 import { cn } from '@/lib/utils'
 
-// ─── Step definitions ─────────────────────────────────────────────────────────
-
 const STEPS = [
   { n: 1, label: 'Choose Service',   hint: 'Pick from 11 services'     },
   { n: 2, label: 'Select a Date',    hint: 'Choose a convenient date'  },
@@ -17,13 +15,10 @@ const STEPS = [
   { n: 4, label: 'Review & Confirm', hint: 'Double-check everything'   },
 ]
 
-// ─── Vertical stepper ─────────────────────────────────────────────────────────
-
 function VerticalStepper({ currentStep }: { currentStep: number }) {
   return (
     <div className="relative">
-      {/* Connecting line */}
-      <div className="absolute left-[15px] top-4 bottom-4 w-[1px] bg-dark/10" aria-hidden="true" />
+      <div className="absolute left-[15px] top-4 bottom-4 w-[1px] bg-white/10" aria-hidden="true" />
 
       <div className="relative space-y-6">
         {STEPS.map(({ n, label, hint }) => {
@@ -33,12 +28,11 @@ function VerticalStepper({ currentStep }: { currentStep: number }) {
 
           return (
             <div key={n} className="flex items-start gap-4">
-              {/* Circle indicator */}
               <div className={cn(
                 'w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold shrink-0 relative z-10 transition-colors',
                 done    && 'bg-primary text-white',
-                current && 'bg-white border-2 border-primary text-primary',
-                future  && 'bg-dark/8 text-dark/30 border border-dark/15'
+                current && 'bg-primary text-white',
+                future  && 'border border-white/20 text-white/30'
               )}>
                 {done ? (
                   <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
@@ -47,16 +41,15 @@ function VerticalStepper({ currentStep }: { currentStep: number }) {
                 ) : n}
               </div>
 
-              {/* Labels */}
               <div className="pt-1">
                 <p className={cn(
                   'text-sm font-medium leading-none',
-                  current ? 'text-dark' : done ? 'text-dark/60' : 'text-dark/30'
+                  current ? 'text-white' : done ? 'text-white/60' : 'text-white/30'
                 )}>
                   {label}
                 </p>
                 {current && (
-                  <p className="text-xs text-dark/40 mt-1">{hint}</p>
+                  <p className="text-xs text-white/40 mt-1">{hint}</p>
                 )}
               </div>
             </div>
@@ -67,11 +60,9 @@ function VerticalStepper({ currentStep }: { currentStep: number }) {
   )
 }
 
-// ─── Page ─────────────────────────────────────────────────────────────────────
-
 function FormSkeleton() {
   return (
-    <div className="flex flex-col items-center gap-4 py-20 text-dark/35">
+    <div className="flex flex-col items-center gap-4 py-20 text-white/35">
       <Loader2 size={28} className="animate-spin" />
       <p className="text-sm">Loading booking form…</p>
     </div>
@@ -82,50 +73,46 @@ export default function BookPage() {
   const [currentStep, setCurrentStep] = useState(1)
 
   return (
-    <main className="bg-white min-h-screen">
+    <main className="bg-dark min-h-screen">
       <div className="max-w-6xl mx-auto px-4 sm:px-8 py-12 md:py-20">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-start">
 
-          {/* ── Sidebar ───────────────────────────────────────────────────── */}
           <aside className="lg:col-span-4">
             <div className="lg:sticky lg:top-24 space-y-8">
 
-              {/* Title + Stepper */}
               <div>
-                <h1 className="font-display text-3xl text-dark mb-8">Book a Service</h1>
+                <h1 className="font-display text-3xl text-white mb-8">Book a Service</h1>
                 <VerticalStepper currentStep={currentStep} />
               </div>
 
-              {/* Confidentiality card */}
-              <div className="bg-muted border border-dark/8 rounded-2xl p-6">
-                <Shield size={22} className="text-dark/45 mb-3" aria-hidden="true" />
-                <p className="font-display text-base text-dark leading-snug">
+              <div className="bg-white/4 border border-white/8 rounded-2xl p-6">
+                <Shield size={22} className="text-white/45 mb-3" aria-hidden="true" />
+                <p className="font-display text-base text-white leading-snug">
                   Confidentiality Agreement
                 </p>
-                <p className="text-dark/55 text-sm mt-2 leading-relaxed">
+                <p className="text-white/50 text-sm mt-2 leading-relaxed">
                   Signed on every job. Your information stays private — no exceptions.
                 </p>
               </div>
 
-              {/* Contact */}
               <div className="space-y-3 pt-2">
-                <p className="text-[10px] uppercase tracking-widest text-dark/30 font-medium">
+                <p className="text-[10px] uppercase tracking-widest text-white/30 font-medium">
                   Questions? Contact Us
                 </p>
                 <a
                   href={COMPANY.whatsappLink}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-3 text-sm text-dark/60 hover:text-dark transition-colors"
+                  className="flex items-center gap-3 text-sm text-white/50 hover:text-white transition-colors"
                 >
                   <MessageCircle size={15} className="text-green-500 shrink-0" />
                   WhatsApp — fastest response
                 </a>
                 <a
                   href={`tel:${COMPANY.phone.replace(/\s/g, '')}`}
-                  className="flex items-center gap-3 text-sm text-dark/60 hover:text-dark transition-colors"
+                  className="flex items-center gap-3 text-sm text-white/50 hover:text-white transition-colors"
                 >
-                  <Phone size={15} className="text-dark/45 shrink-0" />
+                  <Phone size={15} className="text-white/45 shrink-0" />
                   {COMPANY.phone}
                 </a>
               </div>
@@ -133,11 +120,10 @@ export default function BookPage() {
             </div>
           </aside>
 
-          {/* ── Form ──────────────────────────────────────────────────────── */}
           <div className="lg:col-span-8">
-            <div className="bg-white rounded-3xl border border-dark/8 shadow-sm p-6 sm:p-10">
+            <div className="bg-white/4 border border-white/8 rounded-3xl p-6 sm:p-10">
               <Suspense fallback={<FormSkeleton />}>
-                <BookingForm onStepChange={setCurrentStep} />
+                <BookingForm onStepChange={setCurrentStep} theme="dark" />
               </Suspense>
             </div>
           </div>

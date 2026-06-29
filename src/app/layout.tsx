@@ -30,9 +30,28 @@ const dmMono = DM_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'Faith The Organizer — From Clutter to Order',
+  metadataBase: new URL('https://www.organizer.co.ke'),
+  title: {
+    default: 'Faith The Organizer — From Clutter to Order',
+    template: '%s | Faith The Organizer',
+  },
   description:
-    'Faith The Organizer — From Clutter to Order. Nairobi\'s premier home & office organizing service. Book a decluttering, organizing or moving service today.',
+    "Nairobi's premier home & office organizing service. Book decluttering, home staging, moving, and office organizing today. Serving all Nairobi neighbourhoods.",
+  openGraph: {
+    type: 'website',
+    locale: 'en_KE',
+    url: 'https://www.organizer.co.ke',
+    siteName: 'Faith The Organizer',
+    title: 'Faith The Organizer — From Clutter to Order',
+    description: "Nairobi's premier home & office organizing service.",
+    images: [{ url: '/og/home.jpg', width: 1200, height: 630 }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Faith The Organizer',
+    description: "Nairobi's premier home & office organizing service.",
+    images: ['/og/home.jpg'],
+  },
 }
 
 export default function RootLayout({

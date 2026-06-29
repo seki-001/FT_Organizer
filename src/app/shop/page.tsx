@@ -7,7 +7,7 @@ import { SlidersHorizontal, X, PackageX, ChevronDown } from 'lucide-react'
 import { MOCK_PRODUCTS } from '@/lib/mock-products'
 import { SHOP_CATEGORIES } from '@/lib/constants'
 import type { ProductCategory } from '@/lib/types'
-import ProductCard from '@/components/shop/ProductCard'
+import DarkProductCard from '@/components/shop/DarkProductCard'
 import { cn } from '@/lib/utils'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -63,11 +63,11 @@ function FilterPanel({
   ]
 
   return (
-    <div className="flex flex-col gap-6 text-sm">
+    <div className="flex flex-col gap-6 text-sm text-white/70">
 
       {/* Sort By */}
       <div className="flex flex-col gap-3">
-        <p className="text-xs font-semibold text-dark/40 uppercase tracking-widest">Sort By</p>
+        <p className="text-xs font-semibold text-white/40 uppercase tracking-widest">Sort By</p>
         <div className="flex flex-col gap-1.5">
           {SORT_OPTIONS.map((opt) => (
             <label key={opt.value} className="flex items-center gap-2.5 cursor-pointer group">
@@ -77,7 +77,7 @@ function FilterPanel({
                   'w-4 h-4 rounded-full border-2 flex items-center justify-center transition-colors flex-shrink-0',
                   sort === opt.value
                     ? 'border-primary bg-primary'
-                    : 'border-dark/20 group-hover:border-primary/60'
+                    : 'border-white/20 group-hover:border-primary/60'
                 )}
               >
                 {sort === opt.value && (
@@ -88,7 +88,7 @@ function FilterPanel({
                 onClick={() => setSort(opt.value)}
                 className={cn(
                   'transition-colors',
-                  sort === opt.value ? 'text-dark font-medium' : 'text-dark/60 hover:text-dark'
+                  sort === opt.value ? 'text-white font-medium' : 'text-white/60 hover:text-white'
                 )}
               >
                 {opt.label}
@@ -98,34 +98,32 @@ function FilterPanel({
         </div>
       </div>
 
-      <div className="border-t border-dark/8" />
+      <div className="border-t border-white/8" />
 
       {/* Category */}
       <div className="flex flex-col gap-3">
-        <p className="text-xs font-semibold text-dark/40 uppercase tracking-widest">Category</p>
+        <p className="text-xs font-semibold text-white/40 uppercase tracking-widest">Category</p>
         <div className="flex flex-col gap-1.5">
           {allCategories.map((cat) => (
-            <label key={cat.slug} className="flex items-center gap-2.5 cursor-pointer group">
-              <span
+            <label key={cat.slug} className="flex items-center gap-3 cursor-pointer group">
+              <div
                 onClick={() => setActiveCategory(cat.slug as ProductCategory | 'all')}
                 className={cn(
-                  'w-4 h-4 rounded border-2 flex items-center justify-center transition-colors flex-shrink-0',
+                  'w-4 h-4 rounded-full border-2 flex items-center justify-center transition-colors flex-shrink-0',
                   activeCategory === cat.slug
                     ? 'border-primary bg-primary'
-                    : 'border-dark/20 group-hover:border-primary/60'
+                    : 'border-white/20 group-hover:border-white/40',
                 )}
               >
                 {activeCategory === cat.slug && (
-                  <svg width="8" height="6" viewBox="0 0 8 6" fill="none" aria-hidden="true">
-                    <path d="M1 3l2 2 4-4" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
+                  <div className="w-2 h-2 rounded-full bg-white" />
                 )}
-              </span>
+              </div>
               <span
                 onClick={() => setActiveCategory(cat.slug as ProductCategory | 'all')}
                 className={cn(
-                  'transition-colors',
-                  activeCategory === cat.slug ? 'text-dark font-medium' : 'text-dark/60 hover:text-dark'
+                  'text-sm transition-colors',
+                  activeCategory === cat.slug ? 'text-white' : 'text-white/50 group-hover:text-white',
                 )}
               >
                 {cat.label}
@@ -135,11 +133,11 @@ function FilterPanel({
         </div>
       </div>
 
-      <div className="border-t border-dark/8" />
+      <div className="border-t border-white/8" />
 
       {/* Price Range */}
       <div className="flex flex-col gap-3">
-        <p className="text-xs font-semibold text-dark/40 uppercase tracking-widest">Price Range (KSh)</p>
+        <p className="text-xs font-semibold text-white/40 uppercase tracking-widest">Price Range (KSh)</p>
         <div className="flex items-center gap-2">
           <input
             type="number"
@@ -147,7 +145,7 @@ function FilterPanel({
             onChange={(e) => setPriceMin(Math.max(0, Number(e.target.value)))}
             placeholder="Min"
             aria-label="Minimum price"
-            className="w-0 flex-1 bg-muted border border-dark/10 rounded-lg px-3 py-2 text-xs text-dark focus:outline-none focus:ring-2 focus:ring-primary/20"
+            className="w-0 flex-1 bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:ring-2 focus:ring-primary/20"
           />
           <span className="text-dark/30 text-xs">—</span>
           <input
@@ -156,7 +154,7 @@ function FilterPanel({
             onChange={(e) => setPriceMax(Math.min(MAX_PRICE, Number(e.target.value)))}
             placeholder="Max"
             aria-label="Maximum price"
-            className="w-0 flex-1 bg-muted border border-dark/10 rounded-lg px-3 py-2 text-xs text-dark focus:outline-none focus:ring-2 focus:ring-primary/20"
+            className="w-0 flex-1 bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:ring-2 focus:ring-primary/20"
           />
         </div>
         {/* Visual range bar */}
@@ -171,7 +169,7 @@ function FilterPanel({
         </div>
       </div>
 
-      <div className="border-t border-dark/8" />
+      <div className="border-t border-white/8" />
 
       {/* Availability */}
       <div className="flex items-center justify-between">
@@ -198,7 +196,7 @@ function FilterPanel({
         </button>
       </div>
 
-      <div className="border-t border-dark/8" />
+      <div className="border-t border-white/8" />
 
       {/* Clear All */}
       <button
@@ -224,34 +222,14 @@ function CategoryCard({
       whileHover={{ y: -2 }}
       transition={{ duration: 0.15 }}
       className={cn(
-        'flex flex-col items-center flex-shrink-0 rounded-2xl overflow-hidden border-2 transition-all duration-150 w-28 sm:w-32',
+        'flex-shrink-0 px-4 py-2 rounded-full text-xs font-medium border transition-all duration-150',
         active
-          ? 'ring-2 ring-primary ring-offset-2 border-transparent'
-          : 'border-transparent hover:border-dark/10'
+          ? 'bg-white text-dark border-white font-semibold'
+          : 'border-white/15 text-white/50 hover:border-white/30 hover:text-white',
       )}
       aria-pressed={active}
     >
-      <div className="relative h-24 w-full bg-muted overflow-hidden">
-        <motion.div
-          className="absolute inset-0"
-          whileHover={{ scale: 1.05 }}
-          transition={{ duration: 0.4 }}
-        >
-          <Image
-            src={CATEGORY_IMAGES[slug] ?? CATEGORY_IMAGES['all']}
-            alt={label}
-            fill
-            className="object-cover"
-            sizes="128px"
-          />
-        </motion.div>
-      </div>
-      <p className={cn(
-        'text-sm font-medium py-2 px-1 text-center leading-tight',
-        active ? 'text-primary' : 'text-dark'
-      )}>
-        {label}
-      </p>
+      {label}
     </motion.button>
   )
 }
@@ -311,7 +289,7 @@ export default function ShopCataloguePage() {
   ]
 
   return (
-    <main>
+    <main className="bg-dark">
 
       {/* ── 1. HERO BANNER ─────────────────────────────────────────────────── */}
       <section className="relative h-72 sm:h-80 bg-dark overflow-hidden flex items-center">
@@ -347,9 +325,9 @@ export default function ShopCataloguePage() {
       </section>
 
       {/* ── 2. CATEGORY NAVIGATOR ──────────────────────────────────────────── */}
-      <section className="bg-white py-6 border-b border-dark/8" aria-label="Filter by category">
+      <section className="bg-dark py-6 border-b border-white/8" aria-label="Filter by category">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-4 overflow-x-auto scrollbar-hide pb-1">
+          <div className="flex items-center gap-3 overflow-x-auto scrollbar-hide pb-1">
             {allCategoryItems.map((cat) => (
               <CategoryCard
                 key={cat.slug}
@@ -369,8 +347,8 @@ export default function ShopCataloguePage() {
 
           {/* Desktop Filter Sidebar */}
           <aside className="hidden lg:block w-60 flex-shrink-0">
-            <div className="bg-white rounded-2xl border border-dark/8 p-6 sticky top-24">
-              <p className="font-display text-base text-dark mb-5">Filters</p>
+            <div className="bg-white/4 border border-white/8 rounded-2xl p-6 sticky top-24">
+              <p className="font-display text-base text-white mb-5">Filters</p>
               <FilterPanel {...filterPanelProps} />
             </div>
           </aside>
@@ -390,8 +368,8 @@ export default function ShopCataloguePage() {
                   <SlidersHorizontal size={15} />
                   Filters
                 </button>
-                <p className="text-dark/50 text-sm">
-                  <span className="font-semibold text-dark">{filtered.length}</span>{' '}
+                <p className="text-white/50 text-sm">
+                  <span className="font-semibold text-white">{filtered.length}</span>{' '}
                   {filtered.length === 1 ? 'product' : 'products'}
                 </p>
               </div>
@@ -420,7 +398,7 @@ export default function ShopCataloguePage() {
             {filtered.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
                 {filtered.map((product) => (
-                  <ProductCard key={product.id} product={product} />
+                  <DarkProductCard key={product.id} product={product} />
                 ))}
               </div>
             ) : (

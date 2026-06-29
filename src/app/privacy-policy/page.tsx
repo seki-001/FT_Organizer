@@ -3,7 +3,7 @@ import LegalLayout from '@/components/layout/LegalLayout'
 import { COMPANY } from '@/lib/constants'
 
 export const metadata: Metadata = {
-  title: 'Privacy Policy | Faith The Organizer',
+  title: 'Privacy Policy',
   description:
     'Privacy policy for Faith The Organizer — how we collect, use and protect your personal information. From Clutter to Order.',
 }

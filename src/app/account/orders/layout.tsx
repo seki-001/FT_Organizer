@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Orders | Faith The Organizer',
+  title: 'Orders',
 }
 
 export default function AccountOrdersLayout({

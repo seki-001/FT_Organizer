@@ -14,6 +14,7 @@ import {
 import { BookingFormSchema, type BookingFormValues } from '@/lib/validations'
 import { SERVICES, COMPANY } from '@/lib/constants'
 import { formatPrice, cn } from '@/lib/utils'
+import { bookingFormClasses } from '@/lib/form-theme'
 
 // ─── Icon map ─────────────────────────────────────────────────────────────────
 
@@ -72,37 +73,39 @@ function formatDisplayDate(iso: string) {
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
-function ProgressBar({ step }: { step: number }) {
+function ProgressBar({ step, dark }: { step: number; dark: boolean }) {
+  const c = bookingFormClasses(dark)
   return (
-    <div className="w-full mb-8">
-      {/* Labels */}
+    <div className="w-full mb-8 border-b border-transparent">
       <div className="flex justify-between mb-3">
         {STEPS.map((label, i) => (
           <span
             key={label}
             className={cn(
-              'text-xs font-medium hidden sm:block',
-              i + 1 <= step ? 'text-primary' : 'text-dark/30'
+              'text-xs font-medium hidden sm:block pb-2 border-b-2 transition-colors',
+              i + 1 === step
+                ? 'border-primary text-primary'
+                : i + 1 < step
+                  ? dark ? 'border-transparent text-white/60' : 'border-transparent text-dark/60'
+                  : cn('border-transparent', c.progressLabelInactive),
             )}
           >
             {label}
           </span>
         ))}
       </div>
-      {/* Bar */}
-      <div className="flex gap-1.5">
+      <div className="flex gap-1.5 sm:hidden">
         {STEPS.map((_, i) => (
           <div
             key={i}
             className={cn(
               'h-1.5 flex-1 rounded-full transition-colors duration-300',
-              i + 1 <= step ? 'bg-primary' : 'bg-dark/10'
+              i + 1 <= step ? 'bg-primary' : c.progressInactive,
             )}
           />
         ))}
       </div>
-      {/* Mobile step indicator */}
-      <p className="text-xs text-dark/50 mt-2 sm:hidden">
+      <p className={cn('text-xs mt-2 sm:hidden', c.sub)}>
         Step {step} of {STEPS.length} — {STEPS[step - 1]}
       </p>
     </div>
@@ -120,13 +123,16 @@ function RadioGroup<T extends string>({
   value,
   onChange,
   error,
+  dark,
 }: {
   name: string
   options: readonly { value: T; label: string; hint?: string }[]
   value: T | ''
   onChange: (v: T) => void
   error?: string
+  dark: boolean
 }) {
+  const c = bookingFormClasses(dark)
   return (
     <div>
       <div className="flex flex-wrap gap-3">
@@ -136,15 +142,13 @@ function RadioGroup<T extends string>({
             type="button"
             onClick={() => onChange(opt.value)}
             className={cn(
-              'flex flex-col items-start px-4 py-3 rounded-lg border-2 text-sm font-medium transition-all duration-150 min-h-[44px]',
-              value === opt.value
-                ? 'border-primary bg-primary/5 text-primary'
-                : 'border-dark/15 text-dark hover:border-dark/30'
+              'flex flex-col items-start px-4 py-3 rounded-2xl border-2 text-sm font-medium transition-all duration-150 min-h-[44px]',
+              c.radio(value === opt.value),
             )}
           >
             <span>{opt.label}</span>
             {opt.hint && (
-              <span className={cn('text-xs font-normal', value === opt.value ? 'text-dark/60' : 'text-dark/40')}>
+              <span className={cn('text-xs font-normal', c.radioHint(value === opt.value))}>
                 {opt.hint}
               </span>
             )}
@@ -161,10 +165,13 @@ function RadioGroup<T extends string>({
 function Calendar({
   value,
   onChange,
+  dark,
 }: {
   value: string
   onChange: (iso: string) => void
+  dark: boolean
 }) {
+  const c = bookingFormClasses(dark)
   const today = new Date()
   today.setHours(0, 0, 0, 0)
 
@@ -198,18 +205,18 @@ function Calendar({
           onClick={prevMonth}
           disabled={!canGoPrev}
           aria-label="Previous month"
-          className="flex items-center justify-center w-8 h-8 rounded-full hover:bg-muted disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+          className="flex items-center justify-center w-8 h-8 rounded-full hover:bg-white/8 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
         >
           <ChevronLeft size={18} />
         </button>
-        <p className="font-semibold text-dark text-sm">
+        <p className={cn('font-semibold text-sm', c.calHeader)}>
           {MONTHS[month]} {year}
         </p>
         <button
           type="button"
           onClick={nextMonth}
           aria-label="Next month"
-          className="flex items-center justify-center w-8 h-8 rounded-full hover:bg-muted transition-colors"
+          className="flex items-center justify-center w-8 h-8 rounded-full hover:bg-white/8 transition-colors"
         >
           <ChevronRight size={18} />
         </button>
@@ -218,7 +225,7 @@ function Calendar({
       {/* Day headers */}
       <div className="grid grid-cols-7 mb-1">
         {WEEK_DAYS.map((d) => (
-          <div key={d} className="text-center text-xs font-medium text-dark/40 py-1">
+          <div key={d} className={cn('text-center text-xs font-medium py-1', c.calWeekday)}>
             {d}
           </div>
         ))}
@@ -248,10 +255,7 @@ function Calendar({
                 aria-pressed={selected}
                 className={cn(
                   'w-9 h-9 rounded-full text-sm transition-all duration-150 font-medium',
-                  disabled  && 'text-dark/20 cursor-not-allowed',
-                  !disabled && !selected && 'text-dark hover:bg-muted cursor-pointer',
-                  !disabled && isToday && !selected && 'border border-primary/40 text-primary',
-                  selected  && 'bg-primary text-white shadow-sm',
+                  c.calDay(disabled, selected, isToday),
                 )}
               >
                 {day}
@@ -266,18 +270,27 @@ function Calendar({
 
 // ─── Review row ───────────────────────────────────────────────────────────────
 
-function ReviewRow({ label, value }: { label: string; value: string }) {
+function ReviewRow({ label, value, dark }: { label: string; value: string; dark: boolean }) {
+  const c = bookingFormClasses(dark)
   return (
-    <div className="flex flex-col sm:flex-row sm:items-center gap-1 py-3 border-b border-dark/5 last:border-b-0">
-      <span className="text-dark/50 text-xs uppercase tracking-wide sm:w-40 flex-shrink-0">{label}</span>
-      <span className="text-dark text-sm font-medium">{value || '—'}</span>
+    <div className={cn('flex flex-col sm:flex-row sm:items-center gap-1 py-3 border-b last:border-b-0', c.reviewRow)}>
+      <span className={cn('text-xs uppercase tracking-wide sm:w-40 flex-shrink-0', c.reviewLabel)}>{label}</span>
+      <span className={cn('text-sm font-medium', c.reviewValue)}>{value || '—'}</span>
     </div>
   )
 }
 
 // ─── Main form ────────────────────────────────────────────────────────────────
 
-export default function BookingForm({ onStepChange }: { onStepChange?: (step: number) => void } = {}) {
+export default function BookingForm({
+  onStepChange,
+  theme = 'light',
+}: {
+  onStepChange?: (step: number) => void
+  theme?: 'light' | 'dark'
+} = {}) {
+  const dark = theme === 'dark'
+  const c = bookingFormClasses(dark)
   const searchParams = useSearchParams()
   const preselectedSlug = searchParams.get('service') ?? ''
 
@@ -347,7 +360,7 @@ export default function BookingForm({ onStepChange }: { onStepChange?: (step: nu
       const res = await fetch('/api/bookings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...data, status: 'new', createdAt: new Date().toISOString() }),
+        body: JSON.stringify(data),
       })
       const json = await res.json() as { success: boolean; reference: string }
       if (json.success) {
@@ -368,16 +381,16 @@ export default function BookingForm({ onStepChange }: { onStepChange?: (step: nu
       <div className="flex flex-col items-center text-center gap-6 py-12">
         <CheckCircle size={64} className="text-green-500" aria-hidden="true" />
         <div className="flex flex-col gap-2">
-          <h2 className="font-display text-3xl text-dark">Booking Received!</h2>
-          <p className="text-dark/60 max-w-sm">
+          <h2 className={cn('font-display text-3xl', c.title)}>Booking Received!</h2>
+          <p className={cn('max-w-sm', c.sub)}>
             We&apos;ll send your quote to{' '}
-            <span className="font-medium text-dark">{getValues('email')}</span> within
+            <span className={cn('font-medium', c.title)}>{getValues('email')}</span> within
             24 hours.
           </p>
         </div>
-        <div className="bg-muted rounded-xl px-8 py-4 text-center">
-          <p className="text-dark/50 text-xs uppercase tracking-widest mb-1">Reference</p>
-          <p className="font-mono text-2xl font-bold text-dark">{bookingRef}</p>
+        <div className={cn('rounded-xl px-8 py-4 text-center', c.cardMuted)}>
+          <p className={cn('text-xs uppercase tracking-widest mb-1', c.sub)}>Reference</p>
+          <p className={cn('font-mono text-2xl font-bold', c.title)}>{bookingRef}</p>
         </div>
         <div className="flex flex-col sm:flex-row gap-3 mt-2">
           <a
@@ -390,7 +403,10 @@ export default function BookingForm({ onStepChange }: { onStepChange?: (step: nu
           </a>
           <Link
             href="/"
-            className="border-2 border-dark/20 text-dark hover:border-dark/40 font-medium px-6 py-3 rounded-lg transition-colors duration-200 min-h-[44px] flex items-center justify-center"
+            className={cn(
+              'border-2 font-medium px-6 py-3 rounded-lg transition-colors duration-200 min-h-[44px] flex items-center justify-center',
+              dark ? 'border-white/20 text-white hover:border-white/40' : 'border-dark/20 text-dark hover:border-dark/40',
+            )}
           >
             Back to Home
           </Link>
@@ -403,16 +419,16 @@ export default function BookingForm({ onStepChange }: { onStepChange?: (step: nu
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} noValidate>
-      <ProgressBar step={step} />
+      <ProgressBar step={step} dark={dark} />
 
       {/* ── STEP 1 — Select Service ────────────────────────────────────── */}
       {step === 1 && (
         <div className="flex flex-col gap-6">
           <div>
-            <h2 className="font-display text-2xl md:text-3xl text-dark mb-1">
+            <h2 className={cn('font-display text-2xl md:text-3xl mb-1', c.title)}>
               What service do you need?
             </h2>
-            <p className="text-dark/50 text-sm">Select the service you&apos;d like to book.</p>
+            <p className={cn('text-sm', c.sub)}>Select the service you&apos;d like to book.</p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -426,23 +442,21 @@ export default function BookingForm({ onStepChange }: { onStepChange?: (step: nu
                   onClick={() => setValue('service', service.slug, { shouldValidate: true })}
                   aria-pressed={checked}
                   className={cn(
-                    'flex items-center gap-4 p-4 rounded-xl border-2 text-left transition-all duration-150 min-h-[44px]',
-                    checked
-                      ? 'border-primary bg-primary/5'
-                      : 'border-dark/10 hover:border-dark/25 bg-white'
+                    'flex items-center gap-4 p-4 rounded-2xl border-2 text-left transition-all duration-150 min-h-[44px]',
+                    c.serviceCard(checked),
                   )}
                 >
                   <div className={cn(
                     'flex items-center justify-center w-10 h-10 rounded-full flex-shrink-0',
-                    checked ? 'bg-primary text-white' : 'bg-muted text-dark/40'
+                    c.serviceIcon(checked),
                   )}>
                     <Icon size={18} aria-hidden="true" />
                   </div>
                   <div className="flex flex-col gap-0.5 min-w-0">
-                    <span className={cn('font-medium text-sm leading-snug', checked ? 'text-primary' : 'text-dark')}>
+                    <span className={cn('font-medium text-sm leading-snug', c.serviceName(checked))}>
                       {service.title}
                     </span>
-                    <span className={cn('font-mono text-xs', checked ? 'text-primary/70' : 'text-dark/40')}>
+                    <span className={cn('font-mono text-xs', c.servicePrice(checked))}>
                       From {formatPrice(service.priceFrom)}
                     </span>
                   </div>
@@ -458,27 +472,28 @@ export default function BookingForm({ onStepChange }: { onStepChange?: (step: nu
       {step === 2 && (
         <div className="flex flex-col gap-6">
           <div>
-            <h2 className="font-display text-2xl md:text-3xl text-dark mb-1">
+            <h2 className={cn('font-display text-2xl md:text-3xl mb-1', c.title)}>
               When works for you?
             </h2>
-            <p className="text-dark/50 text-sm">Select a preferred date. Sundays are unavailable.</p>
+            <p className={cn('text-sm', c.sub)}>Select a preferred date. Sundays are unavailable.</p>
           </div>
 
-          <div className="bg-white rounded-2xl border border-dark/10 p-6 max-w-sm mx-auto w-full">
+          <div className={cn('rounded-2xl p-6 max-w-sm mx-auto w-full', c.card)}>
             <Calendar
               value={selectedDate}
               onChange={(iso) => setValue('date', iso, { shouldValidate: true })}
+              dark={dark}
             />
           </div>
 
           {selectedDate && (
-            <p className="text-center text-sm text-dark/60">
-              Selected: <span className="font-medium text-dark">{formatDisplayDate(selectedDate)}</span>
+            <p className={cn('text-center text-sm', c.sub)}>
+              Selected: <span className={cn('font-medium', c.title)}>{formatDisplayDate(selectedDate)}</span>
             </p>
           )}
           <FieldError message={errors.date?.message} />
 
-          <p className="text-dark/50 text-xs text-center max-w-sm mx-auto">
+          <p className={cn('text-xs text-center max-w-sm mx-auto', c.sub)}>
             We&apos;ll confirm your exact time slot within 24 hours of booking.
           </p>
         </div>
@@ -488,100 +503,87 @@ export default function BookingForm({ onStepChange }: { onStepChange?: (step: nu
       {step === 3 && (
         <div className="flex flex-col gap-6">
           <div>
-            <h2 className="font-display text-2xl md:text-3xl text-dark mb-1">
+            <h2 className={cn('font-display text-2xl md:text-3xl mb-1', c.title)}>
               Tell us about yourself
             </h2>
-            <p className="text-dark/50 text-sm">All fields are required unless marked optional.</p>
+            <p className={cn('text-sm', c.sub)}>All fields are required unless marked optional.</p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-            {/* Full name */}
             <div className="flex flex-col gap-1.5 sm:col-span-2">
-              <label htmlFor="name" className="text-sm font-medium text-dark">Full Name</label>
+              <label htmlFor="name" className={cn('text-sm font-medium', c.label)}>Full Name</label>
               <input
                 id="name"
                 type="text"
                 autoComplete="name"
                 placeholder="e.g. Faith Wanjiku"
                 {...register('name')}
-                className={cn(
-                  'w-full bg-muted rounded-lg px-4 py-3 text-sm text-dark placeholder:text-dark/30 outline-none focus:ring-2 focus:ring-primary/30 transition',
-                  errors.name && 'ring-2 ring-danger/40'
-                )}
+                className={cn(c.input, errors.name && 'ring-2 ring-danger/40')}
               />
               <FieldError message={errors.name?.message} />
             </div>
 
-            {/* Phone */}
             <div className="flex flex-col gap-1.5">
-              <label htmlFor="phone" className="text-sm font-medium text-dark">Phone Number</label>
+              <label htmlFor="phone" className={cn('text-sm font-medium', c.label)}>Phone Number</label>
               <input
                 id="phone"
                 type="tel"
                 autoComplete="tel"
                 placeholder="07XX XXX XXX"
                 {...register('phone')}
-                className={cn(
-                  'w-full bg-muted rounded-lg px-4 py-3 text-sm text-dark placeholder:text-dark/30 outline-none focus:ring-2 focus:ring-primary/30 transition',
-                  errors.phone && 'ring-2 ring-danger/40'
-                )}
+                className={cn(c.input, errors.phone && 'ring-2 ring-danger/40')}
               />
               <FieldError message={errors.phone?.message} />
             </div>
 
-            {/* Email */}
             <div className="flex flex-col gap-1.5">
-              <label htmlFor="email" className="text-sm font-medium text-dark">Email Address</label>
+              <label htmlFor="email" className={cn('text-sm font-medium', c.label)}>Email Address</label>
               <input
                 id="email"
                 type="email"
                 autoComplete="email"
                 placeholder="you@example.com"
                 {...register('email')}
-                className={cn(
-                  'w-full bg-muted rounded-lg px-4 py-3 text-sm text-dark placeholder:text-dark/30 outline-none focus:ring-2 focus:ring-primary/30 transition',
-                  errors.email && 'ring-2 ring-danger/40'
-                )}
+                className={cn(c.input, errors.email && 'ring-2 ring-danger/40')}
               />
               <FieldError message={errors.email?.message} />
             </div>
 
-            {/* Property type */}
             <div className="flex flex-col gap-1.5 sm:col-span-2">
-              <label className="text-sm font-medium text-dark">Property Type</label>
+              <label className={cn('text-sm font-medium', c.label)}>Property Type</label>
               <RadioGroup
                 name="propertyType"
                 options={PROPERTY_TYPES}
                 value={watchedValues.propertyType ?? ''}
                 onChange={(v) => setValue('propertyType', v, { shouldValidate: true })}
                 error={errors.propertyType?.message}
+                dark={dark}
               />
             </div>
 
-            {/* Property size */}
             <div className="flex flex-col gap-1.5 sm:col-span-2">
-              <label className="text-sm font-medium text-dark">Approximate Size</label>
+              <label className={cn('text-sm font-medium', c.label)}>Approximate Size</label>
               <RadioGroup
                 name="propertySize"
                 options={PROPERTY_SIZES}
                 value={watchedValues.propertySize ?? ''}
                 onChange={(v) => setValue('propertySize', v, { shouldValidate: true })}
                 error={errors.propertySize?.message}
+                dark={dark}
               />
             </div>
 
-            {/* Notes */}
             <div className="flex flex-col gap-1.5 sm:col-span-2">
-              <label htmlFor="notes" className="text-sm font-medium text-dark">
+              <label htmlFor="notes" className={cn('text-sm font-medium', c.label)}>
                 Special Notes
-                <span className="text-dark/40 font-normal ml-1">(optional)</span>
+                <span className={cn('font-normal ml-1', c.sub)}>(optional)</span>
               </label>
               <textarea
                 id="notes"
                 rows={4}
                 placeholder="Any specific areas of concern, access instructions, or other details..."
                 {...register('notes')}
-                className="w-full bg-muted rounded-lg px-4 py-3 text-sm text-dark placeholder:text-dark/30 outline-none focus:ring-2 focus:ring-primary/30 transition resize-none"
+                className={cn(c.input, 'resize-none')}
               />
             </div>
           </div>
@@ -592,30 +594,28 @@ export default function BookingForm({ onStepChange }: { onStepChange?: (step: nu
       {step === 4 && (
         <div className="flex flex-col gap-6">
           <div>
-            <h2 className="font-display text-2xl md:text-3xl text-dark mb-1">
+            <h2 className={cn('font-display text-2xl md:text-3xl mb-1', c.title)}>
               Review your booking
             </h2>
-            <p className="text-dark/50 text-sm">Check everything looks right before confirming.</p>
+            <p className={cn('text-sm', c.sub)}>Check everything looks right before confirming.</p>
           </div>
 
-          {/* Summary card */}
-          <div className="bg-white rounded-2xl border border-dark/10 px-6 py-2">
-            <ReviewRow label="Service"       value={serviceObj?.title ?? watchedValues.service} />
-            <ReviewRow label="Date"          value={formatDisplayDate(watchedValues.date)} />
-            <ReviewRow label="Name"          value={watchedValues.name} />
-            <ReviewRow label="Phone"         value={watchedValues.phone} />
-            <ReviewRow label="Email"         value={watchedValues.email} />
-            <ReviewRow label="Property type" value={watchedValues.propertyType ?? ''} />
-            <ReviewRow label="Size"          value={watchedValues.propertySize ?? ''} />
+          <div className={cn('rounded-2xl px-6 py-2', c.card)}>
+            <ReviewRow label="Service"       value={serviceObj?.title ?? watchedValues.service} dark={dark} />
+            <ReviewRow label="Date"          value={formatDisplayDate(watchedValues.date)} dark={dark} />
+            <ReviewRow label="Name"          value={watchedValues.name} dark={dark} />
+            <ReviewRow label="Phone"         value={watchedValues.phone} dark={dark} />
+            <ReviewRow label="Email"         value={watchedValues.email} dark={dark} />
+            <ReviewRow label="Property type" value={watchedValues.propertyType ?? ''} dark={dark} />
+            <ReviewRow label="Size"          value={watchedValues.propertySize ?? ''} dark={dark} />
             {watchedValues.notes && (
-              <ReviewRow label="Notes" value={watchedValues.notes} />
+              <ReviewRow label="Notes" value={watchedValues.notes} dark={dark} />
             )}
           </div>
 
-          {/* Confidentiality note */}
-          <div className="flex items-start gap-3 bg-muted border border-dark/8 rounded-xl px-4 py-3">
-            <Shield size={18} className="text-dark/45 flex-shrink-0 mt-0.5" aria-hidden="true" />
-            <p className="text-dark/70 text-xs leading-relaxed">
+          <div className={cn('flex items-start gap-3 rounded-xl px-4 py-3', c.cardMuted)}>
+            <Shield size={18} className={cn('flex-shrink-0 mt-0.5', dark ? 'text-white/45' : 'text-dark/45')} aria-hidden="true" />
+            <p className={cn('text-xs leading-relaxed', dark ? 'text-white/70' : 'text-dark/70')}>
               Your information is protected by our confidentiality agreement. We never share
               your personal details.
             </p>
@@ -624,12 +624,12 @@ export default function BookingForm({ onStepChange }: { onStepChange?: (step: nu
       )}
 
       {/* ── Navigation buttons ─────────────────────────────────────────── */}
-      <div className="flex items-center justify-between mt-8 pt-6 border-t border-dark/10">
+      <div className={cn('flex items-center justify-between mt-8 pt-6 border-t', c.divider)}>
         {step > 1 ? (
           <button
             type="button"
             onClick={prevStep}
-            className="flex items-center gap-2 text-dark/60 hover:text-dark text-sm font-medium transition-colors duration-150 min-h-[44px] px-2"
+            className={cn('flex items-center gap-2 text-sm font-medium transition-colors duration-150 min-h-[44px] px-2', c.navMuted)}
           >
             <ChevronLeft size={18} />
             Back

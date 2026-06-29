@@ -245,10 +245,10 @@ export default function BlogIndexPage() {
   const today = new Date().toLocaleDateString('en-KE', { year: 'numeric', month: 'long', day: 'numeric' })
 
   return (
-    <main>
+    <main className="bg-dark">
 
       {/* ── 1. MAGAZINE MASTHEAD ─────────────────────────────────────────── */}
-      <header className="bg-white border-b border-dark/8 py-14 px-4 sm:px-8">
+      <header className="bg-surface py-16 lg:py-24 border-b border-dark/8 px-4 sm:px-8">
         <div className="max-w-7xl mx-auto">
 
           {/* Row 1 — Thin label + rule */}
@@ -288,7 +288,8 @@ export default function BlogIndexPage() {
       </header>
 
       {/* ── 2. FEATURED STORY ────────────────────────────────────────────── */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-8 py-12">
+      <section className="bg-dark py-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-8">
         <div className="grid grid-cols-1 md:grid-cols-[55%_45%] gap-0 rounded-2xl overflow-hidden
                         border border-dark/8 bg-white group hover:shadow-lg transition-shadow duration-300">
           {/* Image */}
@@ -348,22 +349,24 @@ export default function BlogIndexPage() {
             </Link>
           </div>
         </div>
+      </div>
       </section>
 
+      <section className="bg-dark py-16 lg:py-24">
       {/* ── 3. CATEGORY FILTER ───────────────────────────────────────────── */}
-      <div className="border-y border-dark/8">
+      <div className="border-y border-white/8">
         <div className="max-w-7xl mx-auto px-4 sm:px-8 py-4 flex flex-wrap items-center gap-2">
-          <span className="text-dark/40 text-sm mr-2 shrink-0">Filter:</span>
+          <span className="text-white/40 text-sm mr-2 shrink-0">Filter:</span>
           {FILTER_TABS.map((tab) => (
             <button
               key={tab.value}
               type="button"
               onClick={() => setActiveFilter(tab.value)}
               className={cn(
-                'px-4 py-2 rounded-full text-sm font-medium transition-all duration-150',
+                'px-4 py-2 rounded-full text-sm font-medium transition-all duration-150 border',
                 activeFilter === tab.value
-                  ? 'bg-dark text-white'
-                  : 'bg-muted text-dark/60 hover:bg-dark/10'
+                  ? 'bg-white text-dark border-white font-semibold'
+                  : 'border-white/15 text-white/50 hover:border-white/30 hover:text-white'
               )}
             >
               {tab.label}
@@ -473,6 +476,7 @@ export default function BlogIndexPage() {
       <AnimatePresence>
         <NewsletterBand />
       </AnimatePresence>
+      </section>
 
     </main>
   )

@@ -1,54 +1,50 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { BookingFormSchema } from '@/lib/validations'
+import { apiError, apiSuccess } from '@/lib/api-response'
+import { enforceRateLimit, withRateLimitHeaders, checkRateLimit, getClientIp } from '@/lib/rate-limit'
+import { logger } from '@/lib/logger'
 
 function generateReference(): string {
   return Math.random().toString(36).toUpperCase().slice(2, 8)
 }
 
 export async function POST(request: NextRequest) {
+  const limited = enforceRateLimit(request, 'bookings', { limit: 5, windowMs: 60_000 })
+  if (limited) return limited
+
   try {
     const body: unknown = await request.json()
-
     const parsed = BookingFormSchema.safeParse(body)
+
     if (!parsed.success) {
       return NextResponse.json(
-        { success: false, errors: parsed.error.flatten().fieldErrors },
-        { status: 400 }
+        { error: 'Invalid booking data.', code: 'VALIDATION_ERROR', errors: parsed.error.flatten().fieldErrors },
+        { status: 400 },
       )
     }
 
     const booking = parsed.data
     const reference = generateReference()
+    const status = 'new' as const
+    const createdAt = new Date().toISOString()
 
-    // Log the incoming booking (visible in Vercel/Next.js server logs)
-    console.log('[Booking received]', {
-      reference,
-      service:      booking.service,
-      date:         booking.date,
-      name:         booking.name,
-      email:        booking.email,
-      phone:        booking.phone,
-      propertyType: booking.propertyType,
-      propertySize: booking.propertySize,
-      notes:        booking.notes ?? '',
-      createdAt:    booking.createdAt,
+    logger.info({
+      event: 'booking_created',
+      resource_id: reference,
+      action: status,
+      ip_address: getClientIp(request),
+      service: booking.service,
     })
 
-    // TODO: Send confirmation email to client via Resend
-    //   await sendBookingConfirmation({ to: booking.email, booking, reference })
-
-    // TODO: Send admin notification email via Resend
-    //   await sendAdminNotification({ booking, reference })
-
-    // TODO: Persist booking to database (e.g. Prisma / Supabase)
-    //   await db.booking.create({ data: { ...booking, reference, status: 'new' } })
-
-    return NextResponse.json({ success: true, reference }, { status: 201 })
-  } catch (error) {
-    console.error('[Booking API error]', error)
-    return NextResponse.json(
-      { success: false, error: 'Something went wrong. Please try again.' },
-      { status: 500 }
+    const ip = getClientIp(request)
+    const rate = checkRateLimit(`bookings:${ip}`, { limit: 5, windowMs: 60_000 })
+    return withRateLimitHeaders(
+      apiSuccess({ success: true, reference, status, createdAt }, 201),
+      rate.remaining,
+      rate.resetAt,
     )
+  } catch {
+    logger.error({ event: 'booking_failed', error_code: 'INTERNAL_ERROR' })
+    return apiError('Something went wrong. Please try again.', 'INTERNAL_ERROR', 500)
   }
 }

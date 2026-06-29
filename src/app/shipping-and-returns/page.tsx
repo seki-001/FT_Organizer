@@ -5,7 +5,7 @@ import { DELIVERY_OPTIONS, COMPANY } from '@/lib/constants'
 import { formatPrice } from '@/lib/utils'
 
 export const metadata: Metadata = {
-  title: 'Shipping & Returns | Faith The Organizer',
+  title: 'Shipping & Returns',
   description:
     'Shipping, delivery and returns policy for the Faith The Organizer online shop. Same-day Nairobi delivery available. From Clutter to Order.',
 }

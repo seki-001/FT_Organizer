@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { formatPrice } from '@/lib/utils'
 import { useScrollAnimation } from '@/hooks/useScrollAnimation'
+import { IMG } from '@/lib/image-placeholders'
 import { EASE_STANDARD } from '@/lib/animations'
 
 const INCLUDES = [
@@ -18,7 +19,7 @@ export default function FeaturedService() {
   const { ref, isInView } = useScrollAnimation({ amount: 0.15 })
 
   return (
-    <section className="py-10 bg-surface">
+    <section className="py-10 bg-dark">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           ref={ref}
@@ -30,7 +31,7 @@ export default function FeaturedService() {
           {/* Left — image (40%) */}
           <div className="relative lg:w-[40%] min-h-[260px] lg:min-h-0 flex-shrink-0">
             <Image
-              src="/images/services/whole-house-after-1.jpg"
+              src={IMG.gallery.transform1}
               alt="Whole House Organizing — before to after transformation"
               fill
               className="object-cover"

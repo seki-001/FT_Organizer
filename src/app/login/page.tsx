@@ -4,7 +4,7 @@ import { Loader2 } from 'lucide-react'
 import LoginClient from './LoginClient'
 
 export const metadata: Metadata = {
-  title: 'Sign In | Faith The Organizer',
+  title: 'Sign In',
   description: 'Sign in to your Faith The Organizer account.',
 }
 

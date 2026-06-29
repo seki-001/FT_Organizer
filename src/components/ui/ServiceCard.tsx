@@ -1,63 +1,45 @@
 import Link from 'next/link'
-import {
-  Trash2, Home, Truck, Archive, Package, FileText,
-  Video, MessageSquare, Sparkles, Layout, Briefcase,
-  type LucideIcon,
-} from 'lucide-react'
+import Image from 'next/image'
 import { formatPrice } from '@/lib/utils'
+import { IMG } from '@/lib/image-placeholders'
 
-const ICON_MAP: Record<string, LucideIcon> = {
-  Trash2,
-  Home,
-  Truck,
-  Archive,
-  Package,
-  FileText,
-  Video,
-  MessageSquare,
-  Sparkles,
-  Layout,
-  Briefcase,
+export interface ServiceCardService {
+  slug: string
+  title: string
+  priceFrom: number
+  image?: string
+  duration?: string
 }
 
 interface ServiceCardProps {
-  slug: string
-  title: string
-  icon: string
-  priceFrom: number
+  service: ServiceCardService
 }
 
-export default function ServiceCard({ slug, title, icon, priceFrom }: ServiceCardProps) {
-  const Icon = ICON_MAP[icon] ?? Briefcase
-
+export default function ServiceCard({ service }: ServiceCardProps) {
   return (
-    <article className="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow duration-200 overflow-hidden flex flex-col p-6 gap-4 min-w-[240px] xl:min-w-0 snap-start">
-      {/* Icon */}
-      <div className="flex items-center justify-center w-10 h-10 rounded-full bg-muted">
-        <Icon size={20} className="text-dark/50" aria-hidden="true" />
-      </div>
-
-      {/* Title */}
-      <h3 className="font-semibold text-dark leading-snug">{title}</h3>
-
-      {/* Placeholder description */}
-      <p className="text-dark/60 text-sm leading-relaxed line-clamp-2">
-        Professional, stress-free organizing tailored to your needs and timeline.
-      </p>
-
-      {/* Price + link row */}
-      <div className="flex items-center justify-between mt-auto pt-2">
-        <span className="font-mono text-sm text-primary">
-          From {formatPrice(priceFrom)}
+    <Link
+      href={`/services/${service.slug}`}
+      className="group relative bg-white/4 border border-white/8 rounded-3xl overflow-hidden hover:border-white/15 transition-all duration-300"
+    >
+      <div className="relative h-52 overflow-hidden img-zoom">
+        <Image
+          src={service.image ?? IMG.services.default}
+          alt={service.title}
+          fill
+          className="object-cover"
+          sizes="400px"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-dark/70 to-transparent" />
+        <span className="absolute bottom-3 right-3 bg-white/10 backdrop-blur-sm border border-white/15 text-white text-xs font-mono px-2.5 py-1 rounded-full">
+          From {formatPrice(service.priceFrom)}
         </span>
-        <Link
-          href={`/services/${slug}`}
-          className="text-dark/50 hover:text-dark text-sm font-medium"
-          aria-label={`Learn more about ${title}`}
-        >
-          Learn more →
-        </Link>
       </div>
-    </article>
+
+      <div className="p-5">
+        <p className="text-white/40 text-[10px] uppercase tracking-widest mb-1.5">Organizing Service</p>
+        <p className="text-white font-semibold text-sm group-hover:text-accent/90 transition-colors">{service.title}</p>
+        <p className="text-white/40 text-xs mt-1">{service.duration ?? 'Half day – 2 days'}</p>
+      </div>
+    </Link>
   )
 }

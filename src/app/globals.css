@@ -21,6 +21,7 @@ html {
 
 body {
   @apply font-sans bg-surface text-base leading-relaxed min-h-screen;
+  font-family: var(--font-dm-sans), 'DM Sans', var(--font-inter), sans-serif;
 }
 
 img,
@@ -63,12 +64,121 @@ select {
   overflow: hidden;
 }
 
-.img-zoom img {
-  transition: transform 0.6s ease;
+.img-zoom img,
+.img-zoom > div > img {
+  transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
-.img-zoom:hover img {
-  transform: scale(1.05);
+.img-zoom:hover img,
+.img-zoom:hover > div > img {
+  transform: scale(1.04);
+}
+
+/* ── AiroGuide editorial image masks ── */
+.mask-pill {
+  clip-path: ellipse(50% 38% at 50% 50%);
+}
+.mask-circle {
+  border-radius: 50%;
+  overflow: hidden;
+}
+.mask-stadium {
+  border-radius: 9999px;
+  overflow: hidden;
+}
+.mask-fig8 {
+  border-radius: 60% 60% 40% 40% / 50% 50% 50% 50%;
+  overflow: hidden;
+}
+
+/* ── Rotated caption on image cards ── */
+.caption-rotate {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  transform: rotate(180deg);
+}
+
+/* ── Cinematic dark overlay on hero images ── */
+.overlay-cinematic {
+  background: linear-gradient(
+    to right,
+    rgba(26, 26, 26, 0.75) 0%,
+    rgba(26, 26, 26, 0.30) 50%,
+    rgba(26, 26, 26, 0.10) 100%
+  );
+}
+
+/* ── Section label style (small uppercase tracker) ── */
+.section-label {
+  font-family: var(--font-inter);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.45);
+}
+.section-label-dark {
+  color: rgba(26, 26, 26, 0.4);
+}
+
+/* ── Mixed heading: bold sans + italic serif on same line ── */
+.head-sans {
+  font-family: var(--font-syne), 'Syne', sans-serif;
+  font-weight: 800;
+  font-style: normal;
+}
+.head-serif {
+  font-family: var(--font-playfair);
+  font-weight: 700;
+  font-style: italic;
+}
+
+/* ── Pill/tag selector buttons ── */
+.pill-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.375rem 1rem;
+  border-radius: 9999px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  border: 1px solid rgba(26, 26, 26, 0.12);
+  background: transparent;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+}
+.pill-tag.active,
+.pill-tag:hover {
+  background: #1a1a1a;
+  border-color: #1a1a1a;
+  color: #ffffff;
+}
+.pill-tag-dark {
+  border-color: rgba(255, 255, 255, 0.20);
+  color: rgba(255, 255, 255, 0.70);
+}
+.pill-tag-dark.active,
+.pill-tag-dark:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.40);
+  color: #ffffff;
+}
+
+/* ── Avatar cluster (stacked circular avatars) ── */
+.avatar-cluster {
+  display: flex;
+  align-items: center;
+}
+.avatar-cluster > * + * {
+  margin-left: -10px;
+}
+.avatar-cluster > * {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 2px solid white;
+  overflow: hidden;
+  position: relative;
+  flex-shrink: 0;
 }
 
 /* ─── Animated underline link ──────────────────────────────────────────────── */

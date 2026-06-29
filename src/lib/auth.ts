@@ -47,9 +47,10 @@ export interface AdminSession {
  * And set role: 'admin' in your DB / CredentialsProvider authorize() function.
  */
 export async function getAdminSession(): Promise<AdminSession | null> {
-  // ── DEV MOCK ────────────────────────────────────────────────────────────────
-  // Returns a hardcoded admin session in development.
-  // Delete this return statement and uncomment the real call above before launch.
+  if (process.env.NODE_ENV === 'production') {
+    // Real NextAuth call goes here — see TODO comments in the file
+    return null
+  }
   return {
     user: {
       name:  'Faith Admin',
@@ -57,5 +58,4 @@ export async function getAdminSession(): Promise<AdminSession | null> {
       role:  'admin',
     },
   }
-  // ────────────────────────────────────────────────────────────────────────────
 }

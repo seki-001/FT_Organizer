@@ -5,7 +5,7 @@ import Accordion from '@/components/ui/Accordion'
 import { COMPANY } from '@/lib/constants'
 
 export const metadata: Metadata = {
-  title: 'FAQ | Faith The Organizer',
+  title: 'FAQ',
   description:
     "Frequently asked questions about Faith The Organizer's services and shop — pricing, delivery, confidentiality, and how to prepare for your first session.",
 }
@@ -78,7 +78,7 @@ const SHOP_FAQS = [
 
 export default function FaqPage() {
   return (
-    <main>
+    <main className="bg-dark">
 
       {/* ── 1. HERO ─────────────────────────────────────────────────────── */}
       <section className="bg-dark py-20 px-4 sm:px-8 text-center">

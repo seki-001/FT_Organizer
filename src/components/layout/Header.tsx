@@ -6,12 +6,13 @@ import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import {
   Menu, X, ShoppingCart, Search, Phone, Mail,
-  Heart, ArrowRight, Truck, ChevronDown, ChevronUp,
+  Heart, ArrowRight, ArrowUpRight, Truck, ChevronDown, ChevronUp,
 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { NAV_LINKS, SERVICES, SHOP_CATEGORIES, COMPANY } from '@/lib/constants'
 import { MOCK_PRODUCTS } from '@/lib/mock-products'
 import { useCart } from '@/context/CartContext'
+import { useWishlist } from '@/context/WishlistContext'
 import { cn, formatPrice } from '@/lib/utils'
 
 // ─── Nav order (spec: Home | Services | Shop | Blog | About | Contact) ────────
@@ -239,7 +240,7 @@ function ServicesMegaMenu({
             <div className="flex flex-col flex-1">
               {SERVICES.map(service => (
                 <Link key={service.slug} href={`/services/${service.slug}`} onClick={onClose}
-                  className="group flex items-center justify-between py-1.5 border-b border-dark/5 last:border-0 hover:text-primary transition-colors">
+                  className="group flex items-center justify-between py-1.5 border-b border-dark/5 last:border-0 hover:pl-1 transition-all duration-150">
                   <span className="flex items-center gap-2 text-sm text-dark/70 group-hover:text-primary transition-colors">
                     <ArrowRight size={11} className="text-dark/20 group-hover:text-primary -translate-x-1 group-hover:translate-x-0 transition-all duration-200 flex-shrink-0" />
                     {service.title}
@@ -323,7 +324,7 @@ function ShopMegaMenu({
             <div className="flex flex-col gap-3 flex-1">
               {featured.map(product => (
                 <Link key={product.slug} href={`/shop/${product.slug}`} onClick={onClose}
-                  className="group flex items-center gap-3 p-2.5 rounded-xl hover:bg-muted transition-colors">
+                  className="group flex items-center gap-3 p-2.5 rounded-xl hover:bg-primary/5 border border-transparent hover:border-primary/10 transition-colors">
                   <div className="relative w-12 h-12 rounded-lg overflow-hidden bg-muted flex-shrink-0">
                     <Image src={product.images[0]} alt={product.name} fill className="object-cover" sizes="48px" />
                   </div>
@@ -339,7 +340,7 @@ function ShopMegaMenu({
               ))}
             </div>
             <Link href="/shop" onClick={onClose}
-              className="flex items-center gap-1.5 text-sm font-medium text-dark/50 hover:text-dark mt-4">
+              className="flex items-center gap-1.5 text-sm font-medium text-dark/50 hover:text-primary mt-4 transition-colors">
               View All Products <ArrowRight size={13} />
             </Link>
           </div>
@@ -504,7 +505,7 @@ function MobileMenu({
             <Phone size={14} />
             {COMPANY.phone}
           </a>
-          <a href={COMPANY.whatsappLink} target="_blank" rel="noopener noreferrer"
+          <a href={`https://wa.me/${COMPANY.whatsapp}`} target="_blank" rel="noopener noreferrer"
             className="flex items-center gap-2 text-sm text-[#25D366] font-medium">
             <span className="text-[13px]">WhatsApp</span>
           </a>
@@ -523,6 +524,7 @@ function MobileMenu({
 export default function Header() {
   const pathname = usePathname()
   const { totalItems } = useCart()
+  const { totalItems: wishlistCount } = useWishlist()
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isSearchOpen,     setIsSearchOpen]     = useState(false)
@@ -566,19 +568,19 @@ export default function Header() {
       <header className="sticky top-0 z-50 w-full">
 
         {/* ── Row 1: Utility bar — desktop only ───────────────────────────── */}
-        <div className="hidden lg:block bg-dark">
+        <div className="hidden lg:block bg-dark border-b border-white/5">
           <div className="max-w-7xl mx-auto px-8 py-2 flex items-center justify-between">
-            <p className="text-white/55 text-xs">
-              Professional Home &amp; Office Organizing — Nairobi
+            <p className="text-white/40 text-xs tracking-wide">
+              Professional Home &amp; Office Organizing — Nairobi, Kenya
             </p>
-            <div className="flex items-center gap-5 text-white/55 text-xs">
+            <div className="flex items-center gap-6 text-white/40 text-xs">
               <a href={`tel:${COMPANY.phone}`}
-                className="flex items-center gap-1.5 hover:text-white transition-colors">
+                className="flex items-center gap-1.5 hover:text-white/80 transition-colors">
                 <Phone size={11} />
                 {COMPANY.phone}
               </a>
               <a href={`mailto:${COMPANY.email}`}
-                className="flex items-center gap-1.5 hover:text-white transition-colors">
+                className="flex items-center gap-1.5 hover:text-white/80 transition-colors">
                 <Mail size={11} />
                 {COMPANY.email}
               </a>
@@ -588,18 +590,20 @@ export default function Header() {
 
         {/* ── Row 2: Main nav ──────────────────────────────────────────────── */}
         <div
-          className="bg-white border-b border-dark/8 relative"
+          className="bg-dark/95 backdrop-blur-md border-b border-white/8 relative"
           onMouseLeave={scheduleClose}
         >
           <div className="max-w-7xl mx-auto px-4 lg:px-8 h-16 flex items-center justify-between gap-4">
 
-            {/* Logo */}
+            {/* Logo — replace /logos/logo-dark.png with your actual PNG to activate */}
             <Link href="/" className="flex-shrink-0 flex items-center gap-2.5">
-              {/* Replace with actual FTO logo file */}
-              {/* <Image src="/logo.png" alt="Faith The Organizer" width={140} height={40} className="h-9 w-auto object-contain" /> */}
-              <span className="font-display text-xl font-bold text-primary leading-none">
-                {COMPANY.name}
-              </span>
+              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center flex-shrink-0">
+                <span className="text-white text-sm font-bold font-display">F</span>
+              </div>
+              <div className="flex flex-col leading-none">
+                <span className="text-white font-bold text-base tracking-tight">Faith The</span>
+                <span className="text-primary font-bold text-base tracking-tight font-display italic">Organizer</span>
+              </div>
             </Link>
 
             {/* Desktop nav — hidden on mobile */}
@@ -620,14 +624,14 @@ export default function Header() {
                       className={cn(
                         'flex items-center gap-1 text-sm font-medium px-4 py-2 transition-colors duration-150 relative',
                         isActive || activeMenu === navLink.label.toLowerCase()
-                          ? 'text-dark font-semibold'
-                          : 'text-dark/70 hover:text-dark',
+                          ? 'text-white font-semibold'
+                          : 'text-white/60 hover:text-white',
                       )}
                     >
                       {navLink.label}
                       <ChevronDown
                         size={13}
-                        className={cn('transition-transform duration-200 text-dark/40',
+                        className={cn('transition-transform duration-200 text-white/40',
                           activeMenu === navLink.label.toLowerCase() && 'rotate-180')}
                       />
                       {/* Active underline */}
@@ -642,7 +646,7 @@ export default function Header() {
                   <Link key={navLink.href} href={navLink.href}
                     className={cn(
                       'text-sm font-medium px-4 py-2 transition-colors duration-150 relative',
-                      isActive ? 'text-dark font-semibold' : 'text-dark/70 hover:text-dark',
+                      isActive ? 'text-white font-semibold' : 'text-white/60 hover:text-white',
                     )}
                   >
                     {navLink.label}
@@ -657,20 +661,24 @@ export default function Header() {
 
               {/* Search */}
               <button type="button" onClick={openSearch} aria-label="Search"
-                className="hidden md:flex items-center justify-center w-10 h-10 rounded-xl text-dark/55 hover:text-dark hover:bg-muted transition-colors">
+                className="hidden md:flex items-center justify-center w-10 h-10 rounded-xl text-white/60 hover:text-white hover:bg-white/8 transition-colors">
                 <Search size={19} />
               </button>
 
-              {/* Wishlist — TODO: wire to WishlistContext */}
-              <button type="button" aria-label="Wishlist"
-                className="hidden md:flex items-center justify-center w-10 h-10 rounded-xl text-dark/55 hover:text-dark hover:bg-muted transition-colors relative">
+              <Link href="/account/wishlist" aria-label="Wishlist"
+                className="hidden md:flex items-center justify-center w-10 h-10 rounded-xl text-white/60 hover:text-white hover:bg-white/8 transition-colors relative">
                 <Heart size={19} />
-              </button>
+                {wishlistCount > 0 && (
+                  <span className="absolute -top-0.5 -right-0.5 flex items-center justify-center w-5 h-5 rounded-full bg-accent text-white text-[10px] font-bold">
+                    {wishlistCount}
+                  </span>
+                )}
+              </Link>
 
               {/* Cart */}
               <Link href="/cart"
                 aria-label={`Cart${totalItems > 0 ? `, ${totalItems} item${totalItems !== 1 ? 's' : ''}` : ''}`}
-                className="flex items-center justify-center w-10 h-10 rounded-xl text-dark/70 hover:text-dark hover:bg-muted transition-colors relative">
+                className="flex items-center justify-center w-10 h-10 rounded-xl text-white/60 hover:text-white hover:bg-white/8 transition-colors relative">
                 <ShoppingCart size={20} />
                 {totalItems > 0 && (
                   <span className="absolute -top-0.5 -right-0.5 flex items-center justify-center w-5 h-5 rounded-full bg-primary text-white text-[10px] font-bold leading-none">
@@ -681,8 +689,9 @@ export default function Header() {
 
               {/* Book Now — desktop */}
               <Link href="/book"
-                className="hidden md:inline-flex items-center gap-1.5 bg-primary hover:bg-primary/90 text-white font-medium text-sm px-5 py-2.5 rounded-lg transition-colors ml-1">
+                className="hidden md:inline-flex items-center gap-1.5 bg-white hover:bg-white/90 text-dark font-medium text-sm px-5 py-2.5 rounded-full transition-colors ml-2">
                 Book Now
+                <ArrowUpRight size={13} />
               </Link>
 
               {/* Hamburger — mobile */}
@@ -690,7 +699,7 @@ export default function Header() {
                 onClick={() => setIsMobileMenuOpen(o => !o)}
                 aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
                 aria-expanded={isMobileMenuOpen}
-                className="lg:hidden flex items-center justify-center w-10 h-10 rounded-xl text-dark hover:bg-muted transition-colors">
+                className="lg:hidden flex items-center justify-center w-10 h-10 rounded-xl text-white hover:bg-white/8 transition-colors">
                 <Menu size={22} />
               </button>
             </div>

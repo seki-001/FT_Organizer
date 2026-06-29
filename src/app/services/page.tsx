@@ -7,7 +7,7 @@ import FeaturedService from './_components/FeaturedService'
 import ServicesTrust from './_components/ServicesTrust'
 
 export const metadata: Metadata = {
-  title: 'Services | Faith The Organizer',
+  title: 'Services',
   description:
     'Explore all organizing services offered by Faith The Organizer in Nairobi — home decluttering, office organizing, moving house, home staging and more. From Clutter to Order.',
 }
@@ -42,7 +42,7 @@ const FAQ_ITEMS: AccordionItem[] = [
 
 export default function ServicesHubPage() {
   return (
-    <main>
+    <main className="bg-dark">
 
       {/* 1. HERO */}
       <ServicesHero />
@@ -57,17 +57,18 @@ export default function ServicesHubPage() {
       <ServicesTrust />
 
       {/* 5. FAQ */}
-      <section className="py-16 md:py-24 bg-surface">
+      <section className="py-16 md:py-24 bg-dark border-t border-white/5">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="font-display text-3xl md:text-4xl text-dark mb-4">
-              Frequently Asked Questions
+            <h2 className="text-white text-3xl md:text-4xl mb-4">
+              <span className="head-sans">Frequently Asked </span>
+              <span className="head-serif italic text-accent/90">Questions</span>
             </h2>
-            <p className="text-dark/60 text-lg max-w-xl mx-auto">
+            <p className="text-white/60 text-lg max-w-xl mx-auto">
               Everything you need to know before booking your session.
             </p>
           </div>
-          <div className="bg-white rounded-2xl shadow-sm px-6 sm:px-10 py-2">
+          <div className="bg-white/4 border border-white/8 rounded-3xl px-6 sm:px-10 py-2">
             <Accordion items={FAQ_ITEMS} />
           </div>
         </div>

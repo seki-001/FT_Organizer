@@ -9,9 +9,10 @@ import {
   type LucideIcon,
 } from 'lucide-react'
 import { SERVICES } from '@/lib/constants'
-import { formatPrice, slugToTitle } from '@/lib/utils'
+import { formatPrice } from '@/lib/utils'
 import ServiceCard from '@/components/ui/ServiceCard'
 import FooterCTABand from '@/components/sections/FooterCTABand'
+import { IMG } from '@/lib/image-placeholders'
 import type { Testimonial } from '@/lib/types'
 
 // ─── Icon map ────────────────────────────────────────────────────────────────
@@ -86,10 +87,10 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params
   const service = SERVICES.find((s) => s.slug === slug)
-  if (!service) return { title: 'Service Not Found | Faith The Organizer' }
+  if (!service) return { title: 'Service Not Found' }
 
   return {
-    title: `${service.title} | Faith The Organizer`,
+    title: service.title,
     description: `Professional ${service.title.toLowerCase()} service in Nairobi by Faith The Organizer. Starting from ${formatPrice(service.priceFrom)}. From Clutter to Order.`,
   }
 }
@@ -133,70 +134,13 @@ export default async function ServicePage({
   const Icon = ICON_MAP[service.icon] ?? Briefcase
   const relatedServices = SERVICES.filter((s) => s.slug !== slug).slice(0, 3)
 
-  const gallery = (() => {
-    const map: Record<string, { before: string; after: string }> = {
-      'general-decluttering': {
-        before: '/images/services/decluttering-before-1.jpg',
-        after: '/images/services/decluttering-after-1.jpg',
-      },
-      'whole-house-organizing': {
-        before: '/images/services/whole-house-before-1.jpg',
-        after: '/images/services/whole-house-after-1.jpg',
-      },
-      'moving-house': {
-        before: '/images/services/moving-before-1.jpg',
-        after: '/images/services/moving-after-1.jpg',
-      },
-      'shelving-and-storage': {
-        before: '/images/services/shelving-before-1.jpg',
-        after: '/images/services/shelving-after-1.jpg',
-      },
-      'packing-and-removal': {
-        before: '/images/services/packing-before-1.jpg',
-        after: '/images/services/packing-after-1.jpg',
-      },
-      'paperwork-management': {
-        before: '/images/services/paperwork-before-1.jpg',
-        after: '/images/services/paperwork-after-1.jpg',
-      },
-      'office-organizing': {
-        before: '/images/services/office-before-1.jpg',
-        after: '/images/services/office-after-1.jpg',
-      },
-
-      // Hero-only services: reuse the same image so the gallery layout still works.
-      'online-coaching': {
-        before: '/images/services/coaching-hero.jpg',
-        after: '/images/services/coaching-hero.jpg',
-      },
-      'online-consulting': {
-        before: '/images/services/coaching-hero.jpg',
-        after: '/images/services/coaching-hero.jpg',
-      },
-      'home-staging': {
-        before: '/images/services/staging-before-1.jpg',
-        after: '/images/services/staging-after-1.jpg',
-      },
-      'space-planning': {
-        before: '/images/services/space-planning-hero.jpg',
-        after: '/images/services/space-planning-hero.jpg',
-      },
-    }
-
-    return map[service.slug] ?? {
-      before: '/images/services/decluttering-before-1.jpg',
-      after: '/images/services/decluttering-after-1.jpg',
-    }
-  })()
-
   return (
     <>
-      <main>
+      <main className="bg-dark">
 
         {/* 1. SERVICE HERO ───────────────────────────────────────────────── */}
-        <section className="bg-dark text-white py-20">
+        <section className="bg-dark text-white py-20 md:py-28">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            {/* Breadcrumb */}
             <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-white/40 text-sm mb-10">
               <Link href="/" className="hover:text-white transition-colors duration-200">Home</Link>
               <span aria-hidden="true">/</span>
@@ -205,61 +149,64 @@ export default async function ServicePage({
               <span className="text-white/70">{service.title}</span>
             </nav>
 
-            <div className="flex flex-col md:flex-row md:items-center gap-8 md:gap-12">
-              {/* Icon circle */}
-              <div className="flex-shrink-0 flex items-center justify-center w-24 h-24 rounded-full bg-white/10">
-                <Icon size={44} className="text-white" aria-hidden="true" />
-              </div>
-
-              {/* Text */}
-              <div className="flex flex-col gap-4">
-                <h1 className="font-display text-4xl md:text-5xl font-bold text-white leading-tight">
-                  {service.title}
+            <div className="flex flex-col md:flex-row md:items-end gap-8 md:gap-12">
+              <div className="flex flex-col gap-4 flex-1">
+                <p className="section-label text-white/40">Organizing Service</p>
+                <h1 className="text-white leading-tight">
+                  <span className="head-sans text-4xl md:text-5xl block">{service.title.split(' ').slice(0, -1).join(' ') || service.title}</span>
+                  <span className="head-serif italic text-4xl md:text-5xl text-accent/90 block">
+                    {service.title.split(' ').slice(-1)[0]}
+                  </span>
                 </h1>
-                <p className="font-mono text-2xl text-primary font-medium">
+                <p className="font-mono text-xl text-white/60">
                   From {formatPrice(service.priceFrom)}
                 </p>
                 <div className="flex flex-col sm:flex-row gap-3 mt-2">
                   <Link
                     href={`/book?service=${service.slug}`}
-                    className="bg-primary hover:bg-primary/90 text-white font-medium px-6 py-3 rounded-lg transition-colors duration-200 min-h-[44px] flex items-center justify-center"
+                    className="inline-flex items-center justify-center gap-2 bg-white text-dark font-semibold px-6 py-3 rounded-full hover:bg-white/90 transition-colors duration-200 min-h-[44px]"
                   >
                     Book This Service
                   </Link>
                   <Link
                     href="/contact"
-                    className="border-2 border-white text-white hover:bg-white hover:text-dark font-medium px-6 py-3 rounded-lg transition-all duration-200 min-h-[44px] flex items-center justify-center"
+                    className="inline-flex items-center justify-center border border-white/15 text-white hover:border-white/30 hover:bg-white/5 font-medium px-6 py-3 rounded-full transition-all duration-200 min-h-[44px]"
                   >
                     Get a Free Quote
                   </Link>
                 </div>
+              </div>
+
+              <div className="flex-shrink-0 flex items-center justify-center w-24 h-24 rounded-full bg-white/10">
+                <Icon size={44} className="text-white" aria-hidden="true" />
               </div>
             </div>
           </div>
         </section>
 
         {/* 2. WHAT'S INCLUDED ────────────────────────────────────────────── */}
-        <section className="py-16 md:py-24 bg-surface">
+        <section className="py-16 md:py-24 bg-dark border-t border-white/5">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16 items-start">
               <div>
-                <h2 className="font-display text-3xl md:text-4xl text-dark mb-4">
-                  What&apos;s Included
+                <h2 className="text-white text-3xl md:text-4xl mb-4">
+                  <span className="head-sans">What&apos;s </span>
+                  <span className="head-serif italic text-accent/90">Included</span>
                 </h2>
-                <p className="text-dark/60 leading-relaxed">
+                <p className="text-white/60 leading-relaxed">
                   Every {service.title.toLowerCase()} session is tailored to your specific
                   space and needs. Here is what you can expect when you book with us.
                 </p>
               </div>
-              <ul className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <ul className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-white/4 border border-white/8 rounded-3xl p-6">
                 {PLACEHOLDER_INCLUDES.map((item) => (
                   <li key={item} className="flex items-start gap-3">
                     <CheckCircle2
                       size={20}
-                      className="text-dark/35 flex-shrink-0 mt-0.5"
+                      className="text-accent flex-shrink-0 mt-0.5"
                       aria-hidden="true"
                     />
-                    <span className="text-dark/70 text-sm leading-relaxed">{item}</span>
+                    <span className="text-white/70 text-sm leading-relaxed">{item}</span>
                   </li>
                 ))}
               </ul>
@@ -268,13 +215,14 @@ export default async function ServicePage({
         </section>
 
         {/* 3. HOW IT WORKS ───────────────────────────────────────────────── */}
-        <section className="py-16 md:py-24 bg-muted">
+        <section className="py-16 md:py-24 bg-dark border-t border-white/5">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-14">
-              <h2 className="font-display text-3xl md:text-4xl text-dark mb-4">
-                How It Works
+              <h2 className="text-white text-3xl md:text-4xl mb-4">
+                <span className="head-sans">How It </span>
+                <span className="head-serif italic text-accent/90">Works</span>
               </h2>
-              <p className="text-dark/60 text-lg max-w-xl mx-auto">
+              <p className="text-white/60 text-lg max-w-xl mx-auto">
                 A simple, stress-free process from first contact to finished space.
               </p>
             </div>
@@ -288,13 +236,12 @@ export default async function ServicePage({
               />
 
               {PLACEHOLDER_STEPS.map((step, index) => (
-                <div key={step.title} className="relative flex flex-col items-center text-center gap-4">
-                  {/* Number circle */}
-                  <div className="flex items-center justify-center w-12 h-12 rounded-full bg-dark text-white font-bold text-lg flex-shrink-0 relative z-10">
+                <div key={step.title} className="relative flex flex-col items-center text-center gap-4 bg-white/4 border border-white/8 rounded-3xl p-6">
+                  <div className="flex items-center justify-center w-12 h-12 rounded-full bg-white/10 text-white font-bold text-lg flex-shrink-0 relative z-10">
                     {index + 1}
                   </div>
-                  <h3 className="font-semibold text-dark text-base">{step.title}</h3>
-                  <p className="text-dark/60 text-sm leading-relaxed">{step.description}</p>
+                  <h3 className="font-semibold text-white text-base">{step.title}</h3>
+                  <p className="text-white/60 text-sm leading-relaxed">{step.description}</p>
                 </div>
               ))}
             </div>
@@ -302,66 +249,86 @@ export default async function ServicePage({
         </section>
 
         {/* 4. BEFORE & AFTER GALLERY ─────────────────────────────────────── */}
-        <section className="py-16 md:py-24 bg-surface">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-12">
-              <h2 className="font-display text-3xl md:text-4xl text-dark mb-4">
-                The Results
-              </h2>
-              <p className="text-dark/60 text-lg max-w-xl mx-auto">
-                Real transformations from real clients. Real photos coming soon.
-              </p>
+        <section className="py-16 md:py-24 bg-dark border-t border-white/5">
+          <div className="max-w-7xl mx-auto px-4 lg:px-8">
+            <div className="flex items-start gap-8 mb-12">
+              <div>
+                <p className="head-sans text-6xl text-white leading-none">2.5k+</p>
+                <p className="text-white/30 text-xs mt-2 max-w-[140px]">Happy clients, unforgettable spaces.</p>
+              </div>
+              <div className="ml-auto text-right">
+                <p className="section-label text-white/40 mb-2">Gallery</p>
+                <h2 className="text-white text-3xl">
+                  <span className="head-sans block">Before & After</span>
+                  <span className="head-serif italic text-accent/90">Moments</span>
+                </h2>
+              </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {[1, 2, 3].map((pair) => (
-                <div key={pair} className="flex flex-col sm:flex-row md:flex-col gap-2">
-                  {/* Before */}
-                  <div className="relative flex-1 aspect-[4/3] rounded-xl overflow-hidden">
-                    <Image
-                      src={gallery.before}
-                      alt={`Before — ${service.title} example ${pair}`}
-                      fill
-                      className="object-cover"
-                      sizes="(max-width: 768px) 100vw, 33vw"
-                    />
-                    <span className="absolute bottom-2 left-2 bg-dark/60 text-white text-xs px-2 py-0.5 rounded">
-                      Before
-                    </span>
-                  </div>
-                  {/* After */}
-                  <div className="relative flex-1 aspect-[4/3] rounded-xl overflow-hidden">
-                    <Image
-                      src={gallery.after}
-                      alt={`After — ${service.title} example ${pair}`}
-                      fill
-                      className="object-cover"
-                      sizes="(max-width: 768px) 100vw, 33vw"
-                    />
-                    <span className="absolute bottom-2 left-2 bg-dark/60 text-white text-xs px-2 py-0.5 rounded">
-                      After
-                    </span>
-                  </div>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+              <div className="md:col-span-2 relative rounded-3xl overflow-hidden h-72 img-zoom group">
+                <Image src={IMG.gallery.transform1} alt="Home transformation" fill className="object-cover" sizes="(max-width: 768px) 100vw, 66vw" />
+                <div className="absolute inset-0 bg-gradient-to-t from-dark/60 to-transparent" />
+                <div className="absolute right-4 top-1/2 -translate-y-1/2">
+                  <p className="caption-rotate text-white/60 text-xs tracking-widest uppercase">Living Room Reveal</p>
                 </div>
-              ))}
+              </div>
+
+              <div className="relative rounded-3xl overflow-hidden h-72 img-zoom">
+                <Image src={IMG.gallery.transform2} alt="Organized bedroom" fill className="object-cover" sizes="33vw" />
+                <div className="absolute inset-0 bg-gradient-to-t from-dark/60 to-transparent" />
+                <div className="absolute bottom-4 left-4 right-4">
+                  <p className="text-white text-xs font-semibold">Bedroom & Closet</p>
+                  <p className="text-white/50 text-[10px] italic font-display">Space Planning</p>
+                </div>
+              </div>
+
+              <div className="relative rounded-3xl overflow-hidden h-52 img-zoom">
+                <Image src={IMG.gallery.transform3} alt="Organized kitchen" fill className="object-cover" sizes="33vw" />
+                <div className="absolute inset-0 bg-gradient-to-t from-dark/60 to-transparent" />
+                <div className="absolute bottom-4 left-4">
+                  <p className="text-white text-xs font-semibold">Kitchen</p>
+                  <p className="text-white/40 text-[10px] italic font-display">Decluttering</p>
+                </div>
+              </div>
+
+              <div className="relative rounded-3xl overflow-hidden h-52 img-zoom">
+                <Image src={IMG.gallery.transform4} alt="Organized office" fill className="object-cover" sizes="33vw" />
+                <div className="absolute inset-0 bg-gradient-to-t from-dark/60 to-transparent" />
+                <div className="absolute bottom-4 left-4">
+                  <p className="text-white text-xs font-semibold">Home Office</p>
+                  <p className="text-white/40 text-[10px] italic font-display">Organization</p>
+                </div>
+              </div>
+
+              <div className="relative rounded-3xl overflow-hidden h-52 img-zoom">
+                <Image src={IMG.gallery.transform5} alt="Storage solutions" fill className="object-cover" sizes="33vw" />
+                <div className="absolute inset-0 bg-gradient-to-t from-dark/60 to-transparent" />
+                <div className="absolute bottom-4 left-4">
+                  <p className="text-white text-xs font-semibold">Storage & Shelving</p>
+                  <p className="text-white/40 text-[10px] italic font-display">Solutions</p>
+                </div>
+              </div>
             </div>
           </div>
         </section>
 
         {/* 5. PRICING ────────────────────────────────────────────────────── */}
-        <section className="py-16 md:py-24 bg-muted">
+        <section className="py-16 md:py-24 bg-dark border-t border-white/5">
           <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="bg-white rounded-2xl shadow-sm p-8 sm:p-12 text-center flex flex-col items-center gap-6">
-              <h2 className="font-display text-3xl text-dark">Investment</h2>
+            <div className="bg-white/4 border border-white/8 rounded-3xl p-8 sm:p-12 text-center flex flex-col items-center gap-6">
+              <h2 className="text-white text-3xl">
+                <span className="head-sans">Investment</span>
+              </h2>
 
               <div>
-                <p className="text-dark/50 text-sm uppercase tracking-widest mb-1">Starting from</p>
-                <p className="font-mono text-5xl font-bold text-primary">
+                <p className="text-white/50 text-sm uppercase tracking-widest mb-1">Starting from</p>
+                <p className="font-mono text-5xl font-bold text-accent">
                   {formatPrice(service.priceFrom)}
                 </p>
               </div>
 
-              <p className="text-dark/60 text-sm leading-relaxed max-w-sm">
+              <p className="text-white/60 text-sm leading-relaxed max-w-sm">
                 Final price depends on space size, condition, and location.
                 Get a free quote with no obligation.
               </p>
@@ -372,8 +339,8 @@ export default async function ServicePage({
                   'Level of clutter and current condition',
                   'Your location within Nairobi',
                 ].map((factor) => (
-                  <li key={factor} className="flex items-start gap-3 text-dark/70 text-sm">
-                    <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-dark/30 flex-shrink-0" aria-hidden="true" />
+                  <li key={factor} className="flex items-start gap-3 text-white/70 text-sm">
+                    <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-white/30 flex-shrink-0" aria-hidden="true" />
                     {factor}
                   </li>
                 ))}
@@ -381,7 +348,7 @@ export default async function ServicePage({
 
               <Link
                 href={`/book?service=${service.slug}`}
-                className="bg-primary hover:bg-primary/90 text-white font-medium px-8 py-3 rounded-lg transition-colors duration-200 min-h-[44px] flex items-center"
+                className="inline-flex items-center bg-white text-dark font-semibold px-8 py-3 rounded-full hover:bg-white/90 transition-colors duration-200 min-h-[44px]"
               >
                 Book a Free Consultation
               </Link>
@@ -390,25 +357,26 @@ export default async function ServicePage({
         </section>
 
         {/* 6. TESTIMONIALS ───────────────────────────────────────────────── */}
-        <section className="py-16 md:py-24 bg-surface">
+        <section className="py-16 md:py-24 bg-dark border-t border-white/5">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-12">
-              <h2 className="font-display text-3xl md:text-4xl text-dark mb-4">
-                What Our Clients Say
+              <h2 className="text-white text-3xl md:text-4xl mb-4">
+                <span className="head-sans">What Our Clients </span>
+                <span className="head-serif italic text-accent/90">Say</span>
               </h2>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {PLACEHOLDER_TESTIMONIALS.map((t) => (
-                <article key={t.id} className="bg-white rounded-xl shadow-sm p-6 flex flex-col gap-4">
+                <article key={t.id} className="bg-white/4 border border-white/8 rounded-3xl p-6 flex flex-col gap-4">
                   <StarRating rating={t.rating} />
-                  <blockquote className="text-dark/70 text-sm leading-relaxed flex-1">
+                  <blockquote className="text-white/70 text-sm leading-relaxed flex-1 italic font-display">
                     &ldquo;{t.text}&rdquo;
                   </blockquote>
-                  <footer className="flex items-center gap-3 pt-2 border-t border-dark/5">
+                  <footer className="flex items-center gap-3 pt-2 border-t border-white/8">
                     <Initials name={t.name} />
                     <div>
-                      <p className="font-semibold text-dark text-sm">{t.name}</p>
-                      <p className="text-dark/50 text-xs">{t.location}</p>
+                      <p className="font-semibold text-white text-sm">{t.name}</p>
+                      <p className="text-white/50 text-xs">{t.location}</p>
                     </div>
                   </footer>
                 </article>
@@ -418,25 +386,20 @@ export default async function ServicePage({
         </section>
 
         {/* 7. RELATED SERVICES ───────────────────────────────────────────── */}
-        <section className="py-16 md:py-24 bg-muted">
+        <section className="py-16 md:py-24 bg-dark border-t border-white/5">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-12">
-              <h2 className="font-display text-3xl md:text-4xl text-dark mb-4">
-                You Might Also Need
+              <h2 className="text-white text-3xl md:text-4xl mb-4">
+                <span className="head-sans">You Might Also </span>
+                <span className="head-serif italic text-accent/90">Need</span>
               </h2>
-              <p className="text-dark/60 text-lg max-w-xl mx-auto">
+              <p className="text-white/60 text-lg max-w-xl mx-auto">
                 Explore other organizing services that pair well with {service.title.toLowerCase()}.
               </p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {relatedServices.map((s) => (
-                <ServiceCard
-                  key={s.slug}
-                  slug={s.slug}
-                  title={s.title}
-                  icon={s.icon}
-                  priceFrom={s.priceFrom}
-                />
+                <ServiceCard key={s.slug} service={s} />
               ))}
             </div>
           </div>
@@ -448,10 +411,10 @@ export default async function ServicePage({
       </main>
 
       {/* 8. STICKY MOBILE BOOKING BAR ──────────────────────────────────── */}
-      <div className="md:hidden fixed bottom-0 inset-x-0 z-50 p-4 bg-white border-t border-dark/10 shadow-lg">
+      <div className="md:hidden fixed bottom-0 inset-x-0 z-50 p-4 bg-dark border-t border-white/10 shadow-lg">
         <Link
           href={`/book?service=${service.slug}`}
-          className="flex items-center justify-center w-full bg-primary hover:bg-primary/90 text-white font-medium py-3 rounded-lg transition-colors duration-200 min-h-[44px] gap-2"
+          className="flex items-center justify-center w-full bg-white text-dark font-semibold py-3 rounded-full transition-colors duration-200 min-h-[44px] gap-2"
         >
           Book This Service
           <span className="font-mono text-sm opacity-90">

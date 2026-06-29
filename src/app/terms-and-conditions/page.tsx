@@ -4,7 +4,7 @@ import LegalLayout from '@/components/layout/LegalLayout'
 import { COMPANY } from '@/lib/constants'
 
 export const metadata: Metadata = {
-  title: 'Terms & Conditions | Faith The Organizer',
+  title: 'Terms & Conditions',
   description:
     "Terms and conditions for using Faith The Organizer's website, booking services and purchasing products. From Clutter to Order.",
 }

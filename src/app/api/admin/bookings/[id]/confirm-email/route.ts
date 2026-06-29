@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { getAdminSession } from '@/lib/auth'
+import { logger } from '@/lib/logger'
 
 type Params = { params: { id: string } }
 
@@ -28,8 +29,11 @@ export async function POST(_request: Request, { params }: Params) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  // Stub — log and return success until Resend is connected
-  console.log(`[Stub] Confirmation email would be sent for booking ${params.id}`)
+  logger.info({
+    event: 'booking_confirmation_email_stub',
+    resource_id: params.id,
+    user_id: session.user.email,
+  })
 
   return NextResponse.json({
     success:   true,

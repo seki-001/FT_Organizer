@@ -1,59 +1,47 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextRequest } from 'next/server'
 import { z } from 'zod'
+import { apiError, apiSuccess } from '@/lib/api-response'
+import { enforceRateLimit, withRateLimitHeaders, checkRateLimit, getClientIp } from '@/lib/rate-limit'
+import { logger } from '@/lib/logger'
 
 const InitiateSchema = z.object({
   amount:   z.number().positive(),
   orderRef: z.string().min(1),
 })
 
-// ─── Route handler ────────────────────────────────────────────────────────────
-
 export async function POST(request: NextRequest) {
+  const limited = enforceRateLimit(request, 'flutterwave-initiate', { limit: 5, windowMs: 60_000 })
+  if (limited) return limited
+
   try {
-    const body   = await request.json() as unknown
+    const body = await request.json() as unknown
     const parsed = InitiateSchema.safeParse(body)
 
     if (!parsed.success) {
-      return NextResponse.json({ success: false }, { status: 400 })
+      return apiError('Invalid payment request.', 'VALIDATION_ERROR', 400)
     }
 
     const { amount, orderRef } = parsed.data
 
-    // ── TODO: Replace mock with real Flutterwave hosted payment link ──────────
-    //
-    // const res = await fetch('https://api.flutterwave.com/v3/payments', {
-    //   method:  'POST',
-    //   headers: {
-    //     Authorization:  `Bearer ${process.env.FLUTTERWAVE_SECRET_KEY}`,
-    //     'Content-Type': 'application/json',
-    //   },
-    //   body: JSON.stringify({
-    //     tx_ref:       orderRef,
-    //     amount:       amount,
-    //     currency:     'KES',
-    //     redirect_url: `${process.env.NEXT_PUBLIC_APP_URL}/order-confirmation?ref=${orderRef}`,
-    //     customer: { email, name, phone },
-    //     customizations: {
-    //       title:       'Faith The Organizer',
-    //       description: `Payment for order ${orderRef}`,
-    //       logo:        `${process.env.NEXT_PUBLIC_APP_URL}/logo.png`,
-    //     },
-    //   }),
-    // })
-    // const data = await res.json()
-    // return NextResponse.json({ redirectUrl: data.data.link })
-    // ──────────────────────────────────────────────────────────────────────────
-
-    console.log('[Flutterwave initiate mock]', { amount, orderRef })
-
-    // Mock: redirect back to confirmation directly in dev
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'
-    return NextResponse.json({
-      success:     true,
-      redirectUrl: `${appUrl}/order-confirmation?ref=${orderRef}`,
+    logger.info({
+      event: 'flutterwave_initiated',
+      resource_id: orderRef,
+      ip_address: getClientIp(request),
     })
-  } catch (error) {
-    console.error('[Flutterwave initiate error]', error)
-    return NextResponse.json({ success: false, error: 'Payment initiation failed' }, { status: 500 })
+
+    const appUrl = process.env.NEXT_PUBLIC_SITE_URL ?? process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'
+    const ip = getClientIp(request)
+    const rate = checkRateLimit(`flutterwave-initiate:${ip}`, { limit: 5, windowMs: 60_000 })
+    return withRateLimitHeaders(
+      apiSuccess({
+        success: true,
+        redirectUrl: `${appUrl}/order-confirmation?ref=${orderRef}`,
+      }),
+      rate.remaining,
+      rate.resetAt,
+    )
+  } catch {
+    logger.error({ event: 'flutterwave_initiate_failed', error_code: 'INTERNAL_ERROR' })
+    return apiError('Payment initiation failed', 'INTERNAL_ERROR', 500)
   }
 }

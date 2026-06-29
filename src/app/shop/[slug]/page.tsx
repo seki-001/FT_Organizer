@@ -155,22 +155,24 @@ export default function ProductPage() {
   const slug    = typeof params.slug === 'string' ? params.slug : Array.isArray(params.slug) ? params.slug[0] : ''
   const product = MOCK_PRODUCTS.find((p) => p.slug === slug)
 
-  if (!product) {
-    notFound()
-    return null
-  }
-
   const { addItem, openCart } = useCart()
 
-  // ── UI state ─────────────────────────────────────────────────────────────
   const [activeImage,     setActiveImage]     = useState(0)
-  const [selectedVariant, setSelectedVariant] = useState<ProductVariant | undefined>(product.variants?.[0])
+  const [selectedVariant, setSelectedVariant] = useState<ProductVariant | undefined>(undefined)
   const [quantity,        setQuantity]        = useState(1)
   const [wishlisted,      setWishlisted]      = useState(false)
   const [cartState,       setCartState]       = useState<CartBtnState>('idle')
   const [reviewModalOpen, setReviewModalOpen] = useState(false)
   const [notifyEmail,     setNotifyEmail]     = useState('')
   const [activeTab,       setActiveTab]       = useState<Tab>('description')
+
+  useEffect(() => {
+    if (product?.variants?.[0]) setSelectedVariant(product.variants[0])
+  }, [product])
+
+  if (!product) {
+    notFound()
+  }
 
   const isOnSale    = product.salePrice !== undefined && product.salePrice < product.price
   const activePrice = isOnSale ? product.salePrice! : product.price
@@ -197,7 +199,7 @@ export default function ProductPage() {
 
   return (
     <>
-      <main className="bg-surface">
+      <main className="bg-dark">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
           {/* 1. BREADCRUMB ─────────────────────────────────────────────── */}

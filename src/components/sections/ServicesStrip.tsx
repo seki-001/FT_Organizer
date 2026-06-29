@@ -1,45 +1,67 @@
-import Link from 'next/link'
+import Image from 'next/image'
 import { SERVICES } from '@/lib/constants'
-import ServiceCard from '@/components/ui/ServiceCard'
+import { IMG } from '@/lib/image-placeholders'
 
 export default function ServicesStrip() {
   return (
-    <section className="py-16 md:py-24 bg-surface">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="bg-surface py-16 md:py-20 border-t border-dark/8">
+      <div className="max-w-7xl mx-auto px-4 lg:px-8">
+        <div className="flex flex-col lg:flex-row gap-12 items-start">
+          <div className="lg:max-w-sm flex-shrink-0">
+            <p className="section-label-dark mb-4">Our Services</p>
+            <h2 className="text-dark mb-8 leading-tight">
+              <span className="head-sans text-4xl lg:text-5xl block">Everything you need</span>
+              <span className="head-sans text-4xl lg:text-5xl block">for a</span>
+              <span className="head-serif italic text-4xl lg:text-5xl text-accent block">tidy space.</span>
+            </h2>
+            <div className="flex flex-wrap gap-2">
+              {SERVICES.map((s) => (
+                <button key={s.slug} type="button" className="pill-tag text-xs px-3 py-1.5 bg-dark text-white hover:bg-primary transition-colors">
+                  {s.title}
+                </button>
+              ))}
+            </div>
+          </div>
 
-        {/* Section header */}
-        <div className="text-center mb-12">
-          <h2 className="font-display text-3xl md:text-4xl text-dark mb-4">
-            Our Services
-          </h2>
-          <p className="text-dark/60 text-lg max-w-2xl mx-auto">
-            Professional organizing tailored to your space and lifestyle
-          </p>
+          <div className="flex-1">
+            <div className="bg-white border border-dark/10 rounded-3xl p-6 shadow-sm relative overflow-hidden">
+              <div className="flex gap-3 mb-6">
+                <div className="relative h-48 flex-1 rounded-2xl overflow-hidden img-zoom">
+                  <Image
+                    src={IMG.services.beforeAfter1}
+                    alt="Before organizing"
+                    fill
+                    className="object-cover"
+                    sizes="300px"
+                  />
+                </div>
+                <div className="flex flex-col gap-3 w-28">
+                  <div className="relative h-24 rounded-2xl overflow-hidden img-zoom">
+                    <Image
+                      src={IMG.services.beforeAfter2}
+                      alt="After organizing"
+                      fill
+                      className="object-cover"
+                      sizes="112px"
+                    />
+                  </div>
+                  <div className="relative h-24 rounded-2xl overflow-hidden img-zoom">
+                    <Image
+                      src={IMG.services.beforeAfter3}
+                      alt="Organized space"
+                      fill
+                      className="object-cover"
+                      sizes="112px"
+                    />
+                  </div>
+                </div>
+              </div>
+              <p className="text-dark/40 text-xs uppercase tracking-widest mb-1">Most Popular</p>
+              <p className="text-dark font-semibold text-lg">Whole House Organizing</p>
+              <p className="text-dark/50 text-sm mt-1">From KSh 15,000</p>
+            </div>
+          </div>
         </div>
-
-        {/* Card grid — horizontal scroll on mobile, 4-col grid on xl */}
-        <div className="flex xl:grid xl:grid-cols-4 gap-6 overflow-x-auto xl:overflow-visible snap-x snap-mandatory xl:snap-none pb-4 xl:pb-0 -mx-4 px-4 xl:mx-0 xl:px-0">
-          {SERVICES.map((service) => (
-            <ServiceCard
-              key={service.slug}
-              slug={service.slug}
-              title={service.title}
-              icon={service.icon}
-              priceFrom={service.priceFrom}
-            />
-          ))}
-        </div>
-
-        {/* CTA */}
-        <div className="flex justify-center mt-12">
-          <Link
-            href="/services"
-            className="border-2 border-primary text-primary hover:bg-primary hover:text-white font-medium px-6 py-3 rounded-lg transition-all duration-200"
-          >
-            View All Services
-          </Link>
-        </div>
-
       </div>
     </section>
   )

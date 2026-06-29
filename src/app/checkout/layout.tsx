@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Checkout | Faith The Organizer',
+  title: 'Checkout',
   description: 'Complete your order at Faith The Organizer. Secure checkout with M-Pesa, card or cash on delivery.',
 }
 

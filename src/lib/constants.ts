@@ -22,11 +22,30 @@ export const NAV_LINKS = [
 ]
 
 export const SHOP_CATEGORIES = [
-  { slug: 'kitchen-organization', label: 'Kitchen' },
-  { slug: 'closet-and-bedroom', label: 'Closet & Bedroom' },
-  { slug: 'office-and-desk', label: 'Office & Desk' },
-  { slug: 'storage-solutions', label: 'Storage' },
-  { slug: 'bundles', label: 'Bundles' },
+  { slug: 'kitchen',           label: 'Kitchen',              image: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400&q=80' },
+  { slug: 'pantry',            label: 'Pantry',               image: 'https://images.unsplash.com/photo-1588854337236-6889d631faa8?w=400&q=80' },
+  { slug: 'fridge',            label: 'Fridge',               image: 'https://images.unsplash.com/photo-1584568694244-14fbdf83bd30?w=400&q=80' },
+  { slug: 'closet-bedroom',    label: 'Closet & Bedroom',     image: 'https://images.unsplash.com/photo-1558997519-83ea9252edf8?w=400&q=80' },
+  { slug: 'bathroom',          label: 'Bathroom',             image: 'https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=400&q=80' },
+  { slug: 'beauty-cosmetics',  label: 'Beauty & Cosmetics',   image: 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400&q=80' },
+  { slug: 'stationery',        label: 'Stationery',           image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=400&q=80' },
+  { slug: 'laundry-cleaning',  label: 'Laundry & Cleaning',   image: 'https://images.unsplash.com/photo-1582735689369-4fe89db7114c?w=400&q=80' },
+  { slug: 'shelves-drawers',   label: 'Shelves & Drawers',    image: 'https://images.unsplash.com/photo-1595526114035-0d45ed16cfbf?w=400&q=80' },
+  { slug: 'baskets',           label: 'Baskets',              image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&q=80' },
+  { slug: 'storage-containers',label: 'Storage & Containers', image: 'https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=400&q=80' },
+  { slug: 'travel',            label: 'Travel',               image: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&q=80' },
+  { slug: 'grooming-hygiene',  label: 'Grooming & Hygiene',   image: 'https://images.unsplash.com/photo-1503236823255-94609f598e71?w=400&q=80' },
+  { slug: 'hardware',          label: 'Hardware',             image: 'https://images.unsplash.com/photo-1581235720704-06d3acfcb36f?w=400&q=80' },
+  { slug: 'gadgets',           label: 'Gadgets',              image: 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=400&q=80' },
+  { slug: 'interior-decor',    label: 'Interior Decor',       image: 'https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=400&q=80' },
+  { slug: 'kids-corner',       label: 'Kids Corner',          image: 'https://images.unsplash.com/photo-1558618047-3c8c76ca3cfe?w=400&q=80' },
+  { slug: 'furniture',         label: 'Furniture',            image: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=400&q=80' },
+  { slug: 'stands-racks',      label: 'Stands & Racks',       image: 'https://images.unsplash.com/photo-1611269154421-4e27233ac5c5?w=400&q=80' },
+  { slug: 'car-organizers',    label: 'Car Organizers',       image: 'https://images.unsplash.com/photo-1503736334956-4c8f8e92946d?w=400&q=80' },
+  { slug: 'dining',            label: 'Dining',               image: 'https://images.unsplash.com/photo-1550583724-b2692b85b150?w=400&q=80' },
+  { slug: 'spices',            label: 'Spices',               image: 'https://images.unsplash.com/photo-1506368249639-73a05d6f6488?w=400&q=80' },
+  { slug: 'health',            label: 'Health',               image: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=400&q=80' },
+  { slug: 'packaging',         label: 'Packaging',            image: 'https://images.unsplash.com/photo-1545243424-0ce743321e11?w=400&q=80' },
 ]
 
 export const DELIVERY_OPTIONS = [

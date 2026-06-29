@@ -9,6 +9,8 @@ import { staggerContainer, staggerItem, EASE_STANDARD } from '@/lib/animations'
 
 // ─── Mock posts ───────────────────────────────────────────────────────────────
 
+import { IMG } from '@/lib/image-placeholders'
+
 const POSTS = [
   {
     slug:     'decluttering-guide-nairobi',
@@ -16,7 +18,7 @@ const POSTS = [
     title:    '10 Rules for Decluttering a Nairobi Home Without Losing Your Mind',
     date:     'Mar 12, 2025',
     readTime: '6 min read',
-    image:    '/images/blog/signs-organizer.jpg',
+    image:    'https://images.unsplash.com/photo-1484101403633-562f891dc89a?w=800&q=80',
   },
   {
     slug:     'small-kitchen-storage-hacks',
@@ -24,7 +26,7 @@ const POSTS = [
     title:    'Storage Hacks for the Typical Nairobi Kitchen',
     date:     'Feb 28, 2025',
     readTime: '4 min read',
-    image:    '/images/blog/nairobi-kitchen-organize.jpg',
+    image:    IMG.heroBg,
   },
   {
     slug:     'moving-house-nairobi-checklist',
@@ -32,7 +34,7 @@ const POSTS = [
     title:    'The Complete Moving-House Checklist for Nairobi Residents',
     date:     'Feb 14, 2025',
     readTime: '5 min read',
-    image:    '/images/blog/moving-nairobi.jpg',
+    image:    'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&q=80',
   },
 ]
 
@@ -42,23 +44,24 @@ export default function EditorialBlogPreview() {
   const { ref, isInView } = useScrollAnimation({ amount: 0.08 })
 
   return (
-    <section className="py-16 md:py-24 bg-surface">
+    <section className="py-16 md:py-24 bg-dark border-t border-white/5">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-
-        {/* ── Header ─────────────────────────────────────────────────────── */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.5, ease: EASE_STANDARD }}
           className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-10"
         >
-          <h2 className="font-display text-4xl md:text-5xl text-dark leading-tight">
-            The Organized Life
-          </h2>
+          <div>
+            <p className="section-label text-white/40 mb-3">Blog</p>
+            <h2 className="text-white">
+              <span className="head-sans text-4xl block">The Organized</span>
+              <span className="head-serif italic text-4xl text-accent/90">Life</span>
+            </h2>
+          </div>
           <Link
             href="/blog"
-            className="inline-flex items-center gap-1.5 text-primary text-sm font-medium
-                       animated-link hover:opacity-80 transition-opacity group"
+            className="inline-flex items-center gap-1.5 text-white/50 hover:text-white text-sm transition-colors group"
           >
             Visit Blog
             <motion.span
@@ -97,7 +100,7 @@ export default function EditorialBlogPreview() {
                   />
                 </motion.div>
                 {/* Gradient overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-dark/90 via-dark/40 to-transparent" />
 
                 {/* Content */}
                 <div className="absolute inset-0 flex flex-col justify-between p-6">
@@ -123,8 +126,8 @@ export default function EditorialBlogPreview() {
           <motion.div variants={staggerItem} className="lg:col-span-5 flex flex-col gap-4">
             {POSTS.slice(1).map((post) => (
               <Link key={post.slug} href={`/blog/${post.slug}`} className="block group">
-                <div className="flex rounded-2xl overflow-hidden border border-dark/8 bg-white
-                                hover:shadow-md transition-shadow duration-200 h-36">
+                <div className="flex rounded-2xl overflow-hidden border border-white/8 bg-white/4
+                                hover:border-white/15 transition-colors duration-200 h-36">
                   {/* Image */}
                   <div className="relative w-32 shrink-0 overflow-hidden bg-muted">
                     <motion.div
@@ -145,15 +148,15 @@ export default function EditorialBlogPreview() {
                   {/* Content */}
                   <div className="flex flex-col justify-between p-4 min-w-0 flex-1">
                     <div>
-                      <span className="text-primary text-xs font-medium uppercase tracking-wider">
+                      <span className="text-accent text-xs font-medium uppercase tracking-wider">
                         {post.category}
                       </span>
-                      <h3 className="font-display text-sm text-dark leading-snug mt-0.5 line-clamp-2
-                                     group-hover:text-primary transition-colors">
+                      <h3 className="font-display text-sm text-white leading-snug mt-0.5 line-clamp-2
+                                     group-hover:text-accent/90 transition-colors">
                         {post.title}
                       </h3>
                     </div>
-                    <p className="text-dark/35 text-xs font-mono">
+                    <p className="text-white/35 text-xs font-mono">
                       {post.date} · {post.readTime}
                     </p>
                   </div>

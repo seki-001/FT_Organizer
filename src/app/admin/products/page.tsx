@@ -9,26 +9,43 @@ import {
 } from 'lucide-react'
 import AdminPageHeader from '@/components/admin/AdminPageHeader'
 import { MOCK_PRODUCTS } from '@/lib/mock-products'
+import { SHOP_CATEGORIES } from '@/lib/constants'
 import { cn, formatPrice, discountPercent } from '@/lib/utils'
 import type { Product } from '@/lib/types'
 
 // ─── Category meta ────────────────────────────────────────────────────────────
 
 const CATEGORY_META: Record<string, { label: string; class: string }> = {
-  'kitchen-organization': { label: 'Kitchen',  class: 'bg-orange-100 text-orange-700' },
-  'closet-and-bedroom':   { label: 'Closet',   class: 'bg-purple-100 text-purple-700' },
-  'office-and-desk':      { label: 'Office',   class: 'bg-blue-100 text-blue-700'    },
-  'storage-solutions':    { label: 'Storage',  class: 'bg-emerald-100 text-emerald-700' },
-  'bundles':              { label: 'Bundle',   class: 'bg-primary/10 text-primary'   },
+  'kitchen':           { label: 'Kitchen',          class: 'bg-orange-100 text-orange-700'   },
+  'pantry':            { label: 'Pantry',            class: 'bg-amber-100 text-amber-700'    },
+  'fridge':            { label: 'Fridge',            class: 'bg-cyan-100 text-cyan-700'      },
+  'dining':            { label: 'Dining',            class: 'bg-yellow-100 text-yellow-700'  },
+  'spices':            { label: 'Spices',            class: 'bg-red-100 text-red-700'        },
+  'bathroom':          { label: 'Bathroom',          class: 'bg-sky-100 text-sky-700'        },
+  'closet-bedroom':    { label: 'Closet',            class: 'bg-purple-100 text-purple-700'  },
+  'beauty-cosmetics':  { label: 'Beauty',            class: 'bg-pink-100 text-pink-700'      },
+  'grooming-hygiene':  { label: 'Grooming',          class: 'bg-violet-100 text-violet-700'  },
+  'health':            { label: 'Health',            class: 'bg-green-100 text-green-700'    },
+  'baskets':           { label: 'Baskets',           class: 'bg-stone-100 text-stone-700'    },
+  'storage-containers':{ label: 'Storage',           class: 'bg-emerald-100 text-emerald-700'},
+  'shelves-drawers':   { label: 'Shelves',           class: 'bg-indigo-100 text-indigo-700'  },
+  'stands-racks':      { label: 'Stands & Racks',    class: 'bg-slate-100 text-slate-700'    },
+  'furniture':         { label: 'Furniture',         class: 'bg-teal-100 text-teal-700'      },
+  'stationery':        { label: 'Stationery',        class: 'bg-blue-100 text-blue-700'      },
+  'interior-decor':    { label: 'Decor',             class: 'bg-rose-100 text-rose-700'      },
+  'laundry-cleaning':  { label: 'Laundry',           class: 'bg-lime-100 text-lime-700'      },
+  'hardware':          { label: 'Hardware',          class: 'bg-zinc-100 text-zinc-700'      },
+  'travel':            { label: 'Travel',            class: 'bg-fuchsia-100 text-fuchsia-700'},
+  'car-organizers':    { label: 'Car',               class: 'bg-neutral-100 text-neutral-700'},
+  'kids-corner':       { label: 'Kids',              class: 'bg-orange-100 text-orange-600'  },
+  'gadgets':           { label: 'Gadgets',           class: 'bg-blue-100 text-blue-600'      },
+  'packaging':         { label: 'Packaging',         class: 'bg-stone-100 text-stone-600'    },
+  'bundles':           { label: 'Bundle',            class: 'bg-primary/10 text-primary'     },
 }
 
 const CATEGORIES = [
-  { value: 'all',                  label: 'All Categories' },
-  { value: 'kitchen-organization', label: 'Kitchen'       },
-  { value: 'closet-and-bedroom',   label: 'Closet'        },
-  { value: 'office-and-desk',      label: 'Office'        },
-  { value: 'storage-solutions',    label: 'Storage'       },
-  { value: 'bundles',              label: 'Bundles'       },
+  { value: 'all', label: 'All Categories' },
+  ...SHOP_CATEGORIES.map(c => ({ value: c.slug, label: c.label })),
 ]
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -252,9 +269,19 @@ export default function AdminProductsPage() {
 
         <AdminPageHeader
           title="Products"
-          subtitle="Manage your shop inventory"
+          subtitle={`${MOCK_PRODUCTS.length} products across 24 categories`}
           action={{ label: 'Add Product', href: '/admin/products/new', icon: PlusCircle }}
         />
+
+        {/* Quick actions */}
+        <div className="flex gap-3">
+          <Link
+            href="/admin/products/import"
+            className="flex items-center gap-2 text-sm font-medium text-dark border border-dark/15 hover:border-primary/40 hover:text-primary bg-white px-4 py-2.5 rounded-xl transition-colors"
+          >
+            <Download size={14} /> Bulk Import (Excel / CSV)
+          </Link>
+        </div>
 
         {/* Summary stats */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">

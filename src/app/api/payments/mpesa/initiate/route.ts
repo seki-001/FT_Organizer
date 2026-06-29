@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
+import { apiError, apiSuccess } from '@/lib/api-response'
+import { enforceRateLimit, withRateLimitHeaders, checkRateLimit, getClientIp } from '@/lib/rate-limit'
+import { logger } from '@/lib/logger'
 
 const InitiateSchema = z.object({
   phone:    z.string().min(9, 'Phone number too short'),
@@ -24,6 +27,9 @@ function normalisePhone(raw: string): string | null {
 // ─── Route handler ────────────────────────────────────────────────────────────
 
 export async function POST(request: NextRequest) {
+  const limited = enforceRateLimit(request, 'mpesa-initiate', { limit: 5, windowMs: 60_000 })
+  if (limited) return limited
+
   try {
     const body   = await request.json() as unknown
     const parsed = InitiateSchema.safeParse(body)
@@ -86,24 +92,27 @@ export async function POST(request: NextRequest) {
     // return NextResponse.json({ success: true, checkoutRequestId: response.id })
     // ──────────────────────────────────────────────────────────────────────────
 
-    console.log('[M-Pesa initiate mock]', { phone: normalisedPhone, amount, orderRef })
+    logger.info({
+      event: 'mpesa_initiated',
+      resource_id: orderRef,
+      ip_address: getClientIp(request),
+    })
 
-    // Simulate the ~2 second network call to Daraja
     await new Promise((resolve) => setTimeout(resolve, 2000))
 
-    return NextResponse.json(
-      {
-        success:           true,
+    const ip = getClientIp(request)
+    const rate = checkRateLimit(`mpesa-initiate:${ip}`, { limit: 5, windowMs: 60_000 })
+    return withRateLimitHeaders(
+      apiSuccess({
+        success: true,
         checkoutRequestId: `mock_${Date.now()}`,
-        message:           'STK push sent (mock)',
-      },
-      { status: 200 }
+        message: 'STK push sent (mock)',
+      }),
+      rate.remaining,
+      rate.resetAt,
     )
-  } catch (error) {
-    console.error('[M-Pesa initiate error]', error)
-    return NextResponse.json(
-      { success: false, error: 'Failed to initiate M-Pesa payment. Please try again.' },
-      { status: 500 }
-    )
+  } catch {
+    logger.error({ event: 'mpesa_initiate_failed', error_code: 'INTERNAL_ERROR' })
+    return apiError('Failed to initiate M-Pesa payment. Please try again.', 'INTERNAL_ERROR', 500)
   }
 }

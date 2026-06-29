@@ -1,5 +1,14 @@
 import type { BlogPost } from '@/lib/types'
 
+const COVER = {
+  kitchen: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&q=80',
+  home: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80',
+  products: 'https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=800&q=80',
+  moving: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&q=80',
+  tips: 'https://images.unsplash.com/photo-1484101403633-562f891dc89a?w=800&q=80',
+  office: 'https://images.unsplash.com/photo-1593642632559-0c6d3fc62b89?w=800&q=80',
+} as const
+
 const LOREM = `## Why This Matters in Nairobi Homes
 
 Most Nairobi homes were not built with storage in mind. Whether you are in a two-bedroom apartment in Kilimani or a four-bedroom house in Karen, the struggle is the same: too much stuff, not enough intentional space. The good news is that with a clear system, any home can be transformed — without buying a single new storage product.
@@ -26,7 +35,7 @@ export const MOCK_POSTS: BlogPost[] = [
     title:       'How to Organize Your Kitchen in a Nairobi Apartment',
     excerpt:     'Small kitchens are the norm in Nairobi apartments — but with the right systems and products, you can have a beautifully organized kitchen that works hard for you every day.',
     content:     LOREM,
-    coverImage:  '/images/blog/nairobi-kitchen-organize.jpg',
+    coverImage:  COVER.kitchen,
     category:    'home-tips',
     author:      'Faith The Organizer',
     publishedAt: '2024-12-10',
@@ -38,7 +47,7 @@ export const MOCK_POSTS: BlogPost[] = [
     title:       'Before & After: Transforming a Runda Family Home',
     excerpt:     'A four-bedroom family home in Runda was bursting at the seams. See how we turned chaos into calm over two days — every room, every drawer, every shelf.',
     content:     LOREM,
-    coverImage:  '/images/blog/runda-transformation.jpg',
+    coverImage:  COVER.home,
     category:    'before-and-after',
     author:      'Faith The Organizer',
     publishedAt: '2024-11-18',
@@ -50,7 +59,7 @@ export const MOCK_POSTS: BlogPost[] = [
     title:       'The Best Organizing Products You Can Buy in Kenya Right Now',
     excerpt:     'After organizing hundreds of homes, these are the products I recommend again and again — all available in Nairobi or deliverable across Kenya.',
     content:     LOREM,
-    coverImage:  '/images/blog/kenya-products.jpg',
+    coverImage:  COVER.products,
     category:    'product-reviews',
     author:      'Faith The Organizer',
     publishedAt: '2024-11-02',
@@ -62,7 +71,7 @@ export const MOCK_POSTS: BlogPost[] = [
     title:       'How to Declutter Before Moving House in Nairobi',
     excerpt:     'Moving is the perfect time to edit your possessions — but only if you plan it right. Here is a room-by-room guide to decluttering before your Nairobi move.',
     content:     LOREM,
-    coverImage:  '/images/blog/moving-nairobi.jpg',
+    coverImage:  COVER.moving,
     category:    'home-tips',
     author:      'Faith The Organizer',
     publishedAt: '2024-10-14',
@@ -74,7 +83,7 @@ export const MOCK_POSTS: BlogPost[] = [
     title:       '5 Signs You Need a Professional Organizer',
     excerpt:     'If you have ever lost your keys, missed a bill, or felt overwhelmed just walking into your own home — this article is for you.',
     content:     LOREM,
-    coverImage:  '/images/blog/signs-organizer.jpg',
+    coverImage:  COVER.tips,
     category:    'home-tips',
     author:      'Faith The Organizer',
     publishedAt: '2024-09-25',
@@ -86,7 +95,7 @@ export const MOCK_POSTS: BlogPost[] = [
     title:       'How to Keep Your Home Office Organized in Nairobi',
     excerpt:     'Working from home in Nairobi comes with unique challenges — from power cuts to small spaces. Here is how to build a workspace that keeps you focused and productive.',
     content:     LOREM,
-    coverImage:  '/images/blog/home-office-nairobi.jpg',
+    coverImage:  COVER.office,
     category:    'office',
     author:      'Faith The Organizer',
     publishedAt: '2024-09-08',

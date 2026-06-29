@@ -1,0 +1,25 @@
+#!/bin/bash
+set -e
+
+echo "Checking system dependencies..."
+
+NODE_VERSION="$(node --version 2>/dev/null || echo "none")"
+if [[ "$NODE_VERSION" == "none" ]]; then
+  echo "Node.js not found — installing via Homebrew..."
+  if ! command -v brew &>/dev/null; then
+    echo "Error: Homebrew is required to install Node.js. Install from https://brew.sh"
+    exit 1
+  fi
+  brew install node
+  NODE_VERSION="$(node --version)"
+fi
+echo "Node $NODE_VERSION OK"
+
+NPM_VERSION="$(npm --version 2>/dev/null || echo "none")"
+if [[ "$NPM_VERSION" == "none" ]]; then
+  echo "Error: npm not found after Node.js install"
+  exit 1
+fi
+echo "npm $NPM_VERSION OK"
+
+echo "System dependencies verified."

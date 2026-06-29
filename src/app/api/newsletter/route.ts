@@ -1,49 +1,39 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextRequest } from 'next/server'
 import { z } from 'zod'
+import { apiError, apiSuccess } from '@/lib/api-response'
+import { enforceRateLimit, withRateLimitHeaders, checkRateLimit, getClientIp } from '@/lib/rate-limit'
+import { logger } from '@/lib/logger'
 
 const SubscribeSchema = z.object({
   email: z.string().email('Invalid email address'),
 })
 
 export async function POST(request: NextRequest) {
+  const limited = enforceRateLimit(request, 'newsletter', { limit: 3, windowMs: 60_000 })
+  if (limited) return limited
+
   try {
-    const body   = await request.json() as unknown
+    const body = await request.json() as unknown
     const parsed = SubscribeSchema.safeParse(body)
 
     if (!parsed.success) {
-      return NextResponse.json(
-        { success: false, error: 'Please provide a valid email address.' },
-        { status: 400 }
-      )
+      return apiError('Please provide a valid email address.', 'VALIDATION_ERROR', 400)
     }
 
-    const { email } = parsed.data
+    logger.info({
+      event: 'newsletter_subscribed',
+      ip_address: getClientIp(request),
+    })
 
-    console.log('[Newsletter subscription]', { email, subscribedAt: new Date().toISOString() })
-
-    // TODO: Add subscriber to email list via Resend Audiences or Mailchimp
-    //   await resend.contacts.create({
-    //     email,
-    //     audienceId: process.env.RESEND_AUDIENCE_ID,
-    //   })
-
-    // TODO: Send welcome email
-    //   await resend.emails.send({
-    //     from:    'Faith The Organizer <hello@organizer.co.ke>',
-    //     to:      email,
-    //     subject: 'Welcome to The Organized Life!',
-    //     html:    welcomeEmailTemplate(),
-    //   })
-
-    return NextResponse.json(
-      { success: true, message: "You're in! Check your inbox." },
-      { status: 201 }
+    const ip = getClientIp(request)
+    const rate = checkRateLimit(`newsletter:${ip}`, { limit: 3, windowMs: 60_000 })
+    return withRateLimitHeaders(
+      apiSuccess({ success: true, message: "You're in! Check your inbox." }, 201),
+      rate.remaining,
+      rate.resetAt,
     )
-  } catch (error) {
-    console.error('[Newsletter API error]', error)
-    return NextResponse.json(
-      { success: false, error: 'Something went wrong. Please try again.' },
-      { status: 500 }
-    )
+  } catch {
+    logger.error({ event: 'newsletter_failed', error_code: 'INTERNAL_ERROR' })
+    return apiError('Something went wrong. Please try again.', 'INTERNAL_ERROR', 500)
   }
 }

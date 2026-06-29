@@ -4,7 +4,7 @@ import { Loader2 } from 'lucide-react'
 import OrderConfirmationClient from '@/components/sections/OrderConfirmationClient'
 
 export const metadata: Metadata = {
-  title: 'Order Confirmed | Faith The Organizer',
+  title: 'Order Confirmed',
   description: 'Your order has been placed with Faith The Organizer. Thank you for your purchase.',
 }
 

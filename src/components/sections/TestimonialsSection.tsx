@@ -1,14 +1,23 @@
-'use client'
-
-import { useCallback } from 'react'
-import { motion } from 'framer-motion'
-import useEmblaCarousel from 'embla-carousel-react'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
+import Image from 'next/image'
 import type { Testimonial } from '@/lib/types'
-import { useScrollAnimation } from '@/hooks/useScrollAnimation'
-import { staggerContainer, staggerItem, EASE_STANDARD } from '@/lib/animations'
+import { IMG } from '@/lib/image-placeholders'
 
-const TESTIMONIALS: Testimonial[] = [
+const galleryImages = [
+  {
+    src: IMG.gallery.testimonial1,
+    alt: 'Organized living room',
+    caption: 'Living Room',
+    subcaption: 'Reveal',
+  },
+  {
+    src: IMG.gallery.testimonial2,
+    alt: 'Organized closet',
+    caption: 'Bedroom & Closet',
+    subcaption: 'Planning',
+  },
+]
+
+const testimonials: Testimonial[] = [
   {
     id: '1',
     name: 'Fransisca Wambui',
@@ -16,6 +25,7 @@ const TESTIMONIALS: Testimonial[] = [
     rating: 5,
     text: 'Incredible service! Faith and her team were punctual, courteous, and so thorough. My home feels like a completely different space. I cannot believe the transformation — every drawer, shelf and cabinet is now perfectly organized. Highly recommend!',
     service: 'Whole House Organizing',
+    avatar: IMG.avatars[0],
   },
   {
     id: '2',
@@ -24,118 +34,67 @@ const TESTIMONIALS: Testimonial[] = [
     rating: 5,
     text: 'Amazing, quick and thorough. Faith understood exactly what I needed and delivered beyond my expectations. She reorganized my kitchen and home office in a single day. The systems she put in place are so intuitive — everything has a home now.',
     service: 'Home Organizing',
-  },
-  {
-    id: '3',
-    name: 'George Omondi',
-    location: 'Kyuna, Nairobi',
-    rating: 5,
-    text: "Exceptional service from start to finish. Professional, detailed and genuinely passionate about organizing. Faith transformed our office space into a productive, clutter-free environment. Our team's morale and efficiency have noticeably improved.",
-    service: 'Office Organizing',
+    avatar: IMG.avatars[1],
   },
 ]
 
-function StarRating({ rating }: { rating: number }) {
-  return (
-    <div className="flex items-center gap-0.5" aria-label={`${rating} out of 5 stars`}>
-      {Array.from({ length: 5 }).map((_, i) => (
-        <span key={i} className={i < rating ? 'text-accent' : 'text-dark/20'} aria-hidden="true">★</span>
-      ))}
-    </div>
-  )
-}
-
-function Initials({ name }: { name: string }) {
-  const parts = name.trim().split(' ')
-  const initials = parts.length >= 2 ? `${parts[0][0]}${parts[parts.length - 1][0]}` : parts[0][0]
-  return (
-    <div
-      className="w-12 h-12 rounded-full bg-muted text-dark/50 font-semibold text-sm flex items-center justify-center flex-shrink-0 uppercase"
-      aria-hidden="true"
-    >
-      {initials}
-    </div>
-  )
-}
-
-function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
-  return (
-    <article className="bg-white rounded-xl shadow-sm flex flex-col gap-4 p-6 h-full mx-2">
-      <StarRating rating={testimonial.rating} />
-      <blockquote className="text-dark/70 text-sm leading-relaxed flex-1">
-        &ldquo;{testimonial.text}&rdquo;
-      </blockquote>
-      <footer className="flex items-center gap-3 pt-2 border-t border-dark/5">
-        <Initials name={testimonial.name} />
-        <div>
-          <p className="font-semibold text-dark text-sm">{testimonial.name}</p>
-          <p className="text-dark/50 text-xs">{testimonial.location}</p>
-        </div>
-      </footer>
-    </article>
-  )
-}
-
 export default function TestimonialsSection() {
-  const [emblaRef, emblaApi] = useEmblaCarousel({
-    loop: true,
-    slidesToScroll: 1,
-    breakpoints: { '(min-width: 768px)': { slidesToScroll: 1 } },
-  })
-  const scrollPrev = useCallback(() => emblaApi?.scrollPrev(), [emblaApi])
-  const scrollNext = useCallback(() => emblaApi?.scrollNext(), [emblaApi])
-
-  const { ref, isInView } = useScrollAnimation({ amount: 0.15 })
-
   return (
-    <section className="py-16 md:py-24 bg-muted">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-
-        {/* Header */}
-        <motion.div
-          ref={ref}
-          initial={{ opacity: 0, y: 24 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.5, ease: EASE_STANDARD }}
-          className="text-center mb-12"
-        >
-          <h2 className="font-display text-3xl md:text-4xl text-dark mb-4">
-            What Our Clients Say
-          </h2>
-          <p className="text-dark/60 text-lg max-w-2xl mx-auto">
-            Real stories from Nairobi homeowners and offices we&apos;ve transformed
-          </p>
-        </motion.div>
-
-        {/* Carousel */}
-        <motion.div
-          variants={staggerContainer}
-          initial="initial"
-          animate={isInView ? 'animate' : 'initial'}
-          className="relative"
-        >
-          <div ref={emblaRef} className="overflow-hidden">
-            <div className="flex -mx-2 md:[&>*]:basis-1/2 lg:[&>*]:basis-1/3 [&>*]:min-w-0 [&>*]:flex-[0_0_100%] md:[&>*]:flex-[0_0_50%] lg:[&>*]:flex-[0_0_33.333%]">
-              {TESTIMONIALS.map((testimonial) => (
-                <motion.div key={testimonial.id} variants={staggerItem} className="px-2">
-                  <TestimonialCard testimonial={testimonial} />
-                </motion.div>
-              ))}
+    <section className="flex flex-col lg:flex-row min-h-[60vh]">
+      <div className="lg:w-2/5 bg-dark p-8 lg:p-12 flex flex-col gap-4">
+        <p className="section-label text-white/40">Gallery</p>
+        <div className="flex flex-col gap-3 flex-1">
+          {galleryImages.slice(0, 2).map((img, i) => (
+            <div key={i} className="relative flex-1 min-h-[160px] rounded-2xl overflow-hidden img-zoom">
+              <Image src={img.src} alt={img.alt} fill className="object-cover" sizes="40vw" />
+              <div className="absolute inset-0 bg-gradient-to-t from-dark/50 to-transparent" />
+              <p className="absolute bottom-3 left-4 text-white text-xs font-semibold">{img.caption}</p>
+              <p className="absolute bottom-3 left-4 mt-4 text-white/40 caption-rotate right-3 top-1/2 -translate-y-1/2 text-[10px] italic font-display">
+                {img.subcaption}
+              </p>
             </div>
-          </div>
+          ))}
+        </div>
+      </div>
 
-          <div className="flex items-center justify-center gap-4 mt-8">
-            <button type="button" onClick={scrollPrev} aria-label="Previous testimonial"
-              className="flex items-center justify-center w-10 h-10 rounded-full border-2 border-dark/20 text-dark/60 hover:border-primary hover:text-primary transition-colors duration-200">
-              <ChevronLeft size={20} />
-            </button>
-            <button type="button" onClick={scrollNext} aria-label="Next testimonial"
-              className="flex items-center justify-center w-10 h-10 rounded-full border-2 border-dark/20 text-dark/60 hover:border-primary hover:text-primary transition-colors duration-200">
-              <ChevronRight size={20} />
-            </button>
-          </div>
-        </motion.div>
+      <div className="lg:w-3/5 bg-surface p-8 lg:p-16 flex flex-col justify-center">
+        <div className="mb-2">
+          <p className="head-sans text-5xl text-dark leading-none">2.5k</p>
+          <p className="head-serif italic text-5xl text-dark/70 leading-none">Reviews</p>
+        </div>
+        <p className="text-dark/40 text-xs mb-10">Real feedback from Nairobi clients who organized better.</p>
 
+        <p className="section-label text-dark/40 mb-4">Testimonials</p>
+        <h2 className="text-dark text-4xl mb-10">
+          <span className="head-sans block">Loved by Nairobi</span>
+          <span className="head-serif italic block text-primary">Homeowners</span>
+        </h2>
+
+        <div className="flex flex-col gap-5">
+          {testimonials.slice(0, 2).map((t) => (
+            <div key={t.id} className="bg-white rounded-2xl p-5 shadow-sm border border-dark/10">
+              <div className="flex gap-0.5 mb-3">
+                {Array.from({ length: t.rating }).map((_, i) => (
+                  <span key={i} className="text-accent text-sm">★</span>
+                ))}
+              </div>
+              <p className="text-dark/70 text-sm leading-relaxed italic font-display mb-4">
+                &ldquo;{t.text}&rdquo;
+              </p>
+              <div className="flex items-center gap-3">
+                {t.avatar && (
+                  <div className="relative w-9 h-9 rounded-full overflow-hidden flex-shrink-0">
+                    <Image src={t.avatar} alt={t.name} fill className="object-cover" sizes="36px" />
+                  </div>
+                )}
+                <div>
+                  <p className="text-dark font-semibold text-sm">{t.name}</p>
+                  <p className="text-dark/40 text-xs">{t.location}</p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   )

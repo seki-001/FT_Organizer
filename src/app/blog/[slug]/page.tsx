@@ -145,7 +145,7 @@ export default function BlogPostPage() {
   const related = MOCK_POSTS.filter((p) => p.category === post.category && p.slug !== post.slug).slice(0, 3)
 
   return (
-    <main>
+    <main className="bg-dark">
 
       {/* ── 1. POST HERO ─────────────────────────────────────────────────── */}
       <header className="bg-white py-14 md:py-20">

@@ -4,40 +4,52 @@ import { forwardRef } from 'react'
 import { motion, type HTMLMotionProps } from 'framer-motion'
 import { cn } from '@/lib/utils'
 
-// ─── Variants ─────────────────────────────────────────────────────────────────
+type Variant = 'primary' | 'secondary' | 'dark' | 'ghost' | 'white' | 'outline' | 'danger'
+type Size = 'sm' | 'md' | 'lg'
+type Radius = 'default' | 'pill'
 
-type Variant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger'
-type Size    = 'sm' | 'md' | 'lg'
-
-const VARIANT_CLASSES: Record<Variant, string> = {
-  primary:   'bg-primary hover:bg-primary/90 text-white shadow-sm',
-  secondary: 'bg-dark hover:bg-dark/80 text-white shadow-sm',
+const variants: Record<Variant, string> = {
+  primary:   'bg-primary hover:bg-primary/90 text-white',
+  secondary: 'border-2 border-primary text-primary hover:bg-primary hover:text-white',
+  dark:      'bg-dark hover:bg-dark/85 text-white',
+  ghost:     'border border-white/15 text-white hover:border-white/30 hover:bg-white/5',
+  white:     'bg-white text-dark hover:bg-white/90',
   outline:   'border-2 border-primary text-primary hover:bg-primary hover:text-white',
-  ghost:     'text-dark/70 hover:text-dark hover:bg-muted',
-  danger:    'bg-danger hover:bg-danger/90 text-white shadow-sm',
+  danger:    'bg-danger hover:bg-danger/90 text-white',
 }
 
-const SIZE_CLASSES: Record<Size, string> = {
-  sm:  'px-4 py-2 text-xs rounded-lg',
-  md:  'px-5 py-2.5 text-sm rounded-xl',
-  lg:  'px-7 py-3.5 text-base rounded-xl',
+const sizes: Record<Size, string> = {
+  sm: 'px-4 py-2 text-xs',
+  md: 'px-5 py-2.5 text-sm',
+  lg: 'px-7 py-4 text-base',
 }
 
-// ─── Props ────────────────────────────────────────────────────────────────────
+const radius: Record<Radius, string> = {
+  default: 'rounded-lg',
+  pill:    'rounded-full',
+}
 
 interface ButtonProps extends Omit<HTMLMotionProps<'button'>, 'children'> {
-  variant?:  Variant
-  size?:     Size
-  loading?:  boolean
-  children:  React.ReactNode
+  variant?: Variant
+  size?: Size
+  radius?: Radius
+  loading?: boolean
+  children: React.ReactNode
   className?: string
 }
 
-// ─── Component ────────────────────────────────────────────────────────────────
-
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
-  { variant = 'primary', size = 'md', loading = false, disabled, children, className, ...props },
-  ref
+  {
+    variant = 'primary',
+    size = 'md',
+    radius: radiusProp = 'default',
+    loading = false,
+    disabled,
+    children,
+    className,
+    ...props
+  },
+  ref,
 ) {
   return (
     <motion.button
@@ -49,9 +61,10 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
       className={cn(
         'inline-flex items-center justify-center gap-2 font-medium transition-colors duration-200 cursor-pointer select-none',
         'disabled:opacity-50 disabled:cursor-not-allowed',
-        VARIANT_CLASSES[variant],
-        SIZE_CLASSES[size],
-        className
+        variants[variant],
+        sizes[size],
+        radius[radiusProp],
+        className,
       )}
       {...props}
     >
