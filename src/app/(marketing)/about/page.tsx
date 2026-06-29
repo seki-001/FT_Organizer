@@ -49,8 +49,8 @@ export default function AboutPage() {
           </div>
           <div className="relative rounded-3xl overflow-hidden aspect-[4/5] img-zoom">
             <Image
-              src={IMG.faithPortrait}
-              alt="Faith organizing a home"
+              src={IMG.gallery.testimonial1}
+              alt="Faith consulting with a client"
               fill
               className="object-cover"
               sizes="50vw"

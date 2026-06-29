@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useMemo, useCallback } from 'react'
+import Image from 'next/image'
 import { Search, Plus, Minus, Trash2, Receipt, User, DollarSign, Smartphone, CreditCard, X, CheckCircle2, Printer } from 'lucide-react'
 import { MOCK_PRODUCTS } from '@/lib/mock-products'
 import { SHOP_CATEGORIES } from '@/lib/constants'
@@ -157,9 +158,9 @@ export default function POSPage() {
   return (
     <div className="flex h-[calc(100vh-64px)] gap-0 overflow-hidden">
       {/* ── LEFT: Product Picker ─────────────────────────────── */}
-      <div className="flex-1 flex flex-col overflow-hidden border-r border-dark/8">
+      <div className="flex-1 flex flex-col overflow-hidden border-r border-[#ECEEF2]">
         {/* Search + Category Filter */}
-        <div className="p-4 border-b border-dark/8 bg-white space-y-3">
+        <div className="p-4 border-b border-[#ECEEF2] bg-white space-y-3">
           <div className="relative">
             <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-dark/35" />
             <input
@@ -196,8 +197,17 @@ export default function POSPage() {
               <button
                 key={p.id}
                 onClick={() => addToCart(p)}
-                className="text-left bg-white border border-dark/8 rounded-xl p-3 hover:border-primary/30 hover:shadow-sm active:scale-95 transition-all group"
+                className="text-left bg-white border border-[#ECEEF2] rounded-lg p-3 hover:border-primary/30 hover:shadow-sm active:scale-95 transition-all group"
               >
+                <div className="relative aspect-square rounded-lg overflow-hidden bg-muted mb-2">
+                  <Image
+                    src={p.images[0]}
+                    alt={p.name}
+                    fill
+                    className="object-cover group-hover:scale-[1.03] transition-transform duration-300"
+                    sizes="120px"
+                  />
+                </div>
                 <p className="text-[10px] text-dark/35 uppercase tracking-wider mb-1 truncate">
                   {p.category.replace(/-/g, ' ')}
                 </p>
@@ -224,7 +234,7 @@ export default function POSPage() {
       {/* ── RIGHT: Cart + Payment ────────────────────────────── */}
       <div className="w-80 xl:w-96 flex flex-col bg-white">
         {/* Cart Header */}
-        <div className="p-4 border-b border-dark/8">
+        <div className="p-4 border-b border-[#ECEEF2]">
           <div className="flex items-center justify-between mb-3">
             <h2 className="font-bold text-dark flex items-center gap-2">
               <Receipt size={16} className="text-primary" />
@@ -250,7 +260,7 @@ export default function POSPage() {
         </div>
 
         {/* Cart Items */}
-        <div className="flex-1 overflow-y-auto divide-y divide-dark/5">
+        <div className="flex-1 overflow-y-auto divide-y divide-[#ECEEF2]">
           {cart.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full text-dark/25 gap-2">
               <Receipt size={32} />
@@ -281,7 +291,7 @@ export default function POSPage() {
         </div>
 
         {/* Totals + Payment */}
-        <div className="border-t border-dark/8 p-4 space-y-3">
+        <div className="border-t border-[#ECEEF2] p-4 space-y-3">
           {/* Discount */}
           <div className="flex items-center gap-2">
             <label className="text-xs text-dark/50 w-20 flex-shrink-0">Discount</label>
@@ -307,7 +317,7 @@ export default function POSPage() {
                 <span className="font-mono">− {formatPrice(discountAmt)}</span>
               </div>
             )}
-            <div className="flex justify-between font-bold text-dark text-base pt-1 border-t border-dark/8">
+            <div className="flex justify-between font-bold text-dark text-base pt-1 border-t border-[#ECEEF2]">
               <span>Total</span>
               <span className="font-mono text-primary">{formatPrice(total)}</span>
             </div>

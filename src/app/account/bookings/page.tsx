@@ -57,7 +57,7 @@ function BookingCard({ booking }: { booking: Booking }) {
   const PropIcon = PROPERTY_ICONS[booking.propertyType]
 
   return (
-    <div className="bg-white rounded-2xl border border-dark/8 shadow-sm p-5 flex flex-col gap-4">
+    <div className="glass-card p-5 flex flex-col gap-4">
       {/* Header */}
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-center gap-3">
@@ -145,11 +145,11 @@ export default function AccountBookingsPage() {
       </div>
 
       {loading ? (
-        <div className="bg-white rounded-2xl border border-dark/8 shadow-sm p-12 text-center text-dark/50 text-sm">
+        <div className="glass-card p-12 text-center text-dark/50 text-sm">
           Loading your bookings…
         </div>
       ) : bookings.length === 0 ? (
-        <div className="bg-white rounded-2xl border border-dark/8 shadow-sm p-12 text-center flex flex-col items-center gap-4">
+        <div className="glass-card p-12 text-center flex flex-col items-center gap-4">
           <Calendar size={48} className="text-dark/20" aria-hidden="true" />
           <p className="text-dark/50">No bookings yet.</p>
           <Link href="/book" className="bg-primary text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-primary/90 transition-colors">

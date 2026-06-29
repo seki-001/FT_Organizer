@@ -1,74 +1,60 @@
-import Image from 'next/image'
 import Link from 'next/link'
 import { SERVICES } from '@/lib/constants'
+import { formatPrice } from '@/lib/utils'
+import { ILLUSTRATIONS, illustrationForService } from '@/lib/illustrations'
+import { SectionHeader, ServiceShowcaseCard } from '@/components/ui/commerce'
+import { MediaBlend } from '@/components/ui/illustrations'
 import { IMG } from '@/lib/image-placeholders'
+
+const SERVICE_BLURBS: Record<string, string> = {
+  'general-decluttering': 'Clear clutter room by room with a proven system tailored to your home.',
+  'whole-house-organizing': 'Full-home transformation — every room sorted, labelled, and sustainable.',
+  'moving-house': 'Pack, unpack, and settle in faster with stress-free move support.',
+}
+
+const FEATURED_SERVICES = SERVICES.slice(0, 3)
 
 export default function ServicesStrip() {
   return (
-    <section className="bg-surface py-16 md:py-20 border-t border-dark/8">
+    <section className="glass-grid-bg section-blend section-blend-top section-from-dark section-scoop-top py-14 md:py-20">
       <div className="max-w-7xl mx-auto px-4 lg:px-8">
-        <div className="flex flex-col lg:flex-row gap-12 items-start">
-          <div className="lg:max-w-sm flex-shrink-0">
-            <p className="section-label-dark mb-4">Our Services</p>
-            <h2 className="text-dark mb-8 leading-tight">
-              <span className="head-sans text-4xl lg:text-5xl block">Everything you need</span>
-              <span className="head-sans text-4xl lg:text-5xl block">for a</span>
-              <span className="head-serif italic text-4xl lg:text-5xl text-accent block">tidy space.</span>
-            </h2>
-            <div className="flex flex-wrap gap-2">
-              {SERVICES.map((s) => (
-                <Link
-                  key={s.slug}
-                  href={`/services/${s.slug}`}
-                  className="inline-flex items-center px-3.5 py-1.5 rounded-full text-xs font-medium border border-dark/12 bg-white text-dark/75 shadow-sm hover:bg-primary hover:border-primary hover:text-white transition-colors duration-150"
-                >
-                  {s.title}
-                </Link>
-              ))}
-            </div>
-          </div>
+        <SectionHeader
+          label="Our services"
+          title="Everything you need"
+          titleAccent="for a tidy space"
+          description="Professional organizing across Nairobi — friendly cartoon-guided process, real results in your home."
+          action={{ label: 'All services', href: '/services' }}
+        />
 
-          <div className="flex-1">
-            <Link
-              href="/services/whole-house-organizing"
-              className="group block bg-white border border-dark/10 rounded-3xl p-6 shadow-sm relative overflow-hidden hover:border-primary/25 hover:shadow-md transition-all duration-200"
-            >
-              <div className="flex gap-3 mb-6">
-                <div className="relative h-48 flex-1 rounded-2xl overflow-hidden">
-                  <Image
-                    src={IMG.services.beforeAfter1}
-                    alt="Before organizing"
-                    fill
-                    className="object-cover transition-transform duration-500 group-hover:scale-[1.02]"
-                    sizes="300px"
-                  />
-                </div>
-                <div className="flex flex-col gap-3 w-28">
-                  <div className="relative h-24 rounded-2xl overflow-hidden">
-                    <Image
-                      src={IMG.services.beforeAfter2}
-                      alt="After organizing"
-                      fill
-                      className="object-cover transition-transform duration-500 group-hover:scale-[1.02]"
-                      sizes="112px"
-                    />
-                  </div>
-                  <div className="relative h-24 rounded-2xl overflow-hidden">
-                    <Image
-                      src={IMG.services.beforeAfter3}
-                      alt="Organized space"
-                      fill
-                      className="object-cover transition-transform duration-500 group-hover:scale-[1.02]"
-                      sizes="112px"
-                    />
-                  </div>
-                </div>
-              </div>
-              <p className="text-dark/40 text-xs uppercase tracking-widest mb-1">Most Popular</p>
-              <p className="text-dark font-semibold text-lg group-hover:text-primary transition-colors">Whole House Organizing</p>
-              <p className="text-dark/50 text-sm mt-1">From KSh 15,000</p>
+        <MediaBlend
+          className="mb-12"
+          photo={IMG.services.beforeAfter1}
+          illustration={ILLUSTRATIONS.closetStudio}
+          photoAlt="Organized modern living room"
+          illustrationAlt="Organized closet and wardrobe"
+          photoPosition="left"
+        />
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-6 mb-10">
+          {FEATURED_SERVICES.map((service) => (
+            <ServiceShowcaseCard
+              key={service.slug}
+              title={service.title}
+              description={SERVICE_BLURBS[service.slug] ?? 'Professional organizing tailored to your space and lifestyle.'}
+              image={illustrationForService(service.slug)}
+              href={`/services/${service.slug}`}
+              priceFrom={`From ${formatPrice(service.priceFrom)}`}
+              illustration
+            />
+          ))}
+        </div>
+
+        <div className="flex flex-wrap gap-2 justify-center">
+          {SERVICES.map((s) => (
+            <Link key={s.slug} href={`/services/${s.slug}`} className="sfs-chip">
+              {s.title}
             </Link>
-          </div>
+          ))}
         </div>
       </div>
     </section>

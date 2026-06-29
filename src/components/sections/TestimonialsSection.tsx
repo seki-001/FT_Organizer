@@ -1,6 +1,7 @@
 import Image from 'next/image'
 import type { Testimonial } from '@/lib/types'
 import { IMG } from '@/lib/image-placeholders'
+import { clientAvatar } from '@/lib/avatars'
 
 const galleryImages = [
   {
@@ -25,7 +26,7 @@ const testimonials: Testimonial[] = [
     rating: 5,
     text: 'Incredible service! Faith and her team were punctual, courteous, and so thorough. My home feels like a completely different space. I cannot believe the transformation — every drawer, shelf and cabinet is now perfectly organized. Highly recommend!',
     service: 'Whole House Organizing',
-    avatar: IMG.avatars[0],
+    avatar: clientAvatar(0),
   },
   {
     id: '2',
@@ -34,18 +35,18 @@ const testimonials: Testimonial[] = [
     rating: 5,
     text: 'Amazing, quick and thorough. Faith understood exactly what I needed and delivered beyond my expectations. She reorganized my kitchen and home office in a single day. The systems she put in place are so intuitive — everything has a home now.',
     service: 'Home Organizing',
-    avatar: IMG.avatars[1],
+    avatar: clientAvatar(1),
   },
 ]
 
 export default function TestimonialsSection() {
   return (
-    <section className="flex flex-col lg:flex-row min-h-[60vh]">
-      <div className="lg:w-2/5 bg-dark p-8 lg:p-12 flex flex-col gap-4">
+    <section className="flex flex-col lg:flex-row min-h-[60vh] section-blend">
+      <div className="lg:w-2/5 bg-gradient-to-b from-dark via-dark to-dark/95 p-8 lg:p-12 flex flex-col gap-4">
         <p className="section-label text-white/40">Gallery</p>
         <div className="flex flex-col gap-3 flex-1">
           {galleryImages.slice(0, 2).map((img, i) => (
-            <div key={i} className="relative flex-1 min-h-[160px] rounded-2xl overflow-hidden img-zoom">
+            <div key={i} className="relative flex-1 min-h-[160px] img-frame-lg img-zoom ring-1 ring-white/20">
               <Image src={img.src} alt={img.alt} fill className="object-cover" sizes="40vw" />
               <div className="absolute inset-0 bg-gradient-to-t from-dark/50 to-transparent" />
               <p className="absolute bottom-3 left-4 text-white text-xs font-semibold">{img.caption}</p>
@@ -57,7 +58,7 @@ export default function TestimonialsSection() {
         </div>
       </div>
 
-      <div className="lg:w-3/5 bg-surface p-8 lg:p-16 flex flex-col justify-center">
+      <div className="lg:w-3/5 glass-grid-bg p-8 lg:p-16 flex flex-col justify-center bg-gradient-to-br from-[#F7F7F8] via-[#F9F9FA] to-[#F3F3F5]">
         <div className="mb-2">
           <p className="head-sans text-5xl text-dark leading-none">2.5k</p>
           <p className="head-serif italic text-5xl text-dark/70 leading-none">Reviews</p>
@@ -72,7 +73,7 @@ export default function TestimonialsSection() {
 
         <div className="flex flex-col gap-5">
           {testimonials.slice(0, 2).map((t) => (
-            <div key={t.id} className="bg-white rounded-2xl p-5 shadow-sm border border-dark/10">
+            <div key={t.id} className="glass-card p-5 flex flex-col gap-3">
               <div className="flex gap-0.5 mb-3">
                 {Array.from({ length: t.rating }).map((_, i) => (
                   <span key={i} className="text-accent text-sm">★</span>

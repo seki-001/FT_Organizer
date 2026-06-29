@@ -144,13 +144,13 @@ export default function PurchasesPage() {
 
       {/* List */}
       {filtered.length === 0 ? (
-        <div className="bg-white border border-dark/8 rounded-2xl p-16 text-center">
+        <div className="admin-card p-16 text-center">
           <Package size={36} className="text-dark/15 mx-auto mb-3" />
           <p className="text-dark/40 text-sm">No purchases recorded for {filterMonth}.</p>
         </div>
       ) : (
-        <div className="bg-white border border-dark/8 rounded-2xl overflow-hidden">
-          <div className="divide-y divide-dark/5">
+        <div className="admin-card overflow-hidden">
+          <div className="divide-y divide-[#ECEEF2]">
             {filtered.map(p => {
               const firstItem = p.items[0]
               return (

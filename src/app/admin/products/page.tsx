@@ -116,7 +116,7 @@ function DeleteDialog({
       onClick={onCancel}
     >
       <div
-        className="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6 flex flex-col gap-4"
+        className="admin-card shadow-2xl max-w-sm w-full p-6 flex flex-col gap-4"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-start gap-3">
@@ -291,7 +291,7 @@ export default function AdminProductsPage() {
             { label: 'Low Stock',      count: lowStockCount,     color: 'text-amber-600'      },
             { label: 'Out of Stock',   count: outOfStockCount,   color: 'text-danger'         },
           ].map(({ label, count, color }) => (
-            <div key={label} className="bg-white rounded-xl border border-dark/8 shadow-sm p-4 text-center">
+            <div key={label} className="admin-card p-4 text-center">
               <p className={cn('font-display text-2xl font-bold', color)}>{count}</p>
               <p className="text-dark/50 text-xs mt-0.5">{label}</p>
             </div>
@@ -341,7 +341,7 @@ export default function AdminProductsPage() {
         )}
 
         {/* Filters */}
-        <div className="bg-white rounded-xl border border-dark/8 shadow-sm p-4 flex flex-col sm:flex-row gap-3">
+        <div className="admin-card p-4 flex flex-col sm:flex-row gap-3">
           <div className="relative flex-1 min-w-0">
             <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-dark/35 pointer-events-none" aria-hidden="true" />
             <input
@@ -383,11 +383,11 @@ export default function AdminProductsPage() {
         </div>
 
         {/* Table */}
-        <div className="bg-white rounded-xl border border-dark/8 shadow-sm overflow-hidden">
+        <div className="admin-card overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-sm min-w-[900px]">
               <thead>
-                <tr className="border-b border-dark/8 bg-muted/30">
+                <tr className="border-b border-[#ECEEF2] bg-muted/30">
                   <th className="px-4 py-3 w-10">
                     <input
                       ref={selectAllRef}

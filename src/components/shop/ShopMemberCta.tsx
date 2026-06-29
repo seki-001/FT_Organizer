@@ -46,7 +46,7 @@ export default function ShopMemberCta({ variant = 'banner', className }: ShopMem
   if (variant === 'card') {
     return (
       <div className={cn(
-        'rounded-2xl border border-primary/20 bg-gradient-to-br from-primary/[0.07] via-white to-white p-5 flex flex-col gap-4',
+        'glass-panel-light rounded-3xl p-5 flex flex-col gap-4 border border-primary/15',
         className,
       )}>
         <div>

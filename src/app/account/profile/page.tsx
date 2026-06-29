@@ -1,11 +1,13 @@
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { CheckCircle2, Loader2, Eye, EyeOff } from 'lucide-react'
 import { useAuth } from '@/context/AuthContext'
+import { clientAvatarForUser } from '@/lib/avatars'
 
 // ─── Schemas ──────────────────────────────────────────────────────────────────
 
@@ -126,10 +128,24 @@ export default function AccountProfilePage() {
 
   return (
     <div className="flex flex-col gap-8 max-w-xl">
-      <h1 className="font-display text-2xl font-bold text-dark">My Profile</h1>
+      <div className="flex items-center gap-4">
+        <div className="w-14 h-14 rounded-full overflow-hidden flex-shrink-0 bg-white border border-white/80 shadow-sm">
+          <Image
+            src={clientAvatarForUser(session?.user.email ?? session?.user.name ?? 'guest')}
+            alt=""
+            width={56}
+            height={56}
+            className="w-full h-full object-cover"
+          />
+        </div>
+        <div>
+          <h1 className="font-display text-2xl font-bold text-dark">My Profile</h1>
+          <p className="text-dark/50 text-sm">{session?.user.email}</p>
+        </div>
+      </div>
 
       {/* ── Profile details ─────────────────────────────────────────────── */}
-      <section className="bg-white rounded-2xl border border-dark/8 shadow-sm p-6 flex flex-col gap-5">
+      <section className="glass-card p-6 flex flex-col gap-5">
         <h2 className="font-semibold text-dark">Personal Details</h2>
 
         <form onSubmit={handleProfile(onSaveProfile)} className="flex flex-col gap-4">
@@ -201,7 +217,7 @@ export default function AccountProfilePage() {
       </section>
 
       {/* ── Password ────────────────────────────────────────────────────── */}
-      <section className="bg-white rounded-2xl border border-dark/8 shadow-sm p-6 flex flex-col gap-5">
+      <section className="glass-card p-6 flex flex-col gap-5">
         <h2 className="font-semibold text-dark">Change Password</h2>
 
         <form onSubmit={handlePw(onUpdatePassword)} className="flex flex-col gap-4">

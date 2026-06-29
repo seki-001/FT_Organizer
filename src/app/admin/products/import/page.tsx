@@ -192,10 +192,10 @@ export default function ProductImportPage() {
           {/* Product list preview */}
           {result.products.length > 0 && (
             <div className="border border-dark/10 rounded-xl overflow-hidden">
-              <div className="bg-muted px-4 py-3 border-b border-dark/8">
+              <div className="bg-muted px-4 py-3 border-b border-[#ECEEF2]">
                 <p className="text-sm font-semibold text-dark">Imported Products ({result.products.length})</p>
               </div>
-              <div className="divide-y divide-dark/5 max-h-80 overflow-y-auto">
+              <div className="divide-y divide-[#ECEEF2] max-h-80 overflow-y-auto">
                 {result.products.map((p, i) => (
                   <div key={i} className="px-4 py-3 flex items-center justify-between">
                     <div>

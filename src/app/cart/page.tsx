@@ -3,7 +3,9 @@
 import { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { Trash2, Minus, Plus, ShoppingCart, Lock, Shield, Tag } from 'lucide-react'
+import { Trash2, Minus, Plus, Lock, Shield, Tag } from 'lucide-react'
+import { IllustrationSpot } from '@/components/ui/illustrations'
+import { ILLUSTRATIONS } from '@/lib/illustrations'
 import { useCart } from '@/context/CartContext'
 import { formatPrice, cn } from '@/lib/utils'
 
@@ -125,15 +127,16 @@ export default function CartPage() {
     return (
       <main>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 flex flex-col items-center text-center gap-6">
-          <ShoppingCart size={64} className="text-dark/15" aria-hidden="true" />
+          <IllustrationSpot
+            src={ILLUSTRATIONS.closetStudio}
+            alt="Empty cart illustration"
+            size="lg"
+          />
           <div>
             <h1 className="font-display text-3xl text-dark mb-2">Your cart is empty</h1>
-            <p className="text-dark/50">Add some products to get started.</p>
+            <p className="text-dark/50">Add some organizing products to get started.</p>
           </div>
-          <Link
-            href="/shop"
-            className="bg-primary hover:bg-primary/90 text-white font-medium px-8 py-3 rounded-lg transition-colors duration-200 min-h-[44px] flex items-center"
-          >
+          <Link href="/shop" className="sfs-btn-primary px-8">
             Start Shopping
           </Link>
         </div>
@@ -156,7 +159,7 @@ export default function CartPage() {
 
           {/* LEFT — Cart items */}
           <div className="lg:col-span-2">
-            <div className="bg-white rounded-2xl border border-dark/8 px-4 sm:px-6">
+            <div className="bg-white/60 backdrop-blur-xl rounded-2xl border border-white/70 px-4 sm:px-6 shadow-sfs-sm">
               {items.map((item) => (
                 <CartItemRow key={`${item.product.id}-${item.variant?.id ?? 'no-variant'}`} item={item} />
               ))}
@@ -173,7 +176,7 @@ export default function CartPage() {
 
           {/* RIGHT — Order summary */}
           <div className="flex flex-col gap-5">
-            <div className="bg-white rounded-2xl border border-dark/8 p-6 flex flex-col gap-4">
+            <div className="glass-panel-light rounded-2xl p-6 flex flex-col gap-4">
               <h2 className="font-display text-xl text-dark">Order Summary</h2>
 
               {/* Line items */}

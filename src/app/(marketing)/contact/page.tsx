@@ -49,7 +49,7 @@ export default function ContactPage() {
               <a
                 key={item.label}
                 href={item.href}
-                className="flex items-start gap-4 p-5 rounded-2xl bg-white/4 border border-white/8 hover:border-white/15 transition-colors group"
+                className="flex items-start gap-4 p-5 rounded-2xl glass-card-dark hover:border-white/20 transition-colors group"
               >
                 <div className="w-10 h-10 rounded-xl bg-primary/15 flex items-center justify-center flex-shrink-0">
                   <item.icon size={18} className="text-primary" />

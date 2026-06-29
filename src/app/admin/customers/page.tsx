@@ -63,7 +63,7 @@ export default function CustomersPage() {
 
       {/* Stats */}
       <div className="grid grid-cols-3 gap-4">
-        <div className="bg-white border border-dark/8 rounded-2xl p-5">
+        <div className="admin-card p-5">
           <p className="text-xs text-dark/40 uppercase tracking-wider mb-1">Total Customers</p>
           <p className="text-3xl font-bold text-dark">{list.length}</p>
         </div>
@@ -71,7 +71,7 @@ export default function CustomersPage() {
           <p className="text-xs text-danger/70 uppercase tracking-wider mb-1 flex items-center gap-1"><TrendingUp size={11} /> Total Owed to Us</p>
           <p className="text-3xl font-bold text-danger">{formatPrice(totalDebt)}</p>
         </div>
-        <div className="bg-white border border-dark/8 rounded-2xl p-5">
+        <div className="admin-card p-5">
           <p className="text-xs text-dark/40 uppercase tracking-wider mb-1">With Outstanding Debt</p>
           <p className="text-3xl font-bold text-dark">{list.filter(c => c.creditBalance > 0).length}</p>
         </div>
@@ -109,13 +109,13 @@ export default function CustomersPage() {
 
       {/* List */}
       {filtered.length === 0 ? (
-        <div className="bg-white border border-dark/8 rounded-2xl p-16 text-center">
+        <div className="admin-card p-16 text-center">
           <User size={36} className="text-dark/15 mx-auto mb-3" />
           <p className="text-dark/40 text-sm">{search ? 'No results' : 'No customers yet — add your first customer above.'}</p>
         </div>
       ) : (
-        <div className="bg-white border border-dark/8 rounded-2xl overflow-hidden">
-          <div className="divide-y divide-dark/5">
+        <div className="admin-card overflow-hidden">
+          <div className="divide-y divide-[#ECEEF2]">
             {filtered.map(c => (
               <div key={c.id} className="px-5 py-4 flex items-center gap-4">
                 <div className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold flex-shrink-0">{c.name[0].toUpperCase()}</div>
@@ -148,7 +148,7 @@ export default function CustomersPage() {
       {/* Modals */}
       {payModal && (
         <div className="fixed inset-0 bg-dark/40 z-50 flex items-center justify-center p-4" onClick={() => setPayModal(null)}>
-          <div className="bg-white rounded-2xl p-6 w-full max-w-sm space-y-4" onClick={e => e.stopPropagation()}>
+          <div className="admin-card p-6 w-full max-w-sm space-y-4" onClick={e => e.stopPropagation()}>
             <h3 className="font-bold text-dark">Record Payment</h3>
             <p className="text-sm text-dark/50">{payModal.c.name} owes <strong className="text-danger">{formatPrice(payModal.c.creditBalance)}</strong></p>
             <div>
@@ -165,7 +165,7 @@ export default function CustomersPage() {
       )}
       {debtModal && (
         <div className="fixed inset-0 bg-dark/40 z-50 flex items-center justify-center p-4" onClick={() => setDebtModal(null)}>
-          <div className="bg-white rounded-2xl p-6 w-full max-w-sm space-y-4" onClick={e => e.stopPropagation()}>
+          <div className="admin-card p-6 w-full max-w-sm space-y-4" onClick={e => e.stopPropagation()}>
             <h3 className="font-bold text-dark">Add Credit Sale (Debt)</h3>
             <p className="text-sm text-dark/50">Customer: <strong>{debtModal.c.name}</strong></p>
             <div>

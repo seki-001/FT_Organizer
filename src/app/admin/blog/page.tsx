@@ -28,7 +28,7 @@ function catLabel(cat: string) {
 function DeleteDialog({ post, onConfirm, onCancel }: { post: AdminPost; onConfirm: () => void; onCancel: () => void }) {
   return (
     <div className="fixed inset-0 bg-dark/40 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={onCancel}>
-      <div className="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6 flex flex-col gap-4" onClick={e => e.stopPropagation()}>
+      <div className="admin-card shadow-2xl max-w-sm w-full p-6 flex flex-col gap-4" onClick={e => e.stopPropagation()}>
         <div className="flex items-start gap-3">
           <div className="w-10 h-10 rounded-full bg-danger/10 flex items-center justify-center flex-shrink-0">
             <Trash2 size={18} className="text-danger" />
@@ -95,7 +95,7 @@ export default function AdminBlogPage() {
             { label: 'Published', count: publishedCount, color: 'text-success' },
             { label: 'Drafts',    count: draftCount,     color: 'text-amber-600' },
           ].map(({ label, count, color }) => (
-            <div key={label} className="bg-white rounded-xl border border-dark/8 shadow-sm p-4 text-center">
+            <div key={label} className="admin-card p-4 text-center">
               <p className={cn('font-display text-2xl font-bold', color)}>{count}</p>
               <p className="text-dark/50 text-xs mt-0.5">{label}</p>
             </div>
@@ -103,7 +103,7 @@ export default function AdminBlogPage() {
         </div>
 
         {/* Filters */}
-        <div className="bg-white rounded-xl border border-dark/8 shadow-sm p-4 flex flex-wrap gap-3 items-center">
+        <div className="admin-card p-4 flex flex-wrap gap-3 items-center">
           <div className="relative flex-1 min-w-[180px]">
             <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-dark/35 pointer-events-none" />
             <input
@@ -138,11 +138,11 @@ export default function AdminBlogPage() {
         </div>
 
         {/* Table */}
-        <div className="bg-white rounded-xl border border-dark/8 shadow-sm overflow-hidden">
+        <div className="admin-card overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-sm min-w-[700px]">
               <thead>
-                <tr className="border-b border-dark/8 bg-muted/30">
+                <tr className="border-b border-[#ECEEF2] bg-muted/30">
                   {['Cover', 'Title', 'Category', 'Status', 'Date', 'Views', 'Actions'].map(h => (
                     <th key={h} className="text-left px-5 py-3 text-[11px] font-semibold text-dark/40 uppercase tracking-wide whitespace-nowrap">{h}</th>
                   ))}

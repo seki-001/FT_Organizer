@@ -24,16 +24,16 @@ export default function AdminPageHeader({ title, subtitle, action }: AdminPageHe
   const Icon = action?.icon ?? PlusCircle
 
   const buttonClass = cn(
-    'flex items-center gap-2 font-medium text-sm px-5 py-2.5 rounded-xl transition-all duration-200 flex-shrink-0 min-h-[40px] shadow-sm',
+    'flex items-center gap-2 font-medium text-sm px-4 py-2.5 rounded-lg transition-all duration-200 flex-shrink-0 min-h-[40px]',
     action?.variant === 'outline'
-      ? 'border border-dark/20 text-dark hover:border-primary hover:text-primary bg-white hover:shadow-md'
-      : 'bg-primary hover:bg-primary/90 text-white hover:shadow-md',
+      ? 'border border-[#ECEEF2] text-dark hover:border-primary/30 hover:text-primary bg-white'
+      : 'bg-primary hover:bg-primary/90 text-white',
   )
 
   return (
     <div className="flex items-start justify-between gap-4 mb-6">
       <div className="flex flex-col gap-1 min-w-0">
-        <h1 className="font-display text-2xl md:text-3xl text-dark font-bold leading-tight">
+        <h1 className="text-2xl md:text-[1.75rem] text-dark font-semibold leading-tight tracking-tight">
           {title}
         </h1>
         {subtitle && (

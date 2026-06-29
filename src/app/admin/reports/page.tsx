@@ -162,7 +162,7 @@ export default function ReportsPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Top Products */}
-        <div className="bg-white border border-dark/8 rounded-2xl p-5">
+        <div className="admin-card p-5">
           <h3 className="font-semibold text-dark mb-4 text-sm">Top Products by Revenue</h3>
           {data.topProducts.length === 0 ? (
             <p className="text-xs text-dark/30 py-4 text-center">No sales data yet</p>
@@ -189,7 +189,7 @@ export default function ReportsPage() {
         {/* Right column: Payment breakdown + Debtors */}
         <div className="space-y-4">
           {/* Sales by payment method */}
-          <div className="bg-white border border-dark/8 rounded-2xl p-5">
+          <div className="admin-card p-5">
             <h3 className="font-semibold text-dark mb-4 text-sm">Sales by Payment Method</h3>
             {Object.keys(data.paymentMap).length === 0 ? (
               <p className="text-xs text-dark/30 py-2 text-center">No sales data yet</p>
@@ -217,7 +217,7 @@ export default function ReportsPage() {
             {data.debtors.length === 0 ? (
               <p className="text-xs text-dark/30 py-2 text-center">No outstanding debts</p>
             ) : (
-              <div className="divide-y divide-dark/5">
+              <div className="divide-y divide-[#ECEEF2]">
                 {data.debtors.map(c => (
                   <div key={c.id} className="py-2 flex justify-between">
                     <span className="text-sm text-dark/70">{c.name}</span>
@@ -231,12 +231,12 @@ export default function ReportsPage() {
       </div>
 
       {/* P&L Summary Table */}
-      <div className="bg-white border border-dark/8 rounded-2xl overflow-hidden">
-        <div className="px-5 py-4 border-b border-dark/8">
+      <div className="admin-card overflow-hidden">
+        <div className="px-5 py-4 border-b border-[#ECEEF2]">
           <h3 className="font-semibold text-dark text-sm">Profit & Loss Summary — {monthLabel(month)}</h3>
         </div>
         <table className="w-full text-sm">
-          <tbody className="divide-y divide-dark/5">
+          <tbody className="divide-y divide-[#ECEEF2]">
             {[
               { label: 'Revenue (Sales)', value: data.revenue, bold: false, color: 'text-success' },
               { label: 'Less: Cost of Goods Sold', value: -data.cogs, bold: false, color: 'text-danger' },

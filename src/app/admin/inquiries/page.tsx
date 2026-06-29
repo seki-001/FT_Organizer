@@ -72,7 +72,7 @@ export default function AdminInquiriesPage() {
           Loading inquiries…
         </div>
       ) : inquiries.length === 0 ? (
-        <div className="bg-white rounded-2xl border border-dark/8 p-12 text-center">
+        <div className="admin-card p-12 text-center">
           <Inbox size={40} className="mx-auto text-dark/20 mb-3" />
           <p className="text-dark font-medium">No inquiries yet</p>
           <p className="text-dark/50 text-sm mt-1 max-w-sm mx-auto">
@@ -82,11 +82,11 @@ export default function AdminInquiriesPage() {
         </div>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-          <div className="lg:col-span-2 bg-white rounded-2xl border border-dark/8 overflow-hidden">
+          <div className="lg:col-span-2 admin-card overflow-hidden">
             <div className="px-4 py-3 border-b border-dark/6 text-xs font-semibold uppercase tracking-wider text-dark/40">
               Inbox
             </div>
-            <ul className="divide-y divide-dark/5 max-h-[70vh] overflow-y-auto">
+            <ul className="divide-y divide-[#ECEEF2] max-h-[70vh] overflow-y-auto">
               {inquiries.map((item) => (
                 <li key={item.id}>
                   <button
@@ -106,7 +106,7 @@ export default function AdminInquiriesPage() {
           </div>
 
           {selected && (
-            <div className="lg:col-span-3 bg-white rounded-2xl border border-dark/8 p-6 flex flex-col gap-5">
+            <div className="lg:col-span-3 admin-card p-6 flex flex-col gap-5">
               <div>
                 <p className="text-[10px] uppercase tracking-widest text-dark/40 font-semibold mb-1">Subject</p>
                 <h2 className="font-display text-xl text-dark">{selected.subject}</h2>
@@ -139,7 +139,7 @@ export default function AdminInquiriesPage() {
                 </a>
               </div>
 
-              <div className="bg-surface rounded-xl p-4 border border-dark/8">
+              <div className="bg-surface rounded-xl p-4 border border-[#ECEEF2]">
                 <p className="text-sm text-dark/80 leading-relaxed whitespace-pre-wrap">{selected.message}</p>
               </div>
             </div>

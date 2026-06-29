@@ -9,7 +9,7 @@ export default function MediaFeaturesSection() {
   const { ref, isInView } = useScrollAnimation({ amount: 0.2 })
 
   return (
-    <section className="bg-dark border-t border-white/5 py-12">
+    <section className="bg-dark py-12 section-blend">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.p
           ref={ref}

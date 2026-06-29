@@ -3,15 +3,19 @@ import { Instagram } from 'lucide-react'
 import { COMPANY, SERVICES, SHOP_CATEGORIES } from '@/lib/constants'
 import PaymentTrustBadges from '@/components/payments/PaymentTrustBadges'
 import BrandLogo from '@/components/brand/BrandLogo'
+import { NewsletterBand } from '@/components/ui/commerce'
+import { GlassPanel } from '@/components/ui/glass'
 
 export default function Footer() {
   return (
-    <footer className="bg-dark border-t border-white/6 pt-16 pb-8">
-      <div className="max-w-7xl mx-auto px-4 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-10 mb-14">
-          <div className="md:col-span-1">
+    <>
+      <NewsletterBand />
+      <footer className="bg-dark glass-grid-footer pt-16 pb-8 relative overflow-hidden">
+      <div className="max-w-7xl mx-auto px-4 lg:px-8 relative z-10">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-14">
+          <GlassPanel tone="dark" className="md:col-span-1 p-6">
             <BrandLogo variant="on-dark" className="h-12 sm:h-14 mb-4" href="/" />
-            <p className="text-white/40 text-sm leading-relaxed mb-5">
+            <p className="text-white/50 text-sm leading-relaxed mb-5">
               Nairobi&apos;s premier home & office organizing service — from clutter to calm.
             </p>
             <div className="flex items-center gap-3">
@@ -20,89 +24,67 @@ export default function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Instagram"
-                className="w-9 h-9 rounded-full bg-white/8 border border-white/12 flex items-center justify-center text-white/50 hover:bg-white/15 hover:text-white transition-all"
+                className="glass-icon-btn glass-icon-btn-dark"
               >
                 <Instagram size={15} />
               </a>
             </div>
-          </div>
+          </GlassPanel>
 
-          <div>
-            <p className="section-label text-white/30 mb-5">Services</p>
-            <ul className="flex flex-col gap-2.5">
-              {SERVICES.slice(0, 6).map((s) => (
-                <li key={s.slug}>
-                  <Link
-                    href={`/services/${s.slug}`}
-                    className="text-white/50 text-sm hover:text-white transition-colors"
-                  >
-                    {s.title}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div>
-            <p className="section-label text-white/30 mb-5">Shop</p>
-            <ul className="flex flex-col gap-2.5">
-              {SHOP_CATEGORIES.slice(0, 10).map((c) => (
-                <li key={c.slug}>
-                  <Link
-                    href={`/shop?category=${c.slug}`}
-                    className="text-white/50 text-sm hover:text-white transition-colors"
-                  >
-                    {c.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div>
-            <p className="section-label text-white/30 mb-5">Company</p>
-            <ul className="flex flex-col gap-2.5">
-              {[
+          {[
+            { label: 'Services', items: SERVICES.slice(0, 6).map((s) => ({ label: s.title, href: `/services/${s.slug}` })) },
+            { label: 'Shop', items: SHOP_CATEGORIES.slice(0, 10).map((c) => ({ label: c.label, href: `/shop?category=${c.slug}` })) },
+            {
+              label: 'Company',
+              items: [
                 { label: 'About', href: '/about' },
                 { label: 'Blog', href: '/blog' },
                 { label: 'Contact', href: '/contact' },
                 { label: 'Book a Service', href: '/book' },
                 { label: 'FAQ', href: '/faq' },
-              ].map((l) => (
-                <li key={l.href}>
-                  <Link href={l.href} className="text-white/50 text-sm hover:text-white transition-colors">
-                    {l.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
+              ],
+            },
+          ].map((col) => (
+            <GlassPanel key={col.label} tone="dark" className="p-6">
+              <p className="section-label text-white/40 mb-4">{col.label}</p>
+              <ul className="flex flex-col gap-2.5">
+                {col.items.map((item) => (
+                  <li key={item.href}>
+                    <Link href={item.href} className="text-white/55 text-sm hover:text-white transition-colors">
+                      {item.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </GlassPanel>
+          ))}
         </div>
 
-        <div className="border-t border-white/6 pt-6 flex flex-col gap-6">
+        <GlassPanel tone="dark" rounded="2xl" className="p-6 flex flex-col gap-6">
           <PaymentTrustBadges variant="dark" />
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
-          <p className="text-white/25 text-xs">
-            © {new Date().getFullYear()} Faith The Organizer. All rights reserved.
-          </p>
-          <div className="flex items-center gap-5">
-            {[
-              { label: 'Privacy', href: '/privacy-policy' },
-              { label: 'Terms', href: '/terms-and-conditions' },
-              { label: 'Shipping & Returns', href: '/shipping-and-returns' },
-            ].map((l) => (
-              <Link
-                key={l.href}
-                href={l.href}
-                className="text-white/25 text-xs hover:text-white/50 transition-colors"
-              >
-                {l.label}
-              </Link>
-            ))}
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 border-t border-white/10 pt-4">
+            <p className="text-white/30 text-xs">
+              © {new Date().getFullYear()} Faith The Organizer. All rights reserved.
+            </p>
+            <div className="flex items-center gap-5">
+              {[
+                { label: 'Privacy', href: '/privacy-policy' },
+                { label: 'Terms', href: '/terms-and-conditions' },
+                { label: 'Shipping & Returns', href: '/shipping-and-returns' },
+              ].map((l) => (
+                <Link
+                  key={l.href}
+                  href={l.href}
+                  className="text-white/35 text-xs hover:text-white/60 transition-colors"
+                >
+                  {l.label}
+                </Link>
+              ))}
+            </div>
           </div>
-          </div>
-        </div>
+        </GlassPanel>
       </div>
     </footer>
+    </>
   )
 }

@@ -23,7 +23,7 @@ function Toggle({ checked, onChange }: { checked: boolean; onChange: (v: boolean
 function DeleteDialog({ coupon, onConfirm, onCancel }: { coupon: Coupon; onConfirm: () => void; onCancel: () => void }) {
   return (
     <div className="fixed inset-0 bg-dark/40 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={onCancel}>
-      <div className="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6 flex flex-col gap-4" onClick={e => e.stopPropagation()}>
+      <div className="admin-card shadow-2xl max-w-sm w-full p-6 flex flex-col gap-4" onClick={e => e.stopPropagation()}>
         <div className="flex items-start gap-3">
           <div className="w-10 h-10 rounded-full bg-danger/10 flex items-center justify-center flex-shrink-0"><Trash2 size={18} className="text-danger" /></div>
           <div>
@@ -81,10 +81,10 @@ function CouponModal({ coupon, onSave, onClose, isSaving }: ModalProps) {
 
   return (
     <div className="fixed inset-0 bg-dark/40 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={onClose}>
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md flex flex-col max-h-[90vh]" onClick={e => e.stopPropagation()}>
+      <div className="admin-card shadow-2xl w-full max-w-md flex flex-col max-h-[90vh]" onClick={e => e.stopPropagation()}>
 
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-dark/8 flex-shrink-0">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-[#ECEEF2] flex-shrink-0">
           <h2 className="font-semibold text-dark">{isEdit ? 'Edit Coupon' : 'Create Coupon'}</h2>
           <button onClick={onClose} className="w-8 h-8 flex items-center justify-center rounded-lg text-dark/40 hover:text-dark hover:bg-muted transition-colors"><X size={16} /></button>
         </div>
@@ -179,7 +179,7 @@ function CouponModal({ coupon, onSave, onClose, isSaving }: ModalProps) {
           </div>
 
           {/* Footer */}
-          <div className="flex gap-3 px-6 py-4 border-t border-dark/8 flex-shrink-0">
+          <div className="flex gap-3 px-6 py-4 border-t border-[#ECEEF2] flex-shrink-0">
             <button type="button" onClick={onClose}
               className="flex-1 px-4 py-2.5 border border-dark/15 text-dark text-sm font-medium rounded-lg hover:bg-muted transition-colors">
               Cancel
@@ -279,7 +279,7 @@ export default function AdminCouponsPage() {
             { label: 'Active',   count: activeCount,                        color: 'text-success' },
             { label: 'Inactive', count: coupons.length - activeCount,       color: 'text-dark/40' },
           ].map(({ label, count, color }) => (
-            <div key={label} className="bg-white rounded-xl border border-dark/8 shadow-sm p-4 text-center">
+            <div key={label} className="admin-card p-4 text-center">
               <p className={cn('font-display text-2xl font-bold', color)}>{count}</p>
               <p className="text-dark/50 text-xs mt-0.5">{label}</p>
             </div>
@@ -287,11 +287,11 @@ export default function AdminCouponsPage() {
         </div>
 
         {/* Table */}
-        <div className="bg-white rounded-xl border border-dark/8 shadow-sm overflow-hidden">
+        <div className="admin-card overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-sm min-w-[700px]">
               <thead>
-                <tr className="border-b border-dark/8 bg-muted/30">
+                <tr className="border-b border-[#ECEEF2] bg-muted/30">
                   {['Code', 'Type', 'Value', 'Min Order', 'Uses', 'Expires', 'Active', 'Actions'].map(h => (
                     <th key={h} className="text-left px-5 py-3 text-[11px] font-semibold text-dark/40 uppercase tracking-wide whitespace-nowrap">{h}</th>
                   ))}

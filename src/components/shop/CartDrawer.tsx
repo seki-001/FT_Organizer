@@ -7,6 +7,8 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { X, Minus, Plus, ShoppingBag, Trash2 } from 'lucide-react'
 import { useCart } from '@/context/CartContext'
 import { formatPrice } from '@/lib/utils'
+import { IllustrationSpot } from '@/components/ui/illustrations'
+import { ILLUSTRATIONS } from '@/lib/illustrations'
 
 export default function CartDrawer() {
   const { items, totalItems, totalPrice, isCartOpen, closeCart, removeItem, updateQuantity } = useCart()
@@ -48,7 +50,7 @@ export default function CartDrawer() {
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
             transition={{ type: 'tween', duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
-            className="fixed right-0 top-0 h-full w-full max-w-sm sm:max-w-md bg-white shadow-2xl z-50 flex flex-col"
+            className="fixed right-0 top-0 h-full w-full max-w-sm sm:max-w-md glass-panel-light z-50 flex flex-col border-l border-white/50"
             role="dialog"
             aria-modal="true"
             aria-label="Shopping cart"
@@ -78,9 +80,11 @@ export default function CartDrawer() {
             <div className="flex-1 overflow-y-auto px-5 py-4">
               {items.length === 0 ? (
                 <div className="flex flex-col items-center justify-center h-full gap-5 text-center py-16">
-                  <div className="w-20 h-20 rounded-2xl bg-muted flex items-center justify-center">
-                    <ShoppingBag size={32} className="text-dark/20" aria-hidden="true" />
-                  </div>
+                  <IllustrationSpot
+                    src={ILLUSTRATIONS.closetStudio}
+                    alt="Empty cart"
+                    size="sm"
+                  />
                   <div>
                     <p className="font-display text-xl text-dark">Your cart is empty</p>
                     <p className="text-dark/50 text-sm mt-1">Add products to get started</p>
@@ -88,7 +92,7 @@ export default function CartDrawer() {
                   <Link
                     href="/shop"
                     onClick={closeCart}
-                    className="bg-dark hover:bg-dark/80 text-white text-sm font-medium px-6 py-3 rounded-xl transition-colors"
+                    className="sfs-btn-primary text-sm px-6"
                   >
                     Browse Products
                   </Link>
@@ -188,7 +192,7 @@ export default function CartDrawer() {
                   <Link
                     href="/checkout?mode=account"
                     onClick={closeCart}
-                    className="flex items-center justify-center w-full bg-primary hover:bg-primary/90 text-white font-semibold py-3.5 rounded-xl transition-colors text-sm shadow-sm shadow-primary/20"
+                    className="flex items-center justify-center w-full sfs-btn-primary py-3.5 text-sm shadow-sm shadow-primary/20"
                   >
                     Create Account &amp; Checkout
                   </Link>

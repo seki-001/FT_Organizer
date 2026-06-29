@@ -19,12 +19,14 @@ import PaymentTrustBadges from '@/components/payments/PaymentTrustBadges'
 import ShopMemberCta from '@/components/shop/ShopMemberCta'
 import type { ProductVariant } from '@/lib/types'
 
+import { clientAvatar } from '@/lib/avatars'
+
 // ─── Mock reviews ─────────────────────────────────────────────────────────────
 
 const MOCK_REVIEWS = [
-  { id: 'r1', author: 'Amina K.',    date: '2024-11-10', rating: 5, title: 'Exactly what I needed',  body: 'Great quality and arrived quickly. Really transformed my kitchen — everything has a place now!',   verified: true  },
-  { id: 'r2', author: 'Brian M.',    date: '2024-10-22', rating: 4, title: 'Good value',              body: 'Sturdy and well-made. Took a few minutes to set up but very happy with the result.',              verified: true  },
-  { id: 'r3', author: "Carol W.",    date: '2024-09-05', rating: 5, title: 'Would buy again',         body: "Bought this on Faith's recommendation. Does exactly what it says. Highly recommend.",            verified: false },
+  { id: 'r1', author: 'Amina K.',    date: '2024-11-10', rating: 5, title: 'Exactly what I needed',  body: 'Great quality and arrived quickly. Really transformed my kitchen — everything has a place now!',   verified: true,  avatar: clientAvatar(0) },
+  { id: 'r2', author: 'Brian M.',    date: '2024-10-22', rating: 4, title: 'Good value',              body: 'Sturdy and well-made. Took a few minutes to set up but very happy with the result.',              verified: true,  avatar: clientAvatar(1) },
+  { id: 'r3', author: "Carol W.",    date: '2024-09-05', rating: 5, title: 'Would buy again',         body: "Bought this on Faith's recommendation. Does exactly what it says. Highly recommend.",            verified: false, avatar: clientAvatar(2) },
 ]
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -76,7 +78,7 @@ function ReviewModal({ onClose }: { onClose: () => void }) {
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.95, opacity: 0 }}
         transition={{ duration: 0.2 }}
-        className="bg-white rounded-3xl shadow-xl w-full max-w-lg p-6 sm:p-8 flex flex-col gap-5"
+        className="glass-panel-light rounded-3xl shadow-xl w-full max-w-lg p-6 sm:p-8 flex flex-col gap-5"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between">
@@ -292,7 +294,7 @@ export default function ProductPage() {
             </div>
 
             {/* RIGHT — Product info (sticky on desktop) ────────────── */}
-            <div className="flex flex-col gap-5 lg:sticky lg:top-24 lg:self-start bg-white rounded-3xl border border-dark/8 p-5 sm:p-7 shadow-sm">
+            <div className="flex flex-col gap-5 lg:sticky lg:top-24 lg:self-start glass-panel-light rounded-3xl p-5 sm:p-7">
 
               {/* Category + name */}
               <div className="flex flex-col gap-2">
@@ -405,7 +407,7 @@ export default function ProductPage() {
               {product.inStock && (
                 <div className="flex flex-col gap-2">
                   <p className="text-sm font-medium text-dark">Quantity</p>
-                  <div className="flex items-center w-fit bg-white rounded-xl border-2 border-dark/15 overflow-hidden shadow-sm">
+                  <div className="flex items-center w-fit glass-panel-light rounded-xl overflow-hidden">
                     <button type="button"
                       onClick={() => setQuantity((q) => Math.max(1, q - 1))}
                       disabled={quantity <= 1}
@@ -512,7 +514,7 @@ export default function ProductPage() {
           </div>
 
           {/* 3. TABBED DETAILS ──────────────────────────────────────────── */}
-          <div className="mt-12 sm:mt-16 bg-white rounded-3xl border border-dark/8 p-5 sm:p-8 shadow-sm">
+          <div className="mt-12 sm:mt-16 glass-panel-light rounded-3xl p-5 sm:p-8">
 
             {/* Tab bar */}
             <div className="flex border-b border-dark/10 mb-8" role="tablist">
@@ -611,7 +613,7 @@ export default function ProductPage() {
                       {/* Review cards */}
                       <div className="lg:col-span-2 flex flex-col gap-5">
                         {MOCK_REVIEWS.map((review) => (
-                          <article key={review.id} className="bg-white rounded-2xl border border-dark/8 p-5 flex flex-col gap-3">
+                          <article key={review.id} className="glass-card p-5 flex flex-col gap-3">
                             <div className="flex items-start justify-between gap-4 flex-wrap">
                               <div className="flex flex-col gap-1">
                                 <StarRow rating={review.rating} size={14} />
@@ -624,7 +626,12 @@ export default function ProductPage() {
                               )}
                             </div>
                             <p className="text-dark/70 text-sm leading-relaxed">{review.body}</p>
-                            <p className="text-dark/40 text-xs">{review.author} &middot; {formatReviewDate(review.date)}</p>
+                            <div className="flex items-center gap-2.5 pt-1">
+                              <div className="relative w-8 h-8 rounded-full overflow-hidden flex-shrink-0 bg-white border border-white/80">
+                                <Image src={review.avatar} alt="" width={32} height={32} className="object-cover w-full h-full" />
+                              </div>
+                              <p className="text-dark/40 text-xs">{review.author} &middot; {formatReviewDate(review.date)}</p>
+                            </div>
                           </article>
                         ))}
                       </div>

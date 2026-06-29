@@ -241,7 +241,7 @@ export default function BookingSlideOver({ booking, onClose, onStatusUpdate, onN
             aria-modal="true"
           >
             {/* ── Header ────────────────────────────────────────────────── */}
-            <div className="flex items-center justify-between gap-3 px-5 py-4 border-b border-dark/8 flex-shrink-0">
+            <div className="flex items-center justify-between gap-3 px-5 py-4 border-b border-[#ECEEF2] flex-shrink-0">
               <div className="min-w-0">
                 <p className="font-mono text-xs font-bold text-dark tracking-wider">{booking.id}</p>
                 <p className="text-xs text-dark/40 mt-0.5">

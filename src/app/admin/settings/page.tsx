@@ -8,8 +8,8 @@ export const metadata: Metadata = { title: 'Settings | FTO Admin' }
 
 function SettingsCard({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="bg-white rounded-xl border border-dark/8 shadow-sm overflow-hidden">
-      <div className="px-6 py-4 border-b border-dark/8">
+    <div className="admin-card overflow-hidden">
+      <div className="px-6 py-4 border-b border-[#ECEEF2]">
         <h2 className="font-semibold text-dark text-sm">{title}</h2>
       </div>
       <div className="p-6">{children}</div>
@@ -21,7 +21,7 @@ function ReadonlyField({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex flex-col gap-1.5">
       <p className="text-xs font-medium text-dark/50 uppercase tracking-wide">{label}</p>
-      <p className="text-sm text-dark bg-muted px-4 py-2.5 rounded-lg border border-dark/8">
+      <p className="text-sm text-dark bg-muted px-4 py-2.5 rounded-lg border border-[#ECEEF2]">
         {value}
       </p>
     </div>

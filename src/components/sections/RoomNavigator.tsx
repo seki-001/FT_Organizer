@@ -8,42 +8,44 @@ import { staggerContainer, staggerItem, EASE_STANDARD } from '@/lib/animations'
 
 // ─── Room data ────────────────────────────────────────────────────────────────
 
+import { IMG } from '@/lib/image-placeholders'
+
 const ROOMS = [
   {
     label:        'Kitchen',
     serviceSlug:  'general-decluttering',
     serviceCount: 3,
-    image:        '/images/rooms/kitchen.jpg',
+    image:        IMG.rooms.kitchen,
   },
   {
     label:        'Living Room',
     serviceSlug:  'whole-house-organizing',
     serviceCount: 4,
-    image:        '/images/rooms/living-room.jpg',
+    image:        IMG.rooms.livingRoom,
   },
   {
     label:        'Bedroom',
     serviceSlug:  'shelving-and-storage',
     serviceCount: 3,
-    image:        '/images/rooms/bedroom.jpg',
+    image:        IMG.rooms.bedroom,
   },
   {
     label:        'Home Office',
     serviceSlug:  'office-organizing',
     serviceCount: 2,
-    image:        '/images/rooms/home-office.jpg',
+    image:        IMG.rooms.office,
   },
   {
     label:        'Moving Home',
     serviceSlug:  'moving-house',
     serviceCount: 3,
-    image:        '/images/rooms/moving.jpg',
+    image:        IMG.rooms.moving,
   },
   {
     label:        'Whole Home',
     serviceSlug:  'whole-house-organizing',
     serviceCount: 5,
-    image:        '/images/rooms/whole-home.jpg',
+    image:        IMG.rooms.wholeHome,
   },
 ]
 
@@ -101,7 +103,7 @@ function RoomCard({ room }: { room: typeof ROOMS[0] }) {
       className="cursor-pointer group"
     >
       <Link href={`/services/${room.serviceSlug}`} className="block">
-        <div className="border border-dark/8 rounded-2xl overflow-hidden hover:border-primary/30 transition-colors duration-200 hover:shadow-md transition-shadow">
+        <div className="border border-white/50 rounded-3xl overflow-hidden hover:border-primary/25 transition-colors duration-200 hover:shadow-md transition-shadow glass-subtle">
 
           {/* Portrait image — 2:3 ratio */}
           <div className="relative img-zoom" style={{ aspectRatio: '2 / 3' }}>
@@ -115,7 +117,7 @@ function RoomCard({ room }: { room: typeof ROOMS[0] }) {
           </div>
 
           {/* Label area */}
-          <div className="bg-white px-4 py-3 border-t-0 group-hover:border-b-2 group-hover:border-b-primary transition-all duration-200">
+          <div className="glass-subtle px-4 py-3 group-hover:border-b-2 group-hover:border-b-primary transition-all duration-200">
             <p className="font-medium text-dark text-sm leading-snug">{room.label}</p>
             <p className="text-dark/40 text-xs mt-0.5">{room.serviceCount} services</p>
           </div>

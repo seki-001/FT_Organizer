@@ -11,17 +11,16 @@ import {
   UploadCloud, X, Plus, Trash2, Loader2, GripVertical, AlertCircle,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { SHOP_CATEGORIES } from '@/lib/constants'
+import { imagesForProduct } from '@/lib/product-images'
+import { CATEGORY_PICKER, PRODUCT_SHOT_PICKER } from '@/lib/site-image-picker'
+import SiteImagePicker from '@/components/admin/SiteImagePicker'
 import type { ProductCategory } from '@/lib/types'
 
-// ─── Categories ───────────────────────────────────────────────────────────────
-
-const CATEGORIES: { value: ProductCategory; label: string }[] = [
-  { value: 'kitchen-organization', label: 'Kitchen Organization' },
-  { value: 'closet-and-bedroom',   label: 'Closet & Bedroom'     },
-  { value: 'office-and-desk',      label: 'Office & Desk'        },
-  { value: 'storage-solutions',    label: 'Storage Solutions'    },
-  { value: 'bundles',              label: 'Bundles'               },
-]
+const CATEGORIES = SHOP_CATEGORIES.map((c) => ({
+  value: c.slug as ProductCategory,
+  label: c.label,
+}))
 
 // ─── Schema ───────────────────────────────────────────────────────────────────
 
@@ -87,8 +86,8 @@ function slugify(str: string): string {
 
 function FormCard({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="bg-white rounded-xl border border-dark/8 shadow-sm overflow-hidden">
-      <div className="px-5 py-3.5 border-b border-dark/8">
+    <div className="admin-card overflow-hidden">
+      <div className="px-5 py-3.5 border-b border-[#ECEEF2]">
         <h2 className="text-sm font-semibold text-dark">{title}</h2>
       </div>
       <div className="p-5">{children}</div>
@@ -181,7 +180,7 @@ export default function ProductForm({ mode, initialData, editSlug }: Props) {
     defaultValues: {
       name:        initialData?.name        ?? '',
       slug:        initialData?.slug        ?? '',
-      category:    initialData?.category    ?? 'kitchen-organization',
+      category:    initialData?.category    ?? 'kitchen',
       description: initialData?.description ?? '',
       price:       initialData?.price       ?? ('' as unknown as number),
       salePrice:   initialData?.salePrice   ?? ('' as unknown as undefined),
@@ -195,6 +194,8 @@ export default function ProductForm({ mode, initialData, editSlug }: Props) {
 
   const hasVariants = watch('hasVariants')
   const watchName   = watch('name')
+  const watchCategory = watch('category')
+  const watchSlug   = watch('slug')
 
   // Auto-generate slug from name (only if not manually edited)
   useEffect(() => {
@@ -202,6 +203,11 @@ export default function ProductForm({ mode, initialData, editSlug }: Props) {
       setValue('slug', slugify(watchName), { shouldDirty: true })
     }
   }, [watchName, slugEdited, setValue])
+
+  function applyCategoryDefaults() {
+    const slug = watchSlug || slugify(watchName) || 'new-product'
+    setImages(imagesForProduct(slug, watchCategory))
+  }
 
   // Unsaved-changes browser warning
   useEffect(() => {
@@ -398,11 +404,10 @@ export default function ProductForm({ mode, initialData, editSlug }: Props) {
                   className="hidden"
                   onChange={(e) => {
                     // Dev fallback: use local placeholder images since no real upload is wired
-                    Array.from(e.target.files ?? []).forEach((file) => {
-                      setImages(prev => [
-                        ...prev,
-                        '/images/shop/shop-hero.jpg',
-                      ])
+                    Array.from(e.target.files ?? []).forEach(() => {
+                      const slug = watchSlug || slugify(watchName) || 'new-product'
+                      const defaults = imagesForProduct(slug, watchCategory)
+                      setImages((prev) => [...prev, defaults[0] ?? '/images/site/img-02.png'])
                     })
                     e.target.value = ''
                   }}
@@ -428,6 +433,28 @@ export default function ProductForm({ mode, initialData, editSlug }: Props) {
                   Add
                 </button>
               </div>
+
+              <SiteImagePicker
+                label="Category image"
+                images={CATEGORY_PICKER}
+                selected={images}
+                onSelect={(src) => setImages((prev) => (prev.includes(src) ? prev : [...prev, src]))}
+              />
+
+              <SiteImagePicker
+                label="Product photos"
+                images={PRODUCT_SHOT_PICKER}
+                selected={images}
+                onSelect={(src) => setImages((prev) => (prev.includes(src) ? prev : [...prev, src]))}
+              />
+
+              <button
+                type="button"
+                onClick={applyCategoryDefaults}
+                className="text-xs font-medium text-primary hover:text-primary/80 transition-colors w-fit"
+              >
+                Auto-fill images for this category
+              </button>
 
               {/* Image grid */}
               {images.length > 0 && (
@@ -623,7 +650,7 @@ export default function ProductForm({ mode, initialData, editSlug }: Props) {
                   {...register('category')}
                   className={cn(errors.category ? inputError : inputNormal, 'appearance-none cursor-pointer')}
                 >
-                  {CATEGORIES.map(cat => (
+                  {CATEGORIES.map((cat) => (
                     <option key={cat.value} value={cat.value}>{cat.label}</option>
                   ))}
                 </select>
@@ -680,7 +707,7 @@ export default function ProductForm({ mode, initialData, editSlug }: Props) {
               </div>
 
               {hasVariants && (
-                <div className="flex flex-col gap-3 border-t border-dark/8 pt-4">
+                <div className="flex flex-col gap-3 border-t border-[#ECEEF2] pt-4">
                   {/* Header row */}
                   {variantFields.length > 0 && (
                     <div className="grid grid-cols-[1fr_1fr_80px_24px] gap-1.5 text-[10px] font-semibold text-dark/40 uppercase tracking-wide px-0.5">

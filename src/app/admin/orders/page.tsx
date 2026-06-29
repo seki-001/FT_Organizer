@@ -209,7 +209,7 @@ export default function AdminOrdersPage() {
                 changeFilter(setStatusFilter)(label.toLowerCase())
               }}
               className={cn(
-                'bg-white rounded-xl border border-dark/8 shadow-sm p-4 text-center transition-all hover:border-primary/40 hover:shadow-md',
+                'admin-card p-4 text-center transition-all hover:border-primary/40 hover:shadow-md',
                 statusFilter === label.toLowerCase() && 'border-primary ring-2 ring-primary/20',
               )}
             >
@@ -220,7 +220,7 @@ export default function AdminOrdersPage() {
         </div>
 
         {/* Filters bar */}
-        <div className="bg-white rounded-xl border border-dark/8 shadow-sm p-4 flex flex-col sm:flex-row gap-3">
+        <div className="admin-card p-4 flex flex-col sm:flex-row gap-3">
 
           {/* Search */}
           <div className="relative flex-1 min-w-0">
@@ -283,11 +283,11 @@ export default function AdminOrdersPage() {
         </div>
 
         {/* Table */}
-        <div className="bg-white rounded-xl border border-dark/8 shadow-sm overflow-hidden">
+        <div className="admin-card overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-sm min-w-[700px]">
               <thead>
-                <tr className="border-b border-dark/8 bg-muted/30">
+                <tr className="border-b border-[#ECEEF2] bg-muted/30">
                   {['Order Ref', 'Customer', 'Items', 'Total', 'Payment', 'Status', 'Date', 'Actions'].map(h => (
                     <th
                       key={h}

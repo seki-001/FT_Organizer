@@ -112,7 +112,7 @@ function OrderSummary({
   const finalTotal = totalPrice - promoDiscount + deliveryFee
 
   return (
-    <div className="bg-white rounded-2xl border border-dark/8 p-6 flex flex-col gap-4">
+    <div className="glass-card p-6 flex flex-col gap-4">
       <h2 className="font-display text-lg text-dark">Order Summary</h2>
 
       {/* Items */}
@@ -427,7 +427,7 @@ export default function CheckoutPage() {
 
           {/* ── LEFT: Form ────────────────────────────────────────────── */}
           <div className="lg:col-span-2 flex flex-col gap-6">
-            <div className="bg-white rounded-2xl border border-dark/8 p-6 sm:p-8">
+            <div className="glass-card p-6 sm:p-8">
               <ProgressBar step={step} />
 
               {/* STEP 1 — Details ─────────────────────────────────────── */}
@@ -755,7 +755,7 @@ export default function CheckoutPage() {
           {/* ── RIGHT: Summary (sticky on desktop) ────────────────────── */}
           <div className="lg:sticky lg:top-24 lg:self-start">
             {/* Promo code input */}
-            <div className="bg-white rounded-2xl border border-dark/8 p-5 flex flex-col gap-3">
+            <div className="glass-card p-5 flex flex-col gap-3">
               <p className="text-sm font-semibold text-dark">Promo Code</p>
               {promoCode ? (
                 <div className="flex items-center justify-between bg-success/8 border border-success/20 rounded-lg px-3 py-2">

@@ -1,3 +1,4 @@
+import { blogCoverForCategory } from '@/lib/site-image-picker'
 import type { AdminBooking } from '@/lib/mock-admin-bookings'
 import type { BlogPost, Booking, Order, Product, ProductVariant } from '@/lib/types'
 import type { Tables } from '@/types/database'
@@ -43,7 +44,9 @@ export function rowToAdminBooking(row: Tables<'bookings'>): AdminBooking {
 
 export function rowToProduct(row: Tables<'products'>): Product {
   const dbImages = Array.isArray(row.images) ? (row.images as string[]) : []
-  const images = imagesForProduct(row.slug, dbImages.length ? dbImages : undefined)
+  const images = dbImages.length > 0
+    ? dbImages
+    : imagesForProduct(row.slug, row.category)
   return {
     id: row.id,
     slug: row.slug,
@@ -83,12 +86,13 @@ export function productToRow(product: Partial<Product> & { slug: string; name: s
 }
 
 export function rowToBlogPost(row: Tables<'blog_posts'>): BlogPost {
+  const cover = row.cover_image?.trim()
   return {
     slug: row.slug,
     title: row.title,
     excerpt: row.excerpt,
     content: row.content,
-    coverImage: row.cover_image,
+    coverImage: cover || blogCoverForCategory(row.category),
     category: row.category as BlogPost['category'],
     author: row.author,
     publishedAt: row.published_at ?? row.created_at.slice(0, 10),
@@ -112,8 +116,8 @@ export async function orderRowToOrder(
         name: item.product_name,
         description: '',
         price: item.unit_price,
-        category: 'bundles',
-        images: [],
+        category: 'baskets',
+        images: imagesForProduct(item.product_slug, 'baskets'),
         inStock: true,
         stockCount: 0,
         rating: 0,

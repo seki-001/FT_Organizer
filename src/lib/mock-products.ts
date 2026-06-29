@@ -1,33 +1,9 @@
 import type { Product } from '@/lib/types'
+import { imagesForProduct, CATEGORY_IMAGES } from '@/lib/product-images'
 
-export const CATEGORY_IMAGES: Record<string, string> = {
-  'baskets': 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80',
-  'bathroom': 'https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=600&q=80',
-  'beauty-cosmetics': 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=600&q=80',
-  'car-organizers': 'https://images.unsplash.com/photo-1503736334956-4c8f8e92946d?w=600&q=80',
-  'closet-bedroom': 'https://images.unsplash.com/photo-1558997519-83ea9252edf8?w=600&q=80',
-  'storage-containers': 'https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=600&q=80',
-  'dining': 'https://images.unsplash.com/photo-1550583724-b2692b85b150?w=600&q=80',
-  'fridge': 'https://images.unsplash.com/photo-1584568694244-14fbdf83bd30?w=600&q=80',
-  'furniture': 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=600&q=80',
-  'gadgets': 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=600&q=80',
-  'grooming-hygiene': 'https://images.unsplash.com/photo-1503236823255-94609f598e71?w=600&q=80',
-  'hardware': 'https://images.unsplash.com/photo-1572981545-5ed57a7d0c98?w=600&q=80',
-  'health': 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=600&q=80',
-  'interior-decor': 'https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=600&q=80',
-  'kids-corner': 'https://images.unsplash.com/photo-1558618047-3c8c76ca3cfe?w=600&q=80',
-  'kitchen': 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=600&q=80',
-  'laundry-cleaning': 'https://images.unsplash.com/photo-1582735689369-4fe89db7114c?w=600&q=80',
-  'packaging': 'https://images.unsplash.com/photo-1545243424-0ce743321e11?w=600&q=80',
-  'pantry': 'https://images.unsplash.com/photo-1588854337236-6889d631faa8?w=600&q=80',
-  'shelves-drawers': 'https://images.unsplash.com/photo-1595526114035-0d45ed16cfbf?w=600&q=80',
-  'spices': 'https://images.unsplash.com/photo-1506368249639-73a05d6f6488?w=600&q=80',
-  'stands-racks': 'https://images.unsplash.com/photo-1611269154421-4e27233ac5c5?w=600&q=80',
-  'stationery': 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=600&q=80',
-  'travel': 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=600&q=80',
-}
+export { CATEGORY_IMAGES }
 
-export const MOCK_PRODUCTS: Product[] = [
+const RAW_MOCK_PRODUCTS: Product[] = [
   // Acrylic Curved Basket Lidless (baskets)
   {
     id: "bas-001",
@@ -6631,3 +6607,8 @@ export const MOCK_PRODUCTS: Product[] = [
     featured: true,
   },
 ]
+
+export const MOCK_PRODUCTS: Product[] = RAW_MOCK_PRODUCTS.map((p) => ({
+  ...p,
+  images: imagesForProduct(p.slug, p.category),
+}))

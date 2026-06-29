@@ -7,6 +7,7 @@ import { ArrowRight, Sparkles, Briefcase, Video } from 'lucide-react'
 import { formatPrice } from '@/lib/utils'
 import { useScrollAnimation } from '@/hooks/useScrollAnimation'
 import { staggerContainer, staggerItem, EASE_STANDARD } from '@/lib/animations'
+import { SITE_IMAGES } from '@/lib/site-images'
 
 // ─── Reusable card wrapper ────────────────────────────────────────────────────
 
@@ -31,7 +32,7 @@ function ImageCard({ slug, title, price, image, height = 'h-72' }: {
   slug: string; title: string; price: number; image: string; height?: string
 }) {
   return (
-    <Link href={`/services/${slug}`} className={`relative ${height} rounded-2xl overflow-hidden block group`}>
+    <Link href={`/services/${slug}`} className={`relative ${height} img-frame-xl block group`}>
       <motion.div
         className="absolute inset-0"
         whileHover={{ scale: 1.05 }}
@@ -89,7 +90,7 @@ export default function EditorialServicesGrid() {
               slug="general-decluttering"
               title="General Decluttering"
               price={5000}
-              image="/images/services/decluttering-after-1.jpg"
+              image={SITE_IMAGES.sceneLivingRoom}
             />
           </motion.div>
 
@@ -98,7 +99,7 @@ export default function EditorialServicesGrid() {
             slug="whole-house-organizing"
             className="lg:col-span-4"
           >
-            <div className="bg-primary rounded-2xl p-6 sm:p-8 h-72 flex flex-col justify-between hover:bg-primary/95 transition-colors">
+            <div className="bg-primary rounded-3xl p-6 sm:p-8 h-72 flex flex-col justify-between hover:bg-primary/95 transition-colors">
               <Sparkles size={36} className="text-white/30" aria-hidden="true" />
               <div>
                 <h3 className="font-display text-2xl sm:text-3xl text-white leading-snug">
@@ -120,7 +121,7 @@ export default function EditorialServicesGrid() {
             slug="moving-house"
             className="lg:col-span-3"
           >
-            <div className="bg-muted rounded-2xl p-6 h-72 flex flex-col justify-between hover:bg-dark/5 transition-colors">
+            <div className="bg-muted glass-subtle rounded-3xl p-6 h-72 flex flex-col justify-between hover:bg-white/45 transition-colors">
               <div>
                 <span className="inline-block bg-dark text-white text-xs font-medium rounded-full px-3 py-1">
                   Most Booked
@@ -152,7 +153,7 @@ export default function EditorialServicesGrid() {
             slug="office-organizing"
             className="lg:col-span-3"
           >
-            <div className="bg-dark rounded-2xl p-6 h-64 flex flex-col justify-between hover:bg-dark/90 transition-colors">
+            <div className="bg-dark rounded-3xl p-6 h-64 flex flex-col justify-between hover:bg-dark/90 transition-colors">
               <Briefcase size={30} className="text-primary" aria-hidden="true" />
               <div>
                 <h3 className="font-display text-xl sm:text-2xl text-white leading-snug">
@@ -169,7 +170,7 @@ export default function EditorialServicesGrid() {
               slug="shelving-and-storage"
               title="Shelving & Storage"
               price={6000}
-              image="/images/services/shelving-after-1.jpg"
+              image={SITE_IMAGES.sceneCloset}
               height="h-64"
             />
           </motion.div>
@@ -179,7 +180,7 @@ export default function EditorialServicesGrid() {
             slug="online-coaching"
             className="lg:col-span-3"
           >
-            <div className="bg-muted rounded-2xl p-6 h-64 flex flex-col justify-between hover:bg-dark/5 transition-colors">
+            <div className="bg-muted glass-subtle rounded-3xl p-6 h-64 flex flex-col justify-between hover:bg-white/45 transition-colors">
               <Video size={30} className="text-primary" aria-hidden="true" />
               <div>
                 <h3 className="font-display text-xl text-dark leading-snug">

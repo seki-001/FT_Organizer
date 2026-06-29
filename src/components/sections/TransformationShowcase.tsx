@@ -3,7 +3,7 @@ import { IMG } from '@/lib/image-placeholders'
 
 export default function TransformationShowcase() {
   return (
-    <section className="bg-surface border-t border-dark/8 py-20 md:py-28">
+    <section className="bg-surface py-14 md:py-20">
       <div className="max-w-7xl mx-auto px-4 lg:px-8">
         <div className="flex items-start gap-8 mb-12">
           <div>
@@ -20,7 +20,7 @@ export default function TransformationShowcase() {
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-          <div className="md:col-span-2 relative rounded-3xl overflow-hidden h-72 img-zoom group">
+          <div className="md:col-span-2 relative img-frame-xl h-72 img-zoom group ring-1 ring-white/50">
             <Image
               src={IMG.gallery.transform1}
               alt="Home transformation"
@@ -39,7 +39,7 @@ export default function TransformationShowcase() {
             </div>
           </div>
 
-          <div className="relative rounded-3xl overflow-hidden h-72 img-zoom">
+          <div className="relative img-frame-xl h-72 img-zoom ring-1 ring-white/50">
             <Image
               src={IMG.gallery.transform2}
               alt="Organized bedroom"
@@ -54,7 +54,7 @@ export default function TransformationShowcase() {
             </div>
           </div>
 
-          <div className="relative rounded-3xl overflow-hidden h-52 img-zoom">
+          <div className="relative img-frame-xl h-52 img-zoom ring-1 ring-white/50">
             <Image
               src={IMG.gallery.transform3}
               alt="Organized kitchen"
@@ -69,7 +69,7 @@ export default function TransformationShowcase() {
             </div>
           </div>
 
-          <div className="relative rounded-3xl overflow-hidden h-52 img-zoom">
+          <div className="relative img-frame-xl h-52 img-zoom ring-1 ring-white/50">
             <Image
               src={IMG.gallery.transform4}
               alt="Organized office"
@@ -84,7 +84,7 @@ export default function TransformationShowcase() {
             </div>
           </div>
 
-          <div className="relative rounded-3xl overflow-hidden h-52 img-zoom">
+          <div className="relative img-frame-xl h-52 img-zoom ring-1 ring-white/50">
             <Image
               src={IMG.gallery.transform5}
               alt="Storage solutions"

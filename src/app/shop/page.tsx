@@ -1,16 +1,19 @@
 'use client'
 
 import { useState, useMemo, useCallback, useEffect, Suspense } from 'react'
-import Image from 'next/image'
+import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { AnimatePresence, motion } from 'framer-motion'
-import { SlidersHorizontal, X, PackageX, ChevronDown } from 'lucide-react'
+import { SlidersHorizontal, X, ChevronDown } from 'lucide-react'
 import { MOCK_PRODUCTS } from '@/lib/mock-products'
 import type { Product } from '@/lib/types'
 import { SHOP_CATEGORIES } from '@/lib/constants'
 import type { ProductCategory } from '@/lib/types'
-import DarkProductCard from '@/components/shop/DarkProductCard'
+import ShopProductCard from '@/components/ui/commerce/ShopProductCard'
 import ShopMemberCta from '@/components/shop/ShopMemberCta'
+import { SectionHeader, OfferBadge, ImageCarousel } from '@/components/ui/commerce'
+import { MediaBlend, IllustrationSpot } from '@/components/ui/illustrations'
+import { SITE_IMAGES } from '@/lib/site-images'
 import { cn } from '@/lib/utils'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -25,16 +28,6 @@ const SORT_OPTIONS: { value: SortOption; label: string }[] = [
 ]
 
 const MAX_PRICE = 20000
-
-// Category images for the navigator cards
-const CATEGORY_IMAGES: Record<string, string> = {
-  all:                   '/images/shop/shop-hero.jpg',
-  'kitchen-organization':'/images/shop/shop-hero.jpg',
-  'closet-and-bedroom':  '/images/shop/shop-hero.jpg',
-  'office-and-desk':     '/images/shop/shop-hero.jpg',
-  'storage-solutions':   '/images/shop/shop-hero.jpg',
-  'bundles':             '/images/shop/shop-hero.jpg',
-}
 
 // ─── Filter Sidebar content (shared for desktop sidebar + mobile drawer) ─────
 
@@ -219,21 +212,14 @@ function CategoryCard({
   slug, label, active, onClick,
 }: { slug: string; label: string; active: boolean; onClick: () => void }) {
   return (
-    <motion.button
+    <button
       type="button"
       onClick={onClick}
-      whileHover={{ y: -2 }}
-      transition={{ duration: 0.15 }}
-      className={cn(
-        'flex-shrink-0 px-4 py-2 rounded-full text-xs font-medium border transition-all duration-150',
-        active
-          ? 'bg-primary text-white border-primary font-semibold'
-          : 'border-dark/15 text-dark/55 hover:border-primary/30 hover:text-dark bg-white',
-      )}
+      className={cn('sfs-chip flex-shrink-0', active && 'active')}
       aria-pressed={active}
     >
       {label}
-    </motion.button>
+    </button>
   )
 }
 
@@ -317,40 +303,67 @@ function ShopCatalogueInner() {
   return (
     <main className="bg-surface min-h-screen">
 
-      {/* ── 1. HERO BANNER ─────────────────────────────────────────────────── */}
-      <section className="relative h-56 sm:h-64 bg-white overflow-hidden flex items-center border-b border-dark/8">
-        {/* Background image */}
-        <div className="absolute inset-0">
-          <Image
-            src="/images/shop/shop-hero.jpg"
-            alt="Shop Organizing Products — Faith The Organizer"
-            fill
-            className="object-cover opacity-30"
-            priority
-            sizes="100vw"
-          />
-        </div>
+      {/* ── 1. HERO — Sweet Flower split layout ─────────────────────────────── */}
+      <section className="relative bg-white overflow-hidden border-b border-dark/8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-14">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-12 items-center">
+            <div className="flex flex-col gap-5 order-2 lg:order-1">
+              <OfferBadge variant="glass-light">Member sale — FIRSTORDER 10% off</OfferBadge>
+              <h1 className="font-display text-4xl sm:text-5xl lg:text-[3.25rem] text-dark font-bold leading-[1.08]">
+                Organizing products
+                <span className="block head-serif italic text-primary">delivered to your door</span>
+              </h1>
+              <p className="text-dark/55 text-base leading-relaxed max-w-md">
+                Curated storage, kitchen, closet and office essentials — real products, friendly shopping.
+              </p>
+              <div className="flex flex-wrap gap-3 pt-1">
+                <Link href="/register?callbackUrl=/shop" className="sfs-btn-primary">
+                  Create free account
+                </Link>
+                <Link href="/shop?category=all" className="sfs-btn-outline">
+                  Browse all products
+                </Link>
+              </div>
+              <div className="flex flex-wrap gap-2 pt-2">
+                <span className="sfs-chip">🚚 Free CBD delivery</span>
+                <span className="sfs-chip">✓ Same-day before 2 pm</span>
+              </div>
+            </div>
 
-        {/* Centered content */}
-        <div className="relative z-10 w-full text-center px-4">
-          <h1 className="font-display text-4xl sm:text-5xl text-dark font-bold leading-tight">
-            Shop Organizing Products
-          </h1>
-          <p className="text-dark/55 mt-3 text-lg">Delivered across Nairobi</p>
-        </div>
-
-        {/* Floating pill badges */}
-        <div className="absolute bottom-6 left-4 sm:left-8 flex items-center gap-3 flex-wrap z-10">
-          <span className="bg-white text-dark text-xs font-medium rounded-full px-4 py-2 shadow-md whitespace-nowrap">
-            🚚 Free delivery in Nairobi CBD
-          </span>
-          <span className="bg-white text-dark text-xs font-medium rounded-full px-4 py-2 shadow-md whitespace-nowrap">
-            ✓ Same-day dispatch before 2 pm
-          </span>
+            <div className="order-1 lg:order-2">
+              <MediaBlend
+                photo={SITE_IMAGES.sceneCloset}
+                illustration={SITE_IMAGES.acrylicBasket}
+                photoAlt="Organizing products in a styled home"
+                illustrationAlt="Illustration of closet and home organizing"
+                photoPosition="right"
+                blobVariant="warm"
+              />
+            </div>
+          </div>
         </div>
       </section>
 
       <ShopMemberCta variant="banner" />
+
+      {/* Featured carousel */}
+      {!loading && products.filter((p) => p.featured).length > 0 && (
+        <section className="bg-surface py-10 border-b border-dark/8">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <SectionHeader
+              label="Featured"
+              title="Staff"
+              titleAccent="favourites"
+              action={{ label: 'View all', href: '/shop' }}
+            />
+            <ImageCarousel ariaLabel="Featured products">
+              {products.filter((p) => p.featured).slice(0, 8).map((product) => (
+                <ShopProductCard key={product.id} product={product} variant="carousel" />
+              ))}
+            </ImageCarousel>
+          </div>
+        </section>
+      )}
 
       {/* ── 2. CATEGORY NAVIGATOR ──────────────────────────────────────────── */}
       <section className="bg-white py-6 border-b border-dark/8" aria-label="Filter by category">
@@ -377,7 +390,7 @@ function ShopCatalogueInner() {
           <aside className="hidden lg:block w-60 flex-shrink-0">
             <div className="flex flex-col gap-4 sticky top-24">
               <ShopMemberCta variant="card" />
-              <div className="bg-white border border-dark/8 rounded-2xl p-6 shadow-sm">
+              <div className="glass-panel-light rounded-3xl p-6">
                 <p className="font-display text-base text-dark mb-5">Filters</p>
                 <FilterPanel {...filterPanelProps} />
               </div>
@@ -431,14 +444,14 @@ function ShopCatalogueInner() {
                 <p className="text-dark/50 text-sm">Loading products…</p>
               </div>
             ) : filtered.length > 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
                 {filtered.map((product) => (
-                  <DarkProductCard key={product.id} product={product} />
+                  <ShopProductCard key={product.id} product={product} />
                 ))}
               </div>
             ) : (
               <div className="flex flex-col items-center gap-4 py-24 text-center">
-                <PackageX size={48} className="text-dark/20" aria-hidden="true" />
+                <IllustrationSpot src={SITE_IMAGES.acrylicBasket} alt="No products" size="md" />
                 <p className="font-display text-xl text-dark">No products found</p>
                 <p className="text-dark/50 text-sm">Try adjusting your filters.</p>
                 <button
@@ -474,7 +487,7 @@ function ShopCatalogueInner() {
               animate={{ y: 0 }}
               exit={{ y: '100%' }}
               transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-              className="fixed bottom-0 inset-x-0 z-50 bg-white rounded-t-3xl p-6 max-h-[85vh] overflow-y-auto lg:hidden"
+              className="fixed bottom-0 inset-x-0 z-50 glass-panel-light rounded-t-3xl p-6 max-h-[85vh] overflow-y-auto lg:hidden border-t border-white/60"
             >
               <div className="flex items-center justify-between mb-6">
                 <p className="font-display text-lg text-dark">Filters</p>

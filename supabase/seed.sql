@@ -15,7 +15,7 @@ VALUES
     'How to Organize Your Kitchen in a Nairobi Apartment',
     'Small kitchens are the norm in Nairobi apartments — but with the right systems and products, you can have a beautifully organized kitchen that works hard for you every day.',
     '## Why This Matters in Nairobi Homes\n\nMost Nairobi homes were not built with storage in mind.',
-    'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&q=80',
+    '/images/site/scene-kitchen.png',
     'home-tips',
     'Faith The Organizer',
     '2024-12-10',
@@ -33,7 +33,7 @@ VALUES
     'Keep your baskets organised and clutter-free.',
     900,
     'baskets',
-    '["https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80"]'::jsonb,
+    '["/images/site/img-02.png"]'::jsonb,
     TRUE,
     6,
     4.4,
@@ -49,7 +49,7 @@ VALUES
     'Stackable Fridge Containers Set',
     'Keep your fridge organised with clear, stackable containers.',
     2800, 2400, 'fridge',
-    '["https://images.unsplash.com/photo-1584568694244-14fbdf83bd30?w=600&q=80"]'::jsonb,
+    '["/images/site/img-18.png"]'::jsonb,
     TRUE, 12, 4.7, 28, TRUE
   ),
   (
@@ -57,7 +57,7 @@ VALUES
     'Bamboo Pantry Jars Set of 4',
     'Airtight pantry jars with bamboo lids for dry goods.',
     3200, NULL, 'pantry',
-    '["https://images.unsplash.com/photo-1588854337236-6889d631faa8?w=600&q=80"]'::jsonb,
+    '["/images/site/img-11.png"]'::jsonb,
     TRUE, 8, 4.5, 19, TRUE
   ),
   (
@@ -65,7 +65,7 @@ VALUES
     'Closet Divider Set',
     'Adjustable shelf dividers for wardrobes and closets.',
     1500, NULL, 'closet-bedroom',
-    '["https://images.unsplash.com/photo-1558997519-83ea9252edf8?w=600&q=80"]'::jsonb,
+    '["/images/site/img-28.png"]'::jsonb,
     TRUE, 15, 4.3, 12, FALSE
   ),
   (
@@ -73,7 +73,7 @@ VALUES
     'Under Sink Organiser',
     'Expandable under-sink storage for bathroom or kitchen.',
     2100, 1800, 'bathroom',
-    '["https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=600&q=80"]'::jsonb,
+    '["/images/site/img-20.png"]'::jsonb,
     TRUE, 10, 4.6, 22, TRUE
   ),
   (
@@ -81,7 +81,7 @@ VALUES
     'Desk Organiser Tray Set',
     'Minimal trays for stationery, cables, and desk clutter.',
     1200, NULL, 'stationery',
-    '["https://images.unsplash.com/photo-1497366216548-37526070297c?w=600&q=80"]'::jsonb,
+    '["/images/site/img-19.png"]'::jsonb,
     TRUE, 20, 4.2, 8, FALSE
   )
 ON CONFLICT (slug) DO NOTHING;

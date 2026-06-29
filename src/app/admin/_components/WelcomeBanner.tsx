@@ -13,13 +13,20 @@ export default function WelcomeBanner({ name }: { name: string }) {
   const { text, emoji } = useMemo(getGreeting, [])
   const firstName = name.split(' ')[0]
 
+  const today = new Date().toLocaleDateString('en-KE', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  })
+
   return (
     <div className="flex flex-col gap-1">
-      <h1 className="font-display text-2xl md:text-3xl font-bold text-dark leading-tight">
+      <h1 className="text-2xl md:text-[1.75rem] font-semibold text-dark leading-tight tracking-tight">
         {text}, {firstName} {emoji}
       </h1>
-      <p className="text-dark/50 text-sm">
-        Here&apos;s what&apos;s happening with your business today.
+      <p className="text-dark/45 text-sm">
+        {today} — here&apos;s what&apos;s happening with your business.
       </p>
     </div>
   )

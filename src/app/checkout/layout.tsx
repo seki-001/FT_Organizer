@@ -12,8 +12,8 @@ export default function CheckoutLayout({
   children: React.ReactNode
 }) {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-surface flex items-center justify-center text-dark/50 text-sm">Loading checkout…</div>}>
-      {children}
+    <Suspense fallback={<div className="min-h-screen glass-grid-bg flex items-center justify-center text-dark/50 text-sm">Loading checkout…</div>}>
+      <div className="glass-grid-bg min-h-screen">{children}</div>
     </Suspense>
   )
 }

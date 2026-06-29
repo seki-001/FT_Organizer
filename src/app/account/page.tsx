@@ -67,7 +67,7 @@ export default function AccountDashboardPage() {
 
       {/* Stat cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="bg-white rounded-xl border border-dark/8 p-5 flex items-center gap-4 shadow-sm">
+        <div className="glass-card rounded-xl p-5 flex items-center gap-4">
           <div className="w-11 h-11 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
             <ShoppingBag size={20} className="text-primary" aria-hidden="true" />
           </div>
@@ -76,7 +76,7 @@ export default function AccountDashboardPage() {
             <p className="text-dark/50 text-xs">Orders</p>
           </div>
         </div>
-        <div className="bg-white rounded-xl border border-dark/8 p-5 flex items-center gap-4 shadow-sm">
+        <div className="glass-card rounded-xl p-5 flex items-center gap-4">
           <div className="w-11 h-11 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
             <Calendar size={20} className="text-primary" aria-hidden="true" />
           </div>
@@ -85,7 +85,7 @@ export default function AccountDashboardPage() {
             <p className="text-dark/50 text-xs">Bookings</p>
           </div>
         </div>
-        <div className="bg-white rounded-xl border border-dark/8 p-5 flex items-center gap-4 shadow-sm">
+        <div className="glass-card rounded-xl p-5 flex items-center gap-4">
           <div className="w-11 h-11 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
             <Heart size={20} className="text-primary" aria-hidden="true" />
           </div>
@@ -104,7 +104,7 @@ export default function AccountDashboardPage() {
             View all <ArrowRight size={14} aria-hidden="true" />
           </Link>
         </div>
-        <div className="bg-white rounded-2xl border border-dark/8 shadow-sm overflow-hidden">
+        <div className="glass-card overflow-hidden">
           {recentOrders.length === 0 ? (
             <p className="p-6 text-dark/40 text-sm text-center">No orders yet.</p>
           ) : (
@@ -147,14 +147,14 @@ export default function AccountDashboardPage() {
           </Link>
         </div>
         {!nextBooking ? (
-          <div className="bg-white rounded-2xl border border-dark/8 shadow-sm p-6 text-center">
+          <div className="glass-card p-6 text-center">
             <p className="text-dark/40 text-sm mb-3">No upcoming bookings.</p>
             <Link href="/book" className="text-primary text-sm font-medium hover:underline">
               Book a service →
             </Link>
           </div>
         ) : (
-          <div className="bg-white rounded-2xl border border-dark/8 shadow-sm p-5 flex flex-col sm:flex-row sm:items-center gap-4">
+          <div className="glass-card p-5 flex flex-col sm:flex-row sm:items-center gap-4">
             <div className="flex-1 flex flex-col gap-1">
               <p className="font-semibold text-dark">
                 {SERVICES.find((s) => s.slug === nextBooking.service)?.title ?? nextBooking.service}

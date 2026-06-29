@@ -133,13 +133,13 @@ export default function ExpensesPage() {
         {/* Expense list */}
         <div className="lg:col-span-2 space-y-3">
           {filtered.length === 0 ? (
-            <div className="bg-white border border-dark/8 rounded-2xl p-12 text-center">
+            <div className="admin-card p-12 text-center">
               <TrendingDown size={32} className="text-dark/15 mx-auto mb-3" />
               <p className="text-dark/40 text-sm">No expenses recorded for {filterMonth}.</p>
             </div>
           ) : (
-            <div className="bg-white border border-dark/8 rounded-2xl overflow-hidden">
-              <div className="divide-y divide-dark/5">
+            <div className="admin-card overflow-hidden">
+              <div className="divide-y divide-[#ECEEF2]">
                 {filtered.map(e => (
                   <div key={e.id} className="px-5 py-3.5 flex items-center gap-3">
                     <div className="flex-1 min-w-0">
@@ -156,7 +156,7 @@ export default function ExpensesPage() {
         </div>
 
         {/* Breakdown */}
-        <div className="bg-white border border-dark/8 rounded-2xl p-5 space-y-3 h-fit">
+        <div className="admin-card p-5 space-y-3 h-fit">
           <h3 className="font-semibold text-dark text-sm">By Category</h3>
           {byCategory.length === 0 ? <p className="text-xs text-dark/30">No data yet</p> : byCategory.map(c => (
             <div key={c.value}>

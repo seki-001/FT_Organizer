@@ -108,7 +108,7 @@ function OrderDrawer({ order, onClose }: { order: Order; onClose: () => void }) 
       />
 
       {/* Drawer panel */}
-      <div className="fixed inset-y-0 right-0 z-50 w-full sm:max-w-md bg-white shadow-2xl flex flex-col">
+      <div className="fixed inset-y-0 right-0 z-50 w-full sm:max-w-md glass-panel-light shadow-2xl flex flex-col border-l border-white/50">
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-5 border-b border-dark/8">
           <div>
@@ -227,11 +227,11 @@ export default function AccountOrdersPage() {
       <h1 className="font-display text-2xl font-bold text-dark">My Orders</h1>
 
       {loading ? (
-        <div className="bg-white rounded-2xl border border-dark/8 shadow-sm p-12 text-center text-dark/50 text-sm">
+        <div className="glass-card p-12 text-center text-dark/50 text-sm">
           Loading your orders…
         </div>
       ) : orders.length === 0 ? (
-        <div className="bg-white rounded-2xl border border-dark/8 shadow-sm p-12 text-center flex flex-col items-center gap-4">
+        <div className="glass-card p-12 text-center flex flex-col items-center gap-4">
           <ShoppingBag size={48} className="text-dark/20" aria-hidden="true" />
           <p className="text-dark/50">No orders yet.</p>
           <Link href="/shop" className="bg-primary text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-primary/90 transition-colors">
@@ -241,7 +241,7 @@ export default function AccountOrdersPage() {
       ) : (
         <>
           {/* Desktop table */}
-          <div className="hidden md:block bg-white rounded-2xl border border-dark/8 shadow-sm overflow-hidden">
+          <div className="hidden md:block glass-card overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead className="bg-muted text-dark/50 text-xs uppercase tracking-wide">
@@ -283,7 +283,7 @@ export default function AccountOrdersPage() {
           {/* Mobile cards */}
           <div className="flex flex-col gap-3 md:hidden">
             {orders.map((order) => (
-              <div key={order.id} className="bg-white rounded-xl border border-dark/8 shadow-sm p-4 flex flex-col gap-3">
+              <div key={order.id} className="glass-card rounded-xl p-4 flex flex-col gap-3">
                 <div className="flex items-start justify-between gap-2">
                   <div>
                     <p className="font-mono text-xs font-semibold text-dark">{order.id}</p>

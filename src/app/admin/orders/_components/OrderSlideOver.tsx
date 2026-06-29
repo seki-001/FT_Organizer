@@ -207,7 +207,7 @@ export default function OrderSlideOver({ order, onClose, onStatusUpdate }: Props
             aria-label="Order details"
           >
             {/* ── Header ─────────────────────────────────────────────── */}
-            <div className="px-6 py-4 border-b border-dark/8 flex items-start justify-between gap-4 flex-shrink-0">
+            <div className="px-6 py-4 border-b border-[#ECEEF2] flex items-start justify-between gap-4 flex-shrink-0">
               <div>
                 <p className="font-mono text-sm font-bold text-primary">{order.id}</p>
                 <p className="text-dark/50 text-xs mt-0.5">{fullDateTime(order.createdAt)}</p>
@@ -276,7 +276,7 @@ export default function OrderSlideOver({ order, onClose, onStatusUpdate }: Props
                 {/* Items */}
                 <div>
                   <SectionHeader label="Order Items" />
-                  <div className="flex flex-col divide-y divide-dark/5 border border-dark/8 rounded-xl overflow-hidden">
+                  <div className="flex flex-col divide-y divide-[#ECEEF2] border border-[#ECEEF2] rounded-lg overflow-hidden">
                     {order.items.map((item, i) => {
                       const price = item.product.salePrice ?? item.product.price
                       return (
@@ -330,7 +330,7 @@ export default function OrderSlideOver({ order, onClose, onStatusUpdate }: Props
                               <span className="font-mono text-success">− {formatPrice(discount)}</span>
                             </div>
                           )}
-                          <div className="flex justify-between font-semibold text-sm pt-2 border-t border-dark/8">
+                          <div className="flex justify-between font-semibold text-sm pt-2 border-t border-[#ECEEF2]">
                             <span className="text-dark">Total</span>
                             <span className="font-mono text-dark text-base">{formatPrice(order.total)}</span>
                           </div>
@@ -424,7 +424,7 @@ export default function OrderSlideOver({ order, onClose, onStatusUpdate }: Props
             </div>
 
             {/* ── Footer ─────────────────────────────────────────────── */}
-            <div className="px-6 py-4 border-t border-dark/8 flex flex-col gap-3 flex-shrink-0 bg-white">
+            <div className="px-6 py-4 border-t border-[#ECEEF2] flex flex-col gap-3 flex-shrink-0 bg-white">
 
               {/* Status update */}
               <div>

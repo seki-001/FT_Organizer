@@ -124,7 +124,7 @@ export default function CustomerSlideOver({ customerId, onClose }: Props) {
         aria-modal="true"
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-dark/8 flex-shrink-0">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-[#ECEEF2] flex-shrink-0">
           <h2 className="font-semibold text-dark">Customer Details</h2>
           <button onClick={onClose} className="w-8 h-8 flex items-center justify-center rounded-lg text-dark/40 hover:text-dark hover:bg-muted transition-colors">
             <X size={16} />
@@ -178,7 +178,7 @@ export default function CustomerSlideOver({ customerId, onClose }: Props) {
                 {last5Orders.length === 0 ? (
                   <p className="text-sm text-dark/35 italic">No orders yet.</p>
                 ) : (
-                  <div className="flex flex-col divide-y divide-dark/5">
+                  <div className="flex flex-col divide-y divide-[#ECEEF2]">
                     {last5Orders.map(order => (
                       <div key={order.id} className="py-2.5 flex items-start justify-between gap-3">
                         <div className="min-w-0">
@@ -204,7 +204,7 @@ export default function CustomerSlideOver({ customerId, onClose }: Props) {
                 {last3Bookings.length === 0 ? (
                   <p className="text-sm text-dark/35 italic">No bookings yet.</p>
                 ) : (
-                  <div className="flex flex-col divide-y divide-dark/5">
+                  <div className="flex flex-col divide-y divide-[#ECEEF2]">
                     {last3Bookings.map(booking => (
                       <div key={booking.id} className="py-2.5 flex items-start justify-between gap-3">
                         <div className="min-w-0">

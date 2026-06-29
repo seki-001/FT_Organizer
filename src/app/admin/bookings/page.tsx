@@ -94,7 +94,7 @@ function BookingCardContent({
 
   return (
     <div className={cn(
-      'bg-white rounded-xl border border-dark/8 p-3.5 select-none',
+      'admin-card p-3.5 select-none',
       isDragOverlay && 'shadow-2xl ring-2 ring-primary/25 rotate-1 scale-105',
       !isDragOverlay && 'shadow-sm',
     )}>
@@ -404,7 +404,7 @@ export default function AdminBookingsPage() {
             { label: 'Completed this month',value: stats.completedThisMonth, color: 'text-dark/70',    sub: 'jobs done' },
             { label: 'Cancellation rate',   value: `${stats.cancellationRate}%`, color: 'text-danger', sub: 'of all bookings' },
           ].map(({ label, value, color, sub }) => (
-            <div key={label} className="bg-white rounded-xl border border-dark/8 shadow-sm p-4 text-center">
+            <div key={label} className="admin-card p-4 text-center">
               <p className={cn('font-display text-2xl font-bold', color)}>{value}</p>
               <p className="text-dark/50 text-xs mt-0.5 font-medium">{label}</p>
               <p className="text-dark/30 text-[10px] mt-0.5">{sub}</p>
@@ -505,11 +505,11 @@ export default function AdminBookingsPage() {
 
         {/* ── LIST VIEW ──────────────────────────────────────────────── */}
         {view === 'list' && (
-          <div className="bg-white rounded-xl border border-dark/8 shadow-sm overflow-hidden">
+          <div className="admin-card overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-sm min-w-[750px]">
                 <thead>
-                  <tr className="border-b border-dark/8 bg-muted/30">
+                  <tr className="border-b border-[#ECEEF2] bg-muted/30">
                     {['Customer', 'Service', 'Date', 'Property', 'Status', 'Submitted', 'Actions'].map(h => (
                       <th key={h} className="text-left px-5 py-3 text-[11px] font-semibold text-dark/40 uppercase tracking-wide whitespace-nowrap">
                         {h}

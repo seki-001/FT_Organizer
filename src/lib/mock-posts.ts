@@ -1,13 +1,7 @@
 import type { BlogPost } from '@/lib/types'
+import { IMG } from '@/lib/image-placeholders'
 
-const COVER = {
-  kitchen: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&q=80',
-  home: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80',
-  products: 'https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=800&q=80',
-  moving: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&q=80',
-  tips: 'https://images.unsplash.com/photo-1484101403633-562f891dc89a?w=800&q=80',
-  office: 'https://images.unsplash.com/photo-1593642632559-0c6d3fc62b89?w=800&q=80',
-} as const
+const COVER = IMG.blog
 
 const LOREM = `## Why This Matters in Nairobi Homes
 

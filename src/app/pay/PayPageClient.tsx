@@ -46,7 +46,7 @@ export default function PayPageClient() {
   }
 
   return (
-    <main className="min-h-screen bg-surface">
+    <main className="min-h-screen glass-grid-bg">
       <div className="max-w-lg mx-auto px-4 py-10">
         <div className="mb-8 text-center">
           <h1 className="font-display text-3xl text-dark mb-2">Make a Payment</h1>
@@ -55,7 +55,7 @@ export default function PayPageClient() {
           </p>
         </div>
 
-        <div className="bg-white rounded-2xl border border-dark/8 p-6 space-y-5">
+        <div className="glass-card p-6 space-y-5">
           <div className="space-y-4">
             <div>
               <label htmlFor="amount" className="text-sm font-medium text-dark">Amount (KSh)</label>

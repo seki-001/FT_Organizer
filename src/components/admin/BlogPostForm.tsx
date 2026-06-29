@@ -13,6 +13,8 @@ import {
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { BLOG_CATEGORIES } from '@/lib/mock-admin-blog'
+import { BLOG_COVER_PICKER, blogCoverForCategory } from '@/lib/site-image-picker'
+import SiteImagePicker from '@/components/admin/SiteImagePicker'
 import type { BlogCategory } from '@/lib/types'
 
 // Lazy-load the markdown editor to avoid SSR issues
@@ -60,11 +62,11 @@ function wordsToReadTime(content: string): number {
 function FormCard({ title, children, collapsible = false }: { title: string; children: React.ReactNode; collapsible?: boolean }) {
   const [open, setOpen] = useState(true)
   return (
-    <div className="bg-white rounded-xl border border-dark/8 shadow-sm overflow-hidden">
+    <div className="admin-card overflow-hidden">
       <button
         type="button"
         onClick={() => collapsible && setOpen(o => !o)}
-        className={cn('w-full flex items-center justify-between px-5 py-3.5 border-b border-dark/8', collapsible && 'hover:bg-muted/30 transition-colors')}
+        className={cn('w-full flex items-center justify-between px-5 py-3.5 border-b border-[#ECEEF2]', collapsible && 'hover:bg-muted/30 transition-colors')}
       >
         <h2 className="text-sm font-semibold text-dark text-left">{title}</h2>
         {collapsible && (open ? <ChevronUp size={14} className="text-dark/40" /> : <ChevronDown size={14} className="text-dark/40" />)}
@@ -162,6 +164,7 @@ export default function BlogPostForm({ mode, initialData, editSlug }: Props) {
 
   const watchTitle   = watch('title')
   const watchExcerpt = watch('excerpt')
+  const watchCategory = watch('category')
   const metaTitle    = watch('metaTitle')
   const metaDesc     = watch('metaDescription')
 
@@ -177,6 +180,12 @@ export default function BlogPostForm({ mode, initialData, editSlug }: Props) {
   useEffect(() => {
     if (!metaDesc && watchExcerpt) setValue('metaDescription', watchExcerpt.slice(0, 160))
   }, [watchExcerpt, metaDesc, setValue])
+
+  useEffect(() => {
+    if (mode === 'new' && !coverImage && watchCategory) {
+      setCoverImage(blogCoverForCategory(watchCategory))
+    }
+  }, [mode, watchCategory, coverImage])
 
   // Unsaved-changes browser warning
   useEffect(() => {
@@ -302,7 +311,7 @@ export default function BlogPostForm({ mode, initialData, editSlug }: Props) {
                     const file = e.target.files?.[0]
                     // Dev fallback: no real upload wired yet.
                     // Use a real local placeholder so we never depend on external placeholder services.
-                    if (file) setCoverImage('/images/blog/nairobi-kitchen-organize.jpg')
+                    if (file) setCoverImage(blogCoverForCategory(watchCategory))
                     e.target.value = ''
                   }}
                 />
@@ -318,6 +327,13 @@ export default function BlogPostForm({ mode, initialData, editSlug }: Props) {
                 <button type="button" onClick={() => { if (imageUrl.trim()) { setCoverImage(imageUrl.trim()); setImageUrl('') } }}
                   className="px-4 py-2 bg-dark/8 hover:bg-dark/15 text-dark text-sm font-medium rounded-lg transition-colors">Set</button>
               </div>
+
+              <SiteImagePicker
+                label="Site cover images"
+                images={BLOG_COVER_PICKER}
+                selected={coverImage ? [coverImage] : []}
+                onSelect={setCoverImage}
+              />
 
               {/* Preview */}
               {coverImage && (
@@ -383,8 +399,8 @@ export default function BlogPostForm({ mode, initialData, editSlug }: Props) {
         <div className="flex flex-col gap-6">
 
           {/* Category */}
-          <div className="bg-white rounded-xl border border-dark/8 shadow-sm overflow-hidden">
-            <div className="px-5 py-3.5 border-b border-dark/8"><h2 className="text-sm font-semibold text-dark">Category</h2></div>
+          <div className="admin-card overflow-hidden">
+            <div className="px-5 py-3.5 border-b border-[#ECEEF2]"><h2 className="text-sm font-semibold text-dark">Category</h2></div>
             <div className="p-5">
               <select {...register('category')} className={cn(inputOk, 'appearance-none cursor-pointer')}>
                 {BLOG_CATEGORIES.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
@@ -394,8 +410,8 @@ export default function BlogPostForm({ mode, initialData, editSlug }: Props) {
           </div>
 
           {/* Tags */}
-          <div className="bg-white rounded-xl border border-dark/8 shadow-sm overflow-hidden">
-            <div className="px-5 py-3.5 border-b border-dark/8"><h2 className="text-sm font-semibold text-dark">Tags</h2></div>
+          <div className="admin-card overflow-hidden">
+            <div className="px-5 py-3.5 border-b border-[#ECEEF2]"><h2 className="text-sm font-semibold text-dark">Tags</h2></div>
             <div className="p-5 flex flex-col gap-2">
               <TagInput value={tags} onChange={setTags} />
               <p className="text-xs text-dark/35">Press Enter or comma to add a tag.</p>
@@ -403,7 +419,7 @@ export default function BlogPostForm({ mode, initialData, editSlug }: Props) {
           </div>
 
           {/* Read Time */}
-          <div className="bg-white rounded-xl border border-dark/8 shadow-sm p-5">
+          <div className="admin-card p-5">
             <div className="flex items-center justify-between">
               <p className="text-sm font-medium text-dark">Estimated Read Time</p>
               <p className="text-lg font-bold font-display text-primary">{readTime} min</p>

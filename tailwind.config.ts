@@ -9,8 +9,8 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        primary: '#E8191A',
-        accent: '#E8A020',
+        primary: '#F01A1B',
+        accent: '#F0A824',
         dark: '#2D2D2D',
         surface: '#FAFAFA',
         muted: '#F4F4F4',
@@ -27,6 +27,11 @@ const config: Config = {
         lg: '0.5rem',
         '4xl': '2rem',
         '5xl': '3rem',
+      },
+      boxShadow: {
+        'sfs-sm': '0 1px 3px rgba(45, 45, 45, 0.06), 0 1px 2px rgba(45, 45, 45, 0.04)',
+        'sfs-md': '0 8px 24px rgba(45, 45, 45, 0.08), 0 2px 8px rgba(45, 45, 45, 0.04)',
+        'sfs-lg': '0 16px 48px rgba(45, 45, 45, 0.10), 0 4px 16px rgba(45, 45, 45, 0.05)',
       },
     },
   },

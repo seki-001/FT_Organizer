@@ -16,6 +16,7 @@ import BrandLogo from '@/components/brand/BrandLogo'
 import ShopMemberCta from '@/components/shop/ShopMemberCta'
 import { useWishlist } from '@/context/WishlistContext'
 import { cn, formatPrice } from '@/lib/utils'
+import { IMG } from '@/lib/image-placeholders'
 
 // ─── Nav order (spec: Home | Services | Shop | Blog | About | Contact) ────────
 
@@ -27,12 +28,12 @@ const ORDERED_NAV = NAV_ORDER
 // ─── Room cards for the Services mega menu ────────────────────────────────────
 
 const ROOMS = [
-  { label: 'Kitchen',           slug: 'general-decluttering',   image: '/images/rooms/kitchen.jpg'         },
-  { label: 'Living Room',       slug: 'whole-house-organizing',  image: '/images/rooms/living-room.jpg'     },
-  { label: 'Bedroom & Closet',  slug: 'shelving-and-storage',    image: '/images/rooms/bedroom.jpg'         },
-  { label: 'Home Office',       slug: 'office-organizing',       image: '/images/rooms/home-office.jpg'          },
-  { label: 'Moving',            slug: 'moving-house',            image: '/images/rooms/moving.jpg'          },
-  { label: 'Whole Home',        slug: 'whole-house-organizing',  image: '/images/rooms/whole-home.jpg'      },
+  { label: 'Kitchen',           slug: 'general-decluttering',   image: IMG.rooms.kitchen },
+  { label: 'Living Room',       slug: 'whole-house-organizing',  image: IMG.rooms.livingRoom },
+  { label: 'Bedroom & Closet',  slug: 'shelving-and-storage',    image: IMG.rooms.bedroom },
+  { label: 'Home Office',       slug: 'office-organizing',       image: IMG.rooms.office },
+  { label: 'Moving',            slug: 'moving-house',            image: IMG.rooms.moving },
+  { label: 'Whole Home',        slug: 'whole-house-organizing',  image: IMG.rooms.wholeHome },
 ]
 
 // ─── Search overlay ───────────────────────────────────────────────────────────
@@ -87,7 +88,7 @@ function SearchOverlay({ onClose }: { onClose: () => void }) {
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -20 }}
         transition={{ duration: 0.25, ease: 'easeOut' }}
-        className="fixed top-0 left-0 right-0 z-[80] bg-white/95 backdrop-blur-md shadow-2xl"
+        className="fixed top-0 left-0 right-0 z-[80] glass-panel-light shadow-2xl border-b border-white/50"
         role="dialog"
         aria-label="Search"
       >
@@ -206,7 +207,7 @@ function ServicesMegaMenu({
       transition={{ duration: 0.2, ease: 'easeOut' }}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
-      className="absolute top-full left-0 right-0 z-50 bg-white border-b border-dark/8 shadow-xl"
+      className="absolute top-full left-0 right-0 z-50 glass-panel-dropdown shadow-sfs-lg rounded-b-3xl mt-2 mx-2"
     >
       <div className="max-w-7xl mx-auto px-8 py-8">
         <div className="flex gap-10">
@@ -219,7 +220,7 @@ function ServicesMegaMenu({
             <div className="grid grid-cols-3 gap-3">
               {ROOMS.map(room => (
                 <Link key={room.label} href={`/services/${room.slug}`} onClick={onClose}
-                  className="group relative rounded-xl overflow-hidden h-28 block ring-1 ring-dark/8 hover:ring-primary/40 transition-all duration-200">
+                  className="group relative img-frame-lg h-28 block ring-1 ring-white/50 hover:ring-primary/35 transition-all duration-200 shadow-sm">
                   <Image
                     src={room.image} alt={room.label} fill className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
                     sizes="(max-width: 1280px) 200px, 250px"
@@ -234,14 +235,14 @@ function ServicesMegaMenu({
           </div>
 
           {/* Right 30% — Service list */}
-          <div className="flex-[3] min-w-0 flex flex-col">
+          <div className="flex-[3] min-w-0 flex flex-col glass-subtle rounded-2xl p-4">
             <p className="text-[10px] uppercase tracking-widest text-dark/40 font-semibold mb-4">
               Our Services
             </p>
             <div className="flex flex-col flex-1">
               {SERVICES.map(service => (
                 <Link key={service.slug} href={`/services/${service.slug}`} onClick={onClose}
-                  className="group flex items-center justify-between py-2 px-2 -mx-2 rounded-lg hover:bg-surface transition-colors duration-150">
+                  className="group flex items-center justify-between py-2 px-2 -mx-2 rounded-xl hover:bg-white/35 transition-colors duration-150">
                   <span className="flex items-center gap-2 text-sm text-dark/70 group-hover:text-primary transition-colors">
                     <ArrowRight size={11} className="text-dark/25 group-hover:text-primary transition-colors flex-shrink-0" />
                     {service.title}
@@ -256,7 +257,7 @@ function ServicesMegaMenu({
         </div>
 
         {/* Bottom CTA band */}
-        <div className="mt-6 bg-muted rounded-xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+        <div className="mt-6 glass-subtle rounded-2xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
           <p className="text-sm text-dark/70">
             Not sure where to start?{' '}
             <span className="font-semibold text-dark">Get a free consultation.</span>
@@ -292,7 +293,7 @@ function ShopMegaMenu({
       transition={{ duration: 0.2, ease: 'easeOut' }}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
-      className="absolute top-full left-0 right-0 z-50 bg-white border-b border-dark/8 shadow-xl"
+      className="absolute top-full left-0 right-0 z-50 glass-panel-dropdown shadow-sfs-lg rounded-b-3xl mt-2 mx-2"
     >
       <div className="max-w-7xl mx-auto px-6 lg:px-8 py-6">
         <div className="flex gap-8 lg:gap-12">
@@ -308,7 +309,7 @@ function ShopMegaMenu({
                   key={cat.slug}
                   href={`/shop?category=${cat.slug}`}
                   onClick={onClose}
-                  className="inline-flex items-center px-3.5 py-1.5 rounded-full text-xs font-medium border border-dark/12 bg-surface text-dark/75 hover:bg-primary hover:border-primary hover:text-white transition-colors duration-150"
+                  className="inline-flex items-center px-3.5 py-1.5 rounded-full text-xs font-medium glass-subtle text-dark/75 hover:bg-primary hover:border-primary hover:text-white border border-white/50 transition-colors duration-150"
                 >
                   {cat.label}
                 </Link>
@@ -341,7 +342,7 @@ function ShopMegaMenu({
           </div>
 
           {/* Featured — compact list with small thumbs only */}
-          <div className="flex-[3] min-w-[200px] max-w-xs flex flex-col border-l border-dark/8 pl-8">
+          <div className="flex-[3] min-w-[200px] max-w-xs flex flex-col border-l border-white/40 pl-8">
             <p className="text-[10px] uppercase tracking-widest text-dark/40 font-semibold mb-3">
               Featured
             </p>
@@ -351,9 +352,9 @@ function ShopMegaMenu({
                   key={product.slug}
                   href={`/shop/${product.slug}`}
                   onClick={onClose}
-                  className="group flex items-center gap-3 py-2.5 px-2 -mx-2 rounded-xl hover:bg-surface transition-colors duration-150"
+                  className="group flex items-center gap-3 py-2.5 px-2 -mx-2 rounded-xl hover:bg-white/35 transition-colors duration-150"
                 >
-                  <div className="relative w-11 h-11 rounded-lg overflow-hidden bg-muted flex-shrink-0 ring-1 ring-dark/8">
+                  <div className="relative w-11 h-11 img-frame overflow-hidden bg-muted flex-shrink-0 ring-1 ring-white/50">
                     <Image src={product.images[0]} alt={product.name} fill className="object-cover" sizes="44px" />
                   </div>
                   <div className="min-w-0 flex-1">
@@ -370,7 +371,7 @@ function ShopMegaMenu({
           </div>
         </div>
 
-        <div className="mt-5 pt-4 border-t border-dark/8 flex items-center gap-2.5 text-sm text-dark/60">
+        <div className="mt-5 pt-4 border-t border-white/35 flex items-center gap-2.5 text-sm text-dark/60">
           <Truck size={15} className="text-success flex-shrink-0" />
           <span>
             <span className="font-semibold text-dark">Free delivery</span> in Nairobi CBD on orders over{' '}
@@ -419,13 +420,13 @@ function MobileMenu({
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
       transition={{ duration: 0.25, ease: 'easeOut' }}
-      className="fixed inset-0 z-[60] bg-white flex flex-col overflow-y-auto"
+      className="fixed inset-0 z-[60] glass-grid-bg backdrop-blur-xl flex flex-col overflow-y-auto"
       role="dialog"
       aria-label="Mobile navigation"
       aria-modal="true"
     >
       {/* Top bar */}
-      <div className="flex items-center justify-between px-6 h-16 border-b border-dark/8 flex-shrink-0">
+      <div className="flex items-center justify-between px-6 h-16 border-b border-white/40 flex-shrink-0 glass-panel-light mx-4 mt-4 rounded-2xl">
         <Link href="/" onClick={onClose} className="font-display text-xl font-bold text-primary">
           {COMPANY.name}
         </Link>
@@ -438,7 +439,7 @@ function MobileMenu({
       {/* Search bar */}
       <div className="px-6 pt-5 pb-2">
         <button type="button" onClick={() => { onClose(); openSearch() }}
-          className="w-full flex items-center gap-3 bg-muted rounded-xl px-4 py-3 text-dark/40 text-sm hover:bg-muted/80 transition-colors">
+          className="w-full flex items-center gap-3 glass-panel-light rounded-2xl px-4 py-3 text-dark/40 text-sm hover:bg-white/70 transition-colors">
           <Search size={16} />
           Search services and products…
         </button>
@@ -643,45 +644,31 @@ export default function Header() {
 
   return (
     <>
-      <header className="sticky top-0 z-50 w-full">
-
-        {/* ── Row 1: Utility bar — desktop only ───────────────────────────── */}
-        <div className="hidden lg:block bg-dark border-b border-white/5">
-          <div className="max-w-7xl mx-auto px-8 py-2 flex items-center justify-between">
-            <p className="text-white/40 text-xs tracking-wide">
-              Professional Home &amp; Office Organizing — Nairobi, Kenya
-            </p>
-            <div className="flex items-center gap-6 text-white/40 text-xs">
-              <a href={`tel:${COMPANY.phone}`}
-                className="flex items-center gap-1.5 hover:text-white/80 transition-colors">
-                <Phone size={11} />
-                {COMPANY.phone}
-              </a>
-              <a href={`mailto:${COMPANY.email}`}
-                className="flex items-center gap-1.5 hover:text-white/80 transition-colors">
-                <Mail size={11} />
-                {COMPANY.email}
-              </a>
-            </div>
-          </div>
-        </div>
-
-        {/* ── Row 2: Main nav ──────────────────────────────────────────────── */}
+      <header className="sticky top-0 z-50 w-full px-3 sm:px-4 lg:px-8 pt-3 pb-2">
+        {/* Floating glass nav bar */}
         <div
-          className="bg-dark/95 backdrop-blur-md border-b border-white/8 relative"
+          className="glass-nav rounded-full relative max-w-7xl mx-auto"
           onMouseLeave={scheduleClose}
         >
-          <div className="max-w-7xl mx-auto px-4 lg:px-8 h-16 flex items-center justify-between gap-4">
+          <div className="h-14 sm:h-16 flex items-center justify-between gap-3 px-3 sm:px-5">
 
-            <BrandLogo variant="on-dark" priority />
+            <BrandLogo variant="on-light" priority />
 
-            {/* Desktop nav — hidden on mobile */}
-            <nav aria-label="Primary navigation" className="hidden lg:flex items-center">
+            {/* Desktop nav — pill container */}
+            <nav aria-label="Primary navigation" className="hidden lg:flex items-center glass-nav-pill rounded-full p-1">
               {ORDERED_NAV.map(navLink => {
                 const isActive = navLink.href === '/'
                   ? pathname === '/'
                   : pathname.startsWith(navLink.href)
                 const hasMegaMenu = navLink.label === 'Services' || navLink.label === 'Shop'
+                const menuOpen = activeMenu === navLink.label.toLowerCase()
+
+                const linkClass = cn(
+                  'flex items-center gap-1 text-sm font-medium px-4 py-2 rounded-full transition-all duration-150',
+                  isActive || menuOpen
+                    ? 'glass-nav-link-active text-primary font-semibold'
+                    : 'text-dark/60 hover:text-dark hover:bg-white/40',
+                )
 
                 if (hasMegaMenu) {
                   return (
@@ -690,36 +677,20 @@ export default function Header() {
                       type="button"
                       onMouseEnter={() => openMenu(navLink.label.toLowerCase() as 'services' | 'shop')}
                       onMouseLeave={scheduleClose}
-                      className={cn(
-                        'flex items-center gap-1 text-sm font-medium px-4 py-2 transition-colors duration-150 relative',
-                        isActive || activeMenu === navLink.label.toLowerCase()
-                          ? 'text-white font-semibold'
-                          : 'text-white/60 hover:text-white',
-                      )}
+                      className={linkClass}
                     >
                       {navLink.label}
                       <ChevronDown
                         size={13}
-                        className={cn('transition-transform duration-200 text-white/40',
-                          activeMenu === navLink.label.toLowerCase() && 'rotate-180')}
+                        className={cn('transition-transform duration-200 text-dark/35', menuOpen && 'rotate-180')}
                       />
-                      {/* Active underline */}
-                      {(isActive || activeMenu === navLink.label.toLowerCase()) && (
-                        <span className="absolute bottom-0 left-4 right-4 h-0.5 bg-primary rounded-full" />
-                      )}
                     </button>
                   )
                 }
 
                 return (
-                  <Link key={navLink.href} href={navLink.href}
-                    className={cn(
-                      'text-sm font-medium px-4 py-2 transition-colors duration-150 relative',
-                      isActive ? 'text-white font-semibold' : 'text-white/60 hover:text-white',
-                    )}
-                  >
+                  <Link key={navLink.href} href={navLink.href} className={linkClass}>
                     {navLink.label}
-                    {isActive && <span className="absolute bottom-0 left-4 right-4 h-0.5 bg-primary rounded-full" />}
                   </Link>
                 )
               })}
@@ -730,12 +701,12 @@ export default function Header() {
 
               {/* Search */}
               <button type="button" onClick={openSearch} aria-label="Search"
-                className="hidden md:flex items-center justify-center w-10 h-10 rounded-xl text-white/60 hover:text-white hover:bg-white/8 transition-colors">
+                className="hidden md:flex glass-icon-btn">
                 <Search size={19} />
               </button>
 
               <Link href="/account/wishlist" aria-label="Wishlist"
-                className="hidden md:flex items-center justify-center w-10 h-10 rounded-xl text-white/60 hover:text-white hover:bg-white/8 transition-colors relative">
+                className="hidden md:flex glass-icon-btn relative">
                 <Heart size={19} />
                 {wishlistCount > 0 && (
                   <span className="absolute -top-0.5 -right-0.5 flex items-center justify-center w-5 h-5 rounded-full bg-accent text-white text-[10px] font-bold">
@@ -747,7 +718,7 @@ export default function Header() {
               {/* Cart */}
               <Link href="/cart"
                 aria-label={`Cart${totalItems > 0 ? `, ${totalItems} item${totalItems !== 1 ? 's' : ''}` : ''}`}
-                className="flex items-center justify-center w-10 h-10 rounded-xl text-white/60 hover:text-white hover:bg-white/8 transition-colors relative">
+                className="flex glass-icon-btn relative">
                 <ShoppingCart size={20} />
                 {totalItems > 0 && (
                   <span className="absolute -top-0.5 -right-0.5 flex items-center justify-center w-5 h-5 rounded-full bg-primary text-white text-[10px] font-bold leading-none">
@@ -758,7 +729,7 @@ export default function Header() {
 
               {/* Book Now — desktop */}
               <Link href="/book"
-                className="hidden md:inline-flex items-center gap-1.5 bg-white hover:bg-white/90 text-dark font-medium text-sm px-5 py-2.5 rounded-full transition-colors ml-2">
+                className="hidden md:inline-flex items-center gap-1.5 sfs-btn-primary text-sm py-2.5 ml-2 min-h-[40px]">
                 Book Now
                 <ArrowUpRight size={13} />
               </Link>
@@ -768,7 +739,7 @@ export default function Header() {
                 onClick={() => setIsMobileMenuOpen(o => !o)}
                 aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
                 aria-expanded={isMobileMenuOpen}
-                className="lg:hidden flex items-center justify-center w-10 h-10 rounded-xl text-white hover:bg-white/8 transition-colors">
+                className="lg:hidden flex glass-icon-btn">
                 <Menu size={22} />
               </button>
             </div>

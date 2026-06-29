@@ -16,7 +16,7 @@ function WishlistCard({ product }: { product: Product }) {
   const discount       = product.salePrice ? discountPercent(product.price, product.salePrice) : 0
 
   return (
-    <article className="bg-white rounded-xl border border-dark/8 shadow-sm overflow-hidden flex flex-col group">
+    <article className="glass-card rounded-xl overflow-hidden flex flex-col group">
       {/* Image */}
       <div className="relative aspect-square overflow-hidden bg-muted">
         <Link href={`/shop/${product.slug}`} tabIndex={-1} aria-hidden="true">
@@ -117,7 +117,7 @@ export default function AccountWishlistPage() {
       </div>
 
       {items.length === 0 ? (
-        <div className="bg-white rounded-2xl border border-dark/8 shadow-sm p-12 text-center flex flex-col items-center gap-4">
+        <div className="glass-card p-12 text-center flex flex-col items-center gap-4">
           <Heart size={48} className="text-dark/20" aria-hidden="true" />
           <p className="text-dark/50">Your wishlist is empty.</p>
           <p className="text-dark/40 text-sm">Save products you love and come back to them later.</p>

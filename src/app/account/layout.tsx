@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname, useRouter } from 'next/navigation'
 import {
   LayoutDashboard, ShoppingBag, Calendar, Heart,
@@ -9,6 +10,7 @@ import {
 } from 'lucide-react'
 import { useState } from 'react'
 import { useSession, useSignOut } from '@/context/AuthContext'
+import { clientAvatarForUser } from '@/lib/avatars'
 import { cn } from '@/lib/utils'
 
 // ─── Nav config ───────────────────────────────────────────────────────────────
@@ -69,7 +71,7 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
 
   if (status === 'loading') {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-surface">
+      <div className="min-h-screen flex items-center justify-center glass-grid-bg">
         <div className="w-8 h-8 rounded-full border-4 border-primary border-t-transparent animate-spin" />
       </div>
     )
@@ -77,10 +79,12 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
 
   if (status === 'unauthenticated') return null
 
+  const userAvatar = clientAvatarForUser(session?.user.email ?? session?.user.name ?? 'guest')
+
   return (
-    <div className="min-h-screen bg-surface">
+    <div className="min-h-screen glass-grid-bg">
       {/* Mobile header bar */}
-      <div className="md:hidden sticky top-16 z-30 bg-white border-b border-dark/10 px-4 py-3 flex items-center justify-between">
+      <div className="md:hidden sticky top-16 z-30 glass-panel-light border-b border-white/50 px-4 py-3 flex items-center justify-between">
         <span className="font-semibold text-dark text-sm">
           {session?.user.name ?? 'My Account'}
         </span>
@@ -96,7 +100,7 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
 
       {/* Mobile slide-down nav */}
       {mobileOpen && (
-        <div className="md:hidden bg-white border-b border-dark/10 px-4 py-3 flex flex-col gap-1 sticky top-[105px] z-20">
+        <div className="md:hidden glass-panel-light border-b border-white/50 px-4 py-3 flex flex-col gap-1 sticky top-[105px] z-20">
           {NAV_ITEMS.map((item) => (
             <NavLink
               key={item.href}
@@ -121,11 +125,17 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
 
           {/* Desktop sidebar */}
           <aside className="hidden md:flex flex-col w-60 flex-shrink-0">
-            <div className="sticky top-24 bg-white rounded-2xl shadow-sm border border-dark/5 p-4 flex flex-col gap-1">
+            <div className="sticky top-24 glass-panel-light rounded-2xl p-4 flex flex-col gap-1">
               {/* User info */}
               <div className="flex items-center gap-3 px-4 py-3 mb-2 border-b border-dark/8">
-                <div className="w-9 h-9 rounded-full bg-primary text-white flex items-center justify-center font-bold text-sm uppercase flex-shrink-0">
-                  {session?.user.name?.[0] ?? 'U'}
+                <div className="w-9 h-9 rounded-full overflow-hidden flex-shrink-0 bg-white border border-white/80">
+                  <Image
+                    src={userAvatar}
+                    alt=""
+                    width={36}
+                    height={36}
+                    className="w-full h-full object-cover"
+                  />
                 </div>
                 <div className="min-w-0">
                   <p className="text-sm font-semibold text-dark truncate">{session?.user.name}</p>

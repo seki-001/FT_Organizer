@@ -200,7 +200,7 @@ export default function ProductCard({ product }: { product: Product }) {
   return (
     <>
       <motion.article
-        className="bg-white rounded-2xl overflow-hidden flex flex-col"
+        className="sfs-card group flex flex-col overflow-hidden"
         onHoverStart={() => setHovered(true)}
         onHoverEnd={() => setHovered(false)}
         animate={{ boxShadow: hovered ? '0 8px 32px rgba(0,0,0,0.10)' : '0 1px 4px rgba(0,0,0,0.04)' }}

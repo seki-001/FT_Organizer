@@ -60,11 +60,11 @@ function ChangeLabel({ pct }: { pct: number }) {
 
 function ChartCard({ title, children, className }: { title: string; children: React.ReactNode; className?: string }) {
   return (
-    <div className={cn('bg-white rounded-2xl border border-dark/8 shadow-sm overflow-hidden', className)}>
-      <div className="px-6 py-4 border-b border-dark/5">
-        <h2 className="text-sm font-semibold text-dark">{title}</h2>
+    <div className={cn('admin-card overflow-hidden', className)}>
+      <div className="px-5 py-4 border-b border-[#ECEEF2]">
+        <h2 className="text-[15px] font-semibold text-dark tracking-tight">{title}</h2>
       </div>
-      <div className="p-6">{children}</div>
+      <div className="p-5">{children}</div>
     </div>
   )
 }
@@ -137,12 +137,12 @@ export default function AnalyticsPage() {
           title="Analytics"
           subtitle="Business performance overview"
         />
-        <div className="flex gap-1 p-0.5 bg-white border border-dark/8 rounded-xl shadow-sm flex-shrink-0">
+        <div className="flex gap-1 p-0.5 admin-card flex-shrink-0">
           {DATE_RANGES.map(r => (
             <button key={r.id} onClick={() => setRange(r.id)}
               className={cn(
-                'px-3.5 py-2 text-xs font-medium rounded-lg transition-all whitespace-nowrap',
-                range === r.id ? 'bg-dark text-white shadow-sm' : 'text-dark/50 hover:text-dark',
+                'px-3.5 py-2 text-xs font-medium rounded-md transition-all whitespace-nowrap',
+                range === r.id ? 'bg-dark text-white' : 'text-dark/50 hover:text-dark hover:bg-[#F4F5F7]',
               )}>
               {r.label}
             </button>
@@ -153,12 +153,12 @@ export default function AnalyticsPage() {
       {/* ── Section 1: KPI cards ─────────────────────────────────────────── */}
       <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-4">
         {KPI_CARDS.map(card => (
-          <div key={card.label} className="bg-white rounded-2xl border border-dark/8 shadow-sm p-5 flex flex-col gap-3">
-            <div className={cn('w-9 h-9 rounded-xl flex items-center justify-center', card.bg)}>
+          <div key={card.label} className="admin-stat-card flex flex-col gap-3">
+            <div className={cn('w-9 h-9 rounded-lg flex items-center justify-center', card.bg)}>
               {card.icon}
             </div>
             <div>
-              <p className="font-display text-xl font-bold text-dark leading-tight">{card.value}</p>
+              <p className="font-mono text-xl font-bold text-dark leading-tight">{card.value}</p>
               <p className="text-xs text-dark/45 mt-0.5">{card.label}</p>
             </div>
             <div className="flex items-center gap-1.5">
@@ -238,7 +238,7 @@ export default function AnalyticsPage() {
         <ChartCard title="Top Customer Areas">
           <div className="flex flex-col gap-0">
             {/* Header */}
-            <div className="grid grid-cols-[1fr_52px_52px_80px] gap-2 pb-2 border-b border-dark/8">
+            <div className="grid grid-cols-[1fr_52px_52px_80px] gap-2 pb-2 border-b border-[#ECEEF2]">
               {['Area', 'Cust.', 'Orders', 'Revenue'].map(h => (
                 <p key={h} className="text-[10px] font-semibold uppercase tracking-wide text-dark/35">{h}</p>
               ))}

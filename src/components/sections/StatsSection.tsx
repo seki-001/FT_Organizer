@@ -1,6 +1,6 @@
 export default function StatsSection() {
   return (
-    <section className="bg-white border-t border-dark/8 py-16 md:py-20">
+    <section className="glass-grid-bg py-14 md:py-20">
       <div className="max-w-7xl mx-auto px-4 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-dark/10">
           {[

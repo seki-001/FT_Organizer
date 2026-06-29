@@ -25,7 +25,7 @@ function CustomTooltip({ active, payload, label }: TTProps) {
           </span>
         </div>
       ))}
-      <div className="border-t border-dark/8 mt-2 pt-2 flex items-center justify-between">
+      <div className="border-t border-[#ECEEF2] mt-2 pt-2 flex items-center justify-between">
         <span className="text-xs text-dark/40">Total</span>
         <span className="font-mono font-bold text-dark text-xs">
           KSh {((payload[0]?.value ?? 0) + (payload[1]?.value ?? 0)).toLocaleString('en-KE')}

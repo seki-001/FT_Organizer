@@ -35,7 +35,7 @@ export default function TopProductsChart({ data }: { data: TopProductRow[] }) {
   return (
     <div className="flex flex-col">
       {/* Header */}
-      <div className="grid grid-cols-[24px_1fr_64px_80px_80px] gap-2 px-1 pb-2 border-b border-dark/8">
+      <div className="grid grid-cols-[24px_1fr_64px_80px_80px] gap-2 px-1 pb-2 border-b border-[#ECEEF2]">
         {['#', 'Product', 'Units', 'Revenue', 'Trend'].map(h => (
           <p key={h} className="text-[10px] font-semibold uppercase tracking-wide text-dark/35">{h}</p>
         ))}

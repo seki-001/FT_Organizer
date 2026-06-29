@@ -2,13 +2,15 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname, useRouter } from 'next/navigation'
 import {
   LayoutDashboard, ShoppingBag, Package, Tag, Users, Calendar,
   FileText, Settings, Menu, X, ChevronRight, LogOut, Bell,
-  BarChart2, Home, Receipt, TrendingDown, Truck, PieChart, Mail,
+  BarChart2, Home, Receipt, TrendingDown, Truck, PieChart, Mail, Search,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { clientAvatarForUser } from '@/lib/avatars'
 
 // ─── Nav config ───────────────────────────────────────────────────────────────
 
@@ -25,7 +27,7 @@ interface NavSection {
 
 const NAV_SECTIONS: NavSection[] = [
   {
-    label: 'OVERVIEW',
+    label: 'Overview',
     items: [
       { label: 'Dashboard', href: '/admin',           icon: LayoutDashboard },
       { label: 'Reports',   href: '/admin/reports',   icon: PieChart        },
@@ -33,7 +35,7 @@ const NAV_SECTIONS: NavSection[] = [
     ],
   },
   {
-    label: 'SHOP',
+    label: 'Shop',
     items: [
       { label: 'POS / Sales', href: '/admin/pos',      icon: Receipt     },
       { label: 'Orders',      href: '/admin/orders',   icon: ShoppingBag },
@@ -43,27 +45,27 @@ const NAV_SECTIONS: NavSection[] = [
     ],
   },
   {
-    label: 'ACCOUNTS',
+    label: 'Accounts',
     items: [
       { label: 'Expenses',  href: '/admin/expenses',  icon: TrendingDown },
       { label: 'Purchases', href: '/admin/purchases', icon: Truck        },
     ],
   },
   {
-    label: 'SERVICES',
+    label: 'Services',
     items: [
-      { label: 'Inquiries', href: '/admin/inquiries', icon: Mail },
-      { label: 'Quote Requests', href: '/admin/bookings', icon: Calendar },
+      { label: 'Inquiries',      href: '/admin/inquiries', icon: Mail     },
+      { label: 'Quote Requests', href: '/admin/bookings',  icon: Calendar },
     ],
   },
   {
-    label: 'CONTENT',
+    label: 'Content',
     items: [
       { label: 'Blog Posts', href: '/admin/blog', icon: FileText },
     ],
   },
   {
-    label: 'SETTINGS',
+    label: 'Settings',
     items: [
       { label: 'Settings', href: '/admin/settings', icon: Settings },
     ],
@@ -111,13 +113,11 @@ function NavLink({ item, pathname, onClick }: { item: NavItem; pathname: string;
       href={item.href}
       onClick={onClick}
       className={cn(
-        'flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150',
-        isActive
-          ? 'bg-primary text-white shadow-sm'
-          : 'text-dark/60 hover:text-dark hover:bg-muted',
+        'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors duration-150',
+        isActive ? 'admin-nav-active' : 'admin-nav-link',
       )}
     >
-      <Icon size={17} aria-hidden="true" />
+      <Icon size={18} aria-hidden="true" className={isActive ? 'text-primary' : 'text-dark/40'} />
       {item.label}
     </Link>
   )
@@ -142,19 +142,17 @@ function Sidebar({
   }
 
   return (
-    <div className="flex flex-col h-full bg-white w-[260px] flex-shrink-0 border-r border-dark/8">
+    <div className="flex flex-col h-full admin-sidebar w-[260px] flex-shrink-0">
 
-      {/* ── Brand header ────────────────────────────────────────────────── */}
-      <div className="px-5 py-5 border-b border-dark/8 flex items-center justify-between gap-2">
+      {/* Brand */}
+      <div className="px-5 h-16 flex items-center justify-between gap-2 border-b border-[#ECEEF2]">
         <div className="flex items-center gap-3 min-w-0">
-          <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
-            <Home size={17} className="text-primary" aria-hidden="true" />
+          <div className="w-9 h-9 rounded-lg bg-primary flex items-center justify-center flex-shrink-0">
+            <Home size={16} className="text-white" aria-hidden="true" />
           </div>
           <div className="min-w-0">
-            <p className="font-display text-base text-primary font-bold leading-tight truncate">
-              Faith The Organizer
-            </p>
-            <p className="text-dark/40 text-[11px] mt-0.5">Admin Panel</p>
+            <p className="text-sm text-dark font-semibold leading-tight truncate">Faith The Organizer</p>
+            <p className="text-dark/40 text-[11px] mt-0.5">Admin</p>
           </div>
         </div>
         {onClose && (
@@ -162,18 +160,18 @@ function Sidebar({
             type="button"
             onClick={onClose}
             aria-label="Close sidebar"
-            className="flex items-center justify-center w-8 h-8 rounded-lg text-dark/40 hover:bg-muted hover:text-dark transition-colors md:hidden flex-shrink-0"
+            className="flex items-center justify-center w-8 h-8 rounded-lg text-dark/40 hover:bg-[#F4F5F7] hover:text-dark transition-colors md:hidden flex-shrink-0"
           >
             <X size={18} />
           </button>
         )}
       </div>
 
-      {/* ── Navigation ──────────────────────────────────────────────────── */}
-      <nav className="flex-1 overflow-y-auto py-4 px-3 flex flex-col gap-5" aria-label="Admin navigation">
+      {/* Navigation */}
+      <nav className="flex-1 overflow-y-auto py-5 px-3 flex flex-col gap-6" aria-label="Admin navigation">
         {NAV_SECTIONS.map((section) => (
           <div key={section.label} className="flex flex-col gap-0.5">
-            <p className="px-3 mb-1 text-[10px] font-semibold uppercase tracking-widest text-dark/30 select-none">
+            <p className="px-3 mb-1.5 text-[11px] font-medium text-dark/35 select-none">
               {section.label}
             </p>
             {section.items.map((item) => (
@@ -188,34 +186,40 @@ function Sidebar({
         ))}
       </nav>
 
-      {/* ── View site link ───────────────────────────────────────────────── */}
-      <div className="px-3 pb-3 border-t border-dark/8 pt-3">
+      {/* View site */}
+      <div className="px-3 pb-2">
         <Link
           href="/"
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm text-dark/45 hover:text-dark hover:bg-muted transition-colors"
+          className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-dark/45 hover:text-dark hover:bg-[#F4F5F7] transition-colors"
         >
           <Home size={15} className="text-dark/30" aria-hidden="true" />
           View Website ↗
         </Link>
       </div>
 
-      {/* ── User section ─────────────────────────────────────────────────── */}
-      <div className="px-3 py-3 border-t border-dark/8">
-        <div className="flex items-center gap-3 px-3 py-2 mb-1">
-          <div className="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center text-xs font-bold uppercase flex-shrink-0">
-            {userName?.[0] ?? 'F'}
+      {/* User */}
+      <div className="px-3 py-3 border-t border-[#ECEEF2]">
+        <div className="flex items-center gap-3 px-2 py-2 mb-1">
+          <div className="w-9 h-9 rounded-full overflow-hidden flex-shrink-0 bg-[#F4F5F7]">
+            <Image
+              src={clientAvatarForUser(userEmail)}
+              alt=""
+              width={36}
+              height={36}
+              className="w-full h-full object-cover"
+            />
           </div>
           <div className="min-w-0 flex-1">
-            <p className="text-dark text-xs font-medium truncate">{userName}</p>
+            <p className="text-dark text-sm font-medium truncate">{userName}</p>
             <p className="text-dark/40 text-[11px] truncate">{userEmail}</p>
           </div>
         </div>
         <button
           type="button"
           onClick={handleSignOut}
-          className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm text-dark/50 hover:text-danger hover:bg-danger/5 transition-colors duration-150"
+          className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-dark/50 hover:text-danger hover:bg-danger/5 transition-colors duration-150"
         >
           <LogOut size={15} aria-hidden="true" />
           Sign Out
@@ -249,22 +253,22 @@ export default function AdminShell({
   const breadcrumb = buildBreadcrumb(pathname)
 
   return (
-    <div className="flex h-screen overflow-hidden bg-surface">
+    <div className="flex h-screen overflow-hidden admin-shell">
 
-      {/* ── Desktop sidebar ──────────────────────────────────────────────── */}
-      <div className="hidden md:flex flex-col flex-shrink-0 shadow-sm">
+      {/* Desktop sidebar */}
+      <div className="hidden md:flex flex-col flex-shrink-0">
         <Sidebar userEmail={userEmail} userName={userName} />
       </div>
 
-      {/* ── Mobile sidebar overlay ───────────────────────────────────────── */}
+      {/* Mobile sidebar overlay */}
       {sidebarOpen && (
         <>
           <div
-            className="fixed inset-0 bg-dark/30 z-40 md:hidden backdrop-blur-sm"
+            className="fixed inset-0 bg-dark/20 z-40 md:hidden"
             onClick={() => setSidebarOpen(false)}
             aria-hidden="true"
           />
-          <div className="fixed inset-y-0 left-0 z-50 md:hidden flex flex-col shadow-2xl">
+          <div className="fixed inset-y-0 left-0 z-50 md:hidden flex flex-col shadow-xl">
             <Sidebar
               userEmail={userEmail}
               userName={userName}
@@ -274,27 +278,23 @@ export default function AdminShell({
         </>
       )}
 
-      {/* ── Main content area ────────────────────────────────────────────── */}
+      {/* Main */}
       <div className="flex flex-col flex-1 min-w-0 overflow-hidden">
 
-        {/* Top bar */}
-        <header className="bg-white border-b border-dark/8 h-14 flex items-center px-4 sm:px-6 gap-3 flex-shrink-0 shadow-sm">
+        <header className="admin-header h-16 flex items-center px-4 sm:px-6 gap-4 flex-shrink-0">
 
-          {/* Hamburger — mobile only */}
           <button
             type="button"
             onClick={() => setSidebarOpen(true)}
             aria-label="Open navigation menu"
-            className="md:hidden flex items-center justify-center w-9 h-9 rounded-lg text-dark/50 hover:bg-muted transition-colors flex-shrink-0"
+            className="md:hidden flex items-center justify-center w-9 h-9 rounded-lg text-dark/50 hover:bg-[#F4F5F7] transition-colors flex-shrink-0"
           >
             <Menu size={20} />
           </button>
 
-          {/* Mobile brand */}
-          <span className="md:hidden font-display text-primary font-bold text-base">FTO</span>
+          <span className="md:hidden text-dark font-semibold text-sm">FTO Admin</span>
 
-          {/* Breadcrumb */}
-          <nav aria-label="Breadcrumb" className="hidden sm:flex items-center gap-1.5 text-sm min-w-0 flex-1">
+          <nav aria-label="Breadcrumb" className="hidden sm:flex items-center gap-1.5 text-sm min-w-0">
             {breadcrumb.map((crumb, i) => (
               <span key={crumb.href} className="flex items-center gap-1.5 min-w-0">
                 {i > 0 && (
@@ -308,38 +308,50 @@ export default function AdminShell({
                     {crumb.label}
                   </Link>
                 ) : (
-                  <span className="text-dark font-semibold truncate text-sm">{crumb.label}</span>
+                  <span className="text-dark font-medium truncate text-sm">{crumb.label}</span>
                 )}
               </span>
             ))}
           </nav>
 
-          {/* Mobile: current page label */}
-          <span className="sm:hidden font-semibold text-dark text-sm flex-1">
-            {breadcrumb[breadcrumb.length - 1]?.label ?? 'Admin'}
-          </span>
+          {/* Search */}
+          <div className="hidden lg:flex items-center flex-1 max-w-sm ml-4">
+            <div className="relative w-full">
+              <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-dark/30" aria-hidden="true" />
+              <input
+                type="search"
+                placeholder="Search..."
+                className="w-full h-9 pl-9 pr-3 text-sm rounded-lg border border-[#ECEEF2] bg-[#F4F5F7] text-dark placeholder:text-dark/35 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/30"
+                aria-label="Search admin"
+              />
+            </div>
+          </div>
 
-          {/* Right actions */}
-          <div className="flex items-center gap-1 flex-shrink-0">
+          <div className="flex items-center gap-1 flex-shrink-0 ml-auto">
             <button
               type="button"
               aria-label="Notifications"
-              className="flex items-center justify-center w-9 h-9 rounded-lg text-dark/40 hover:text-dark hover:bg-muted transition-colors relative"
+              className="flex items-center justify-center w-9 h-9 rounded-lg text-dark/40 hover:text-dark hover:bg-[#F4F5F7] transition-colors relative"
             >
               <Bell size={17} aria-hidden="true" />
-              <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-primary border-2 border-white" aria-hidden="true" />
+              <span className="absolute top-2 right-2 w-1.5 h-1.5 rounded-full bg-primary" aria-hidden="true" />
             </button>
-            <div className="hidden sm:flex items-center gap-2 ml-1 pl-3 border-l border-dark/8">
-              <div className="w-7 h-7 rounded-full bg-primary text-white flex items-center justify-center text-xs font-bold uppercase">
-                {userName?.[0] ?? 'F'}
+            <div className="hidden sm:flex items-center gap-2.5 ml-2 pl-3 border-l border-[#ECEEF2]">
+              <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0 bg-[#F4F5F7]">
+                <Image
+                  src={clientAvatarForUser(userEmail)}
+                  alt=""
+                  width={32}
+                  height={32}
+                  className="w-full h-full object-cover"
+                />
               </div>
               <span className="text-sm font-medium text-dark hidden md:block">{userName.split(' ')[0]}</span>
             </div>
           </div>
         </header>
 
-        {/* Page content */}
-        <main className="flex-1 overflow-y-auto p-5 sm:p-8">
+        <main className="flex-1 overflow-y-auto p-5 sm:p-6 lg:p-8">
           {children}
         </main>
       </div>

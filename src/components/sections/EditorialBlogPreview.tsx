@@ -18,7 +18,7 @@ const POSTS = [
     title:    '10 Rules for Decluttering a Nairobi Home Without Losing Your Mind',
     date:     'Mar 12, 2025',
     readTime: '6 min read',
-    image:    'https://images.unsplash.com/photo-1484101403633-562f891dc89a?w=800&q=80',
+    image:    IMG.blog.tips,
   },
   {
     slug:     'small-kitchen-storage-hacks',
@@ -26,7 +26,7 @@ const POSTS = [
     title:    'Storage Hacks for the Typical Nairobi Kitchen',
     date:     'Feb 28, 2025',
     readTime: '4 min read',
-    image:    IMG.heroBg,
+    image:    IMG.blog.kitchen,
   },
   {
     slug:     'moving-house-nairobi-checklist',
@@ -34,7 +34,7 @@ const POSTS = [
     title:    'The Complete Moving-House Checklist for Nairobi Residents',
     date:     'Feb 14, 2025',
     readTime: '5 min read',
-    image:    'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&q=80',
+    image:    IMG.blog.moving,
   },
 ]
 
@@ -44,7 +44,7 @@ export default function EditorialBlogPreview() {
   const { ref, isInView } = useScrollAnimation({ amount: 0.08 })
 
   return (
-    <section className="py-16 md:py-24 bg-dark border-t border-white/5">
+    <section className="py-16 md:py-24 section-to-dark">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

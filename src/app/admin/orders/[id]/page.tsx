@@ -93,8 +93,8 @@ function Badge({ label, colorClass }: { label: string; colorClass: string }) {
 
 function SectionCard({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="bg-white rounded-xl border border-dark/8 shadow-sm overflow-hidden">
-      <div className="px-5 py-3.5 border-b border-dark/8 bg-muted/20">
+    <div className="admin-card overflow-hidden">
+      <div className="px-5 py-3.5 border-b border-[#ECEEF2] bg-muted/20">
         <h2 className="text-xs font-semibold text-dark/50 uppercase tracking-widest">{title}</h2>
       </div>
       <div className="p-5">{children}</div>
@@ -212,7 +212,7 @@ export default function OrderDetailPage() {
 
           {/* Order items */}
           <SectionCard title="Order Items">
-            <div className="flex flex-col divide-y divide-dark/5">
+            <div className="flex flex-col divide-y divide-[#ECEEF2]">
               {order.items.map((item, i) => {
                 const price = item.product.salePrice ?? item.product.price
                 return (
@@ -241,7 +241,7 @@ export default function OrderDetailPage() {
             </div>
 
             {/* Totals */}
-            <div className="mt-4 pt-4 border-t border-dark/8 flex flex-col gap-2">
+            <div className="mt-4 pt-4 border-t border-[#ECEEF2] flex flex-col gap-2">
               <div className="flex justify-between text-sm">
                 <span className="text-dark/60">Subtotal</span>
                 <span className="font-mono">{formatPrice(subtotal)}</span>
@@ -258,7 +258,7 @@ export default function OrderDetailPage() {
                   <span className="font-mono text-success">− {formatPrice(discount)}</span>
                 </div>
               )}
-              <div className="flex justify-between font-semibold pt-2 border-t border-dark/8">
+              <div className="flex justify-between font-semibold pt-2 border-t border-[#ECEEF2]">
                 <span className="text-dark">Order Total</span>
                 <span className="font-mono text-dark text-base">{formatPrice(order.total)}</span>
               </div>
