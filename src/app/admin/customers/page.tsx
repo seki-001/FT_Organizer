@@ -1,206 +1,185 @@
 'use client'
 
-import { useMemo, useState } from 'react'
-import { Search, Eye, MessageCircle } from 'lucide-react'
-import AdminPageHeader from '@/components/admin/AdminPageHeader'
-import { MOCK_CUSTOMERS } from '@/lib/mock-admin-customers'
-import { cn, formatPrice } from '@/lib/utils'
-import { COMPANY } from '@/lib/constants'
-import CustomerSlideOver from './_components/CustomerSlideOver'
+import { useState, useEffect } from 'react'
+import { Plus, Search, User, Phone, Mail, TrendingUp, TrendingDown, X, CheckCircle2 } from 'lucide-react'
+import { formatPrice } from '@/lib/utils'
+import type { BusinessCustomer } from '@/lib/types'
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
+const KEY = 'fto_customers'
+const load = (): BusinessCustomer[] => { try { return JSON.parse(localStorage.getItem(KEY) ?? '[]') } catch { return [] } }
+const save = (d: BusinessCustomer[]) => { try { localStorage.setItem(KEY, JSON.stringify(d)) } catch {} }
 
-function getInitials(name: string) {
-  return name.split(' ').slice(0, 2).map(w => w[0]).join('').toUpperCase()
-}
+const BLANK = { name: '', phone: '', email: '', address: '', notes: '' }
 
-function formatDate(str: string | null) {
-  if (!str) return '—'
-  return new Date(str).toLocaleDateString('en-KE', { day: 'numeric', month: 'short', year: 'numeric' })
-}
+export default function CustomersPage() {
+  const [list, setList] = useState<BusinessCustomer[]>([])
+  const [search, setSearch] = useState('')
+  const [showForm, setShowForm] = useState(false)
+  const [form, setForm] = useState({ ...BLANK })
+  const [payModal, setPayModal] = useState<{ c: BusinessCustomer; amt: string } | null>(null)
+  const [debtModal, setDebtModal] = useState<{ c: BusinessCustomer; amt: string } | null>(null)
 
-// ─── Filter tabs ──────────────────────────────────────────────────────────────
+  useEffect(() => setList(load()), [])
 
-const FILTERS = [
-  { id: 'all',    label: 'All' },
-  { id: 'active', label: 'Active' },
-  { id: 'new',    label: 'New' },
-] as const
-type FilterId = typeof FILTERS[number]['id']
+  const filtered = list.filter(c => !search || c.name.toLowerCase().includes(search.toLowerCase()) || c.phone.includes(search))
+  const totalDebt = list.reduce((s, c) => s + Math.max(0, c.creditBalance), 0)
 
-// ─── Page ─────────────────────────────────────────────────────────────────────
-
-export default function AdminCustomersPage() {
-  const [search,     setSearch]     = useState('')
-  const [filter,     setFilter]     = useState<FilterId>('all')
-  const [selectedId, setSelectedId] = useState<string | null>(null)
-
-  const customers = MOCK_CUSTOMERS
-
-  const now       = new Date()
-  const active90  = new Date(now); active90.setDate(active90.getDate() - 90)
-  const thisMonth = new Date(now.getFullYear(), now.getMonth(), 1)
-
-  const filtered = useMemo(() => {
-    let list = [...customers]
-    const q = search.toLowerCase().trim()
-    if (q) {
-      list = list.filter(c =>
-        c.name.toLowerCase().includes(q) ||
-        c.email.toLowerCase().includes(q) ||
-        c.phone.includes(q),
-      )
-    }
-    if (filter === 'active') list = list.filter(c => c.lastOrderAt && new Date(c.lastOrderAt) >= active90)
-    if (filter === 'new')    list = list.filter(c => new Date(c.joinedAt) >= thisMonth)
-    return list
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [customers, search, filter])
-
-  function whatsappUrl(name: string) {
-    const firstName = name.split(' ')[0]
-    const msg       = encodeURIComponent(`Hi ${firstName}! This is Faith from Faith The Organizer. How can I help you today?`)
-    return `${COMPANY.whatsappLink}&text=${msg}`
+  function add() {
+    if (!form.name.trim() || !form.phone.trim()) return alert('Name and phone are required')
+    const updated = [{ id: Date.now().toString(), ...form, creditBalance: 0, totalPurchases: 0, createdAt: new Date().toISOString() } as BusinessCustomer, ...list]
+    setList(updated); save(updated); setForm({ ...BLANK }); setShowForm(false)
   }
 
-  const AVATAR_COLORS = [
-    'bg-primary/10 text-primary',
-    'bg-emerald-100 text-emerald-700',
-    'bg-blue-100 text-blue-700',
-    'bg-orange-100 text-orange-700',
-    'bg-purple-100 text-purple-700',
-    'bg-rose-100 text-rose-700',
-  ]
+  function recordPayment() {
+    if (!payModal) return
+    const amt = parseFloat(payModal.amt); if (!amt || amt <= 0) return
+    const updated = list.map(c => c.id === payModal.c.id ? { ...c, creditBalance: c.creditBalance - amt } : c)
+    setList(updated); save(updated); setPayModal(null)
+  }
+
+  function recordDebt() {
+    if (!debtModal) return
+    const amt = parseFloat(debtModal.amt); if (!amt || amt <= 0) return
+    const updated = list.map(c => c.id === debtModal.c.id ? { ...c, creditBalance: c.creditBalance + amt, totalPurchases: c.totalPurchases + amt, lastPurchaseAt: new Date().toISOString() } : c)
+    setList(updated); save(updated); setDebtModal(null)
+  }
+
+  function del(id: string) {
+    if (!confirm('Delete this customer?')) return
+    const updated = list.filter(c => c.id !== id); setList(updated); save(updated)
+  }
 
   return (
-    <>
-      <div className="flex flex-col gap-6">
-
-        <AdminPageHeader
-          title="Customers"
-          subtitle={`${customers.length} registered customer${customers.length !== 1 ? 's' : ''}`}
-        />
-
-        {/* Filters */}
-        <div className="bg-white rounded-xl border border-dark/8 shadow-sm p-4 flex flex-wrap gap-3 items-center">
-          {/* Search */}
-          <div className="relative flex-1 min-w-[180px]">
-            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-dark/35 pointer-events-none" />
-            <input
-              type="text" value={search} onChange={e => setSearch(e.target.value)}
-              placeholder="Search by name, email or phone…"
-              className="w-full pl-9 pr-3 py-2 text-sm border border-dark/15 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/30 placeholder:text-dark/30"
-            />
-          </div>
-          {/* Tabs */}
-          <div className="flex gap-1 p-0.5 bg-muted/60 rounded-lg">
-            {FILTERS.map(f => (
-              <button key={f.id} onClick={() => setFilter(f.id)}
-                className={cn('px-4 py-1.5 text-sm font-medium rounded-md transition-all',
-                  filter === f.id ? 'bg-white shadow-sm text-dark' : 'text-dark/50 hover:text-dark')}>
-                {f.label}
-                {f.id !== 'all' && (
-                  <span className="ml-1.5 text-xs text-dark/35">
-                    {f.id === 'active' ? customers.filter(c => c.lastOrderAt && new Date(c.lastOrderAt) >= active90).length
-                      : customers.filter(c => new Date(c.joinedAt) >= thisMonth).length}
-                  </span>
-                )}
-              </button>
-            ))}
-          </div>
-          {(search || filter !== 'all') && (
-            <button onClick={() => { setSearch(''); setFilter('all') }} className="text-xs text-primary hover:underline">Clear</button>
-          )}
+    <div className="max-w-5xl mx-auto space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-dark">Customers</h1>
+          <p className="text-sm text-dark/50 mt-0.5">Manage accounts and outstanding balances</p>
         </div>
-
-        {/* Table */}
-        <div className="bg-white rounded-xl border border-dark/8 shadow-sm overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm min-w-[760px]">
-              <thead>
-                <tr className="border-b border-dark/8 bg-muted/30">
-                  {['Customer', 'Email', 'Phone', 'Orders', 'Total Spent', 'Last Order', 'Actions'].map(h => (
-                    <th key={h} className="text-left px-5 py-3 text-[11px] font-semibold text-dark/40 uppercase tracking-wide whitespace-nowrap">{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {filtered.length === 0 ? (
-                  <tr><td colSpan={7} className="px-5 py-12 text-center text-dark/40 text-sm">No customers match your search.</td></tr>
-                ) : filtered.map((customer, i) => {
-                  const colorCls = AVATAR_COLORS[i % AVATAR_COLORS.length]
-                  const isNew    = new Date(customer.joinedAt) >= thisMonth
-
-                  return (
-                    <tr key={customer.id} className={cn('border-b border-dark/5 hover:bg-muted/20 transition-colors cursor-pointer', i % 2 !== 0 && 'bg-muted/10')}
-                      onClick={() => setSelectedId(customer.id)}>
-
-                      {/* Customer */}
-                      <td className="px-5 py-3.5">
-                        <div className="flex items-center gap-3">
-                          <div className={cn('w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 text-xs font-bold font-display', colorCls)}>
-                            {getInitials(customer.name)}
-                          </div>
-                          <div className="min-w-0">
-                            <div className="flex items-center gap-1.5">
-                              <p className="font-medium text-dark text-sm">{customer.name}</p>
-                              {isNew && <span className="text-[10px] font-bold bg-primary/10 text-primary px-1.5 py-0.5 rounded-full">New</span>}
-                            </div>
-                            <p className="text-xs text-dark/40">{customer.area}</p>
-                          </div>
-                        </div>
-                      </td>
-
-                      {/* Email */}
-                      <td className="px-5 py-3.5 max-w-[200px]">
-                        <a href={`mailto:${customer.email}`} onClick={e => e.stopPropagation()}
-                          className="text-sm text-dark/60 hover:text-primary transition-colors truncate block">{customer.email}</a>
-                      </td>
-
-                      {/* Phone */}
-                      <td className="px-5 py-3.5 text-sm text-dark/60 whitespace-nowrap">{customer.phone}</td>
-
-                      {/* Orders */}
-                      <td className="px-5 py-3.5 text-sm font-semibold text-dark tabular-nums">{customer.totalOrders}</td>
-
-                      {/* Total spent */}
-                      <td className="px-5 py-3.5 text-sm font-semibold text-dark tabular-nums">{formatPrice(customer.totalSpent)}</td>
-
-                      {/* Last order */}
-                      <td className="px-5 py-3.5 text-xs text-dark/50 whitespace-nowrap">{formatDate(customer.lastOrderAt)}</td>
-
-                      {/* Actions */}
-                      <td className="px-5 py-3.5">
-                        <div className="flex items-center gap-1" onClick={e => e.stopPropagation()}>
-                          <button onClick={() => setSelectedId(customer.id)}
-                            className="w-8 h-8 flex items-center justify-center rounded-lg text-dark/40 hover:text-primary hover:bg-primary/8 transition-colors">
-                            <Eye size={14} />
-                          </button>
-                          <a href={whatsappUrl(customer.name)} target="_blank" rel="noopener noreferrer"
-                            className="w-8 h-8 flex items-center justify-center rounded-lg text-dark/40 hover:text-[#25D366] hover:bg-[#25D366]/10 transition-colors">
-                            <MessageCircle size={14} />
-                          </a>
-                        </div>
-                      </td>
-                    </tr>
-                  )
-                })}
-              </tbody>
-            </table>
-          </div>
-          {filtered.length > 0 && (
-            <div className="px-5 py-3 border-t border-dark/5">
-              <p className="text-xs text-dark/40">
-                Showing <span className="font-medium text-dark">{filtered.length}</span> of{' '}
-                <span className="font-medium text-dark">{customers.length}</span> customers
-              </p>
-            </div>
-          )}
-        </div>
-
+        <button onClick={() => setShowForm(v => !v)} className="flex items-center gap-2 bg-primary text-white text-sm font-semibold px-4 py-2.5 rounded-xl hover:bg-primary/90 transition-colors">
+          <Plus size={15} /> Add Customer
+        </button>
       </div>
 
-      <CustomerSlideOver customerId={selectedId} onClose={() => setSelectedId(null)} />
-    </>
+      {/* Stats */}
+      <div className="grid grid-cols-3 gap-4">
+        <div className="bg-white border border-dark/8 rounded-2xl p-5">
+          <p className="text-xs text-dark/40 uppercase tracking-wider mb-1">Total Customers</p>
+          <p className="text-3xl font-bold text-dark">{list.length}</p>
+        </div>
+        <div className="bg-white border border-danger/20 rounded-2xl p-5">
+          <p className="text-xs text-danger/70 uppercase tracking-wider mb-1 flex items-center gap-1"><TrendingUp size={11} /> Total Owed to Us</p>
+          <p className="text-3xl font-bold text-danger">{formatPrice(totalDebt)}</p>
+        </div>
+        <div className="bg-white border border-dark/8 rounded-2xl p-5">
+          <p className="text-xs text-dark/40 uppercase tracking-wider mb-1">With Outstanding Debt</p>
+          <p className="text-3xl font-bold text-dark">{list.filter(c => c.creditBalance > 0).length}</p>
+        </div>
+      </div>
+
+      {/* Search */}
+      <div className="relative">
+        <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-dark/35" />
+        <input type="text" placeholder="Search name or phone…" value={search} onChange={e => setSearch(e.target.value)}
+          className="w-full pl-9 pr-4 py-2.5 text-sm border border-dark/15 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40 placeholder:text-dark/30" />
+      </div>
+
+      {/* Add form */}
+      {showForm && (
+        <div className="bg-white border border-dark/10 rounded-2xl p-6 space-y-4">
+          <div className="flex justify-between items-center">
+            <h3 className="font-semibold text-dark">New Customer</h3>
+            <button onClick={() => setShowForm(false)}><X size={16} className="text-dark/40" /></button>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            {([['name','Full Name *','Jane Wanjiku'],['phone','Phone *','+254 7XX XXX XXX'],['email','Email','jane@email.com'],['address','Area / Address','Westlands, Nairobi']] as [string,string,string][]).map(([k,l,p]) => (
+              <div key={k}>
+                <label className="text-xs font-medium text-dark/60 mb-1 block">{l}</label>
+                <input type="text" placeholder={p} value={(form as Record<string,string>)[k]}
+                  onChange={e => setForm(f => ({...f,[k]:e.target.value}))}
+                  className="w-full text-sm border border-dark/15 rounded-lg px-3 py-2 focus:outline-none focus:ring-1 focus:ring-primary/30" />
+              </div>
+            ))}
+          </div>
+          <input type="text" placeholder="Notes (optional)" value={form.notes ?? ''} onChange={e => setForm(f => ({...f,notes:e.target.value}))}
+            className="w-full text-sm border border-dark/15 rounded-lg px-3 py-2 focus:outline-none focus:ring-1 focus:ring-primary/30" />
+          <button onClick={add} className="bg-primary text-white text-sm font-semibold px-5 py-2.5 rounded-xl hover:bg-primary/90 transition-colors">Save Customer</button>
+        </div>
+      )}
+
+      {/* List */}
+      {filtered.length === 0 ? (
+        <div className="bg-white border border-dark/8 rounded-2xl p-16 text-center">
+          <User size={36} className="text-dark/15 mx-auto mb-3" />
+          <p className="text-dark/40 text-sm">{search ? 'No results' : 'No customers yet — add your first customer above.'}</p>
+        </div>
+      ) : (
+        <div className="bg-white border border-dark/8 rounded-2xl overflow-hidden">
+          <div className="divide-y divide-dark/5">
+            {filtered.map(c => (
+              <div key={c.id} className="px-5 py-4 flex items-center gap-4">
+                <div className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold flex-shrink-0">{c.name[0].toUpperCase()}</div>
+                <div className="flex-1 min-w-0">
+                  <p className="font-semibold text-dark text-sm">{c.name}</p>
+                  <div className="flex items-center gap-3 mt-0.5">
+                    <span className="text-xs text-dark/40 flex items-center gap-1"><Phone size={10}/>{c.phone}</span>
+                    {c.email && <span className="text-xs text-dark/40 flex items-center gap-1"><Mail size={10}/>{c.email}</span>}
+                  </div>
+                </div>
+                <div className="text-right flex-shrink-0 mr-2">
+                  {c.creditBalance > 0
+                    ? <p className="text-sm font-bold text-danger">{formatPrice(c.creditBalance)} owed</p>
+                    : c.creditBalance < 0
+                    ? <p className="text-sm font-bold text-success">{formatPrice(-c.creditBalance)} credit</p>
+                    : <p className="text-xs text-dark/30 flex items-center gap-1"><CheckCircle2 size={12}/>Settled</p>}
+                  <p className="text-xs text-dark/35 mt-0.5">Lifetime: {formatPrice(c.totalPurchases)}</p>
+                </div>
+                <div className="flex gap-2 flex-shrink-0">
+                  <button onClick={() => setDebtModal({c, amt:''})} className="text-xs bg-danger/8 text-danger hover:bg-danger/15 px-2.5 py-1.5 rounded-lg font-medium transition-colors">+ Debt</button>
+                  <button onClick={() => setPayModal({c, amt:''})} className="text-xs bg-success/8 text-success hover:bg-success/15 px-2.5 py-1.5 rounded-lg font-medium transition-colors">+ Payment</button>
+                  <button onClick={() => del(c.id)} className="text-xs text-dark/20 hover:text-danger px-1.5 transition-colors"><X size={13}/></button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Modals */}
+      {payModal && (
+        <div className="fixed inset-0 bg-dark/40 z-50 flex items-center justify-center p-4" onClick={() => setPayModal(null)}>
+          <div className="bg-white rounded-2xl p-6 w-full max-w-sm space-y-4" onClick={e => e.stopPropagation()}>
+            <h3 className="font-bold text-dark">Record Payment</h3>
+            <p className="text-sm text-dark/50">{payModal.c.name} owes <strong className="text-danger">{formatPrice(payModal.c.creditBalance)}</strong></p>
+            <div>
+              <label className="text-xs font-medium text-dark/60 mb-1 block">Amount Received (KSh)</label>
+              <input type="number" min={0} value={payModal.amt} onChange={e => setPayModal(p => p ? {...p, amt: e.target.value} : p)}
+                className="w-full text-sm border border-dark/15 rounded-lg px-3 py-2.5 focus:outline-none focus:ring-1 focus:ring-primary/30 font-mono" autoFocus />
+            </div>
+            <div className="flex gap-3">
+              <button onClick={() => setPayModal(null)} className="flex-1 border border-dark/15 text-dark py-2.5 rounded-xl text-sm">Cancel</button>
+              <button onClick={recordPayment} className="flex-1 bg-success text-white py-2.5 rounded-xl text-sm font-semibold">Record Payment</button>
+            </div>
+          </div>
+        </div>
+      )}
+      {debtModal && (
+        <div className="fixed inset-0 bg-dark/40 z-50 flex items-center justify-center p-4" onClick={() => setDebtModal(null)}>
+          <div className="bg-white rounded-2xl p-6 w-full max-w-sm space-y-4" onClick={e => e.stopPropagation()}>
+            <h3 className="font-bold text-dark">Add Credit Sale (Debt)</h3>
+            <p className="text-sm text-dark/50">Customer: <strong>{debtModal.c.name}</strong></p>
+            <div>
+              <label className="text-xs font-medium text-dark/60 mb-1 block">Amount (KSh)</label>
+              <input type="number" min={0} value={debtModal.amt} onChange={e => setDebtModal(p => p ? {...p, amt: e.target.value} : p)}
+                className="w-full text-sm border border-dark/15 rounded-lg px-3 py-2.5 focus:outline-none focus:ring-1 focus:ring-primary/30 font-mono" autoFocus />
+            </div>
+            <div className="flex gap-3">
+              <button onClick={() => setDebtModal(null)} className="flex-1 border border-dark/15 text-dark py-2.5 rounded-xl text-sm">Cancel</button>
+              <button onClick={recordDebt} className="flex-1 bg-danger text-white py-2.5 rounded-xl text-sm font-semibold">Record Debt</button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
   )
 }

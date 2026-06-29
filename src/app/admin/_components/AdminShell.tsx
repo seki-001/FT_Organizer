@@ -6,7 +6,7 @@ import { usePathname, useRouter } from 'next/navigation'
 import {
   LayoutDashboard, ShoppingBag, Package, Tag, Users, Calendar,
   FileText, Settings, Menu, X, ChevronRight, LogOut, Bell,
-  BarChart2, Home,
+  BarChart2, Home, Receipt, TrendingDown, Truck, PieChart,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -28,16 +28,25 @@ const NAV_SECTIONS: NavSection[] = [
     label: 'OVERVIEW',
     items: [
       { label: 'Dashboard', href: '/admin',           icon: LayoutDashboard },
+      { label: 'Reports',   href: '/admin/reports',   icon: PieChart        },
       { label: 'Analytics', href: '/admin/analytics', icon: BarChart2       },
     ],
   },
   {
-    label: 'STORE',
+    label: 'SHOP',
     items: [
-      { label: 'Orders',    href: '/admin/orders',    icon: ShoppingBag },
-      { label: 'Products',  href: '/admin/products',  icon: Package     },
-      { label: 'Coupons',   href: '/admin/coupons',   icon: Tag         },
-      { label: 'Customers', href: '/admin/customers', icon: Users       },
+      { label: 'POS / Sales', href: '/admin/pos',      icon: Receipt     },
+      { label: 'Orders',      href: '/admin/orders',   icon: ShoppingBag },
+      { label: 'Products',    href: '/admin/products', icon: Package     },
+      { label: 'Coupons',     href: '/admin/coupons',  icon: Tag         },
+      { label: 'Customers',   href: '/admin/customers',icon: Users       },
+    ],
+  },
+  {
+    label: 'ACCOUNTS',
+    items: [
+      { label: 'Expenses',  href: '/admin/expenses',  icon: TrendingDown },
+      { label: 'Purchases', href: '/admin/purchases', icon: Truck        },
     ],
   },
   {
