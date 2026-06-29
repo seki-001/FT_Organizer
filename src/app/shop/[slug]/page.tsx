@@ -16,6 +16,7 @@ import { formatPrice, discountPercent, cn } from '@/lib/utils'
 import { useCart } from '@/context/CartContext'
 import ProductCard from '@/components/shop/ProductCard'
 import PaymentTrustBadges from '@/components/payments/PaymentTrustBadges'
+import ShopMemberCta from '@/components/shop/ShopMemberCta'
 import type { ProductVariant } from '@/lib/types'
 
 // ─── Mock reviews ─────────────────────────────────────────────────────────────
@@ -487,6 +488,8 @@ export default function ProductPage() {
                   Covered by our returns policy
                 </span>
               </div>
+
+              <ShopMemberCta variant="card" />
 
               {/* Delivery info */}
               <div className="bg-surface rounded-2xl border border-dark/8 p-4 flex flex-col gap-3">

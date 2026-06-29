@@ -13,6 +13,7 @@ import { NAV_LINKS, SERVICES, SHOP_CATEGORIES, COMPANY } from '@/lib/constants'
 import { MOCK_PRODUCTS } from '@/lib/mock-products'
 import { useCart } from '@/context/CartContext'
 import BrandLogo from '@/components/brand/BrandLogo'
+import ShopMemberCta from '@/components/shop/ShopMemberCta'
 import { useWishlist } from '@/context/WishlistContext'
 import { cn, formatPrice } from '@/lib/utils'
 
@@ -376,6 +377,7 @@ function ShopMegaMenu({
             <span className="font-mono font-semibold text-dark">KSh 2,000</span>
           </span>
         </div>
+        <ShopMemberCta variant="mega" />
       </div>
     </motion.div>
   )

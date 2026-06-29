@@ -249,20 +249,20 @@ export default function CartPage() {
               {/* Checkout options */}
               <div className="flex flex-col gap-2">
                 <Link
-                  href="/checkout?mode=guest"
-                  className="flex items-center justify-center w-full bg-primary hover:bg-primary/90 text-white font-semibold text-base py-4 rounded-xl transition-colors duration-200 min-h-[54px]"
-                >
-                  Checkout as Guest
-                </Link>
-                <Link
                   href="/checkout?mode=account"
-                  className="flex items-center justify-center w-full bg-white border-2 border-dark/12 hover:border-primary text-dark font-semibold text-sm py-3.5 rounded-xl transition-colors duration-200"
+                  className="flex items-center justify-center w-full bg-primary hover:bg-primary/90 text-white font-semibold text-base py-4 rounded-xl transition-colors duration-200 min-h-[54px] shadow-sm shadow-primary/20"
                 >
                   Create Account &amp; Checkout
                 </Link>
+                <Link
+                  href="/checkout?mode=guest"
+                  className="flex items-center justify-center w-full bg-white border-2 border-dark/12 hover:border-primary text-dark font-semibold text-sm py-3.5 rounded-xl transition-colors duration-200"
+                >
+                  Continue as Guest
+                </Link>
               </div>
               <p className="text-center text-dark/40 text-xs">
-                We&apos;ll collect your contact details for delivery and order updates.
+                Accounts track orders, promos, and organizing tips — guest checkout is still quick.
               </p>
 
               {/* Trust row */}

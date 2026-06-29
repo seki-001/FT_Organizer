@@ -26,3 +26,38 @@ export async function insertContactSubmission(data: ContactFormValues) {
 
   return row
 }
+
+export interface ContactInquiry {
+  id: string
+  name: string
+  email: string
+  phone: string
+  subject: string
+  message: string
+  createdAt: string
+}
+
+export async function listContactSubmissions(): Promise<ContactInquiry[]> {
+  if (!isSupabaseAdminConfigured()) return []
+
+  const admin = createAdminClient()
+  const { data, error } = await admin
+    .from('contact_submissions')
+    .select('id, name, email, phone, subject, message, created_at')
+    .order('created_at', { ascending: false })
+
+  if (error) {
+    logger.error({ event: 'contact_list_failed', error_code: error.code })
+    return []
+  }
+
+  return (data ?? []).map((row) => ({
+    id: row.id,
+    name: row.name,
+    email: row.email,
+    phone: row.phone,
+    subject: row.subject,
+    message: row.message,
+    createdAt: row.created_at,
+  }))
+}

@@ -45,6 +45,7 @@ export async function initializePaystackTransaction(input: {
       currency: 'KES',
       reference: input.reference,
       callback_url: callbackUrl,
+      channels: ['card', 'mobile_money', 'bank'],
       metadata: input.metadata ?? {},
     }),
     cache: 'no-store',

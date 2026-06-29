@@ -6,7 +6,7 @@ import { usePathname, useRouter } from 'next/navigation'
 import {
   LayoutDashboard, ShoppingBag, Package, Tag, Users, Calendar,
   FileText, Settings, Menu, X, ChevronRight, LogOut, Bell,
-  BarChart2, Home, Receipt, TrendingDown, Truck, PieChart,
+  BarChart2, Home, Receipt, TrendingDown, Truck, PieChart, Mail,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -52,7 +52,8 @@ const NAV_SECTIONS: NavSection[] = [
   {
     label: 'SERVICES',
     items: [
-      { label: 'Bookings', href: '/admin/bookings', icon: Calendar },
+      { label: 'Inquiries', href: '/admin/inquiries', icon: Mail },
+      { label: 'Quote Requests', href: '/admin/bookings', icon: Calendar },
     ],
   },
   {
@@ -77,7 +78,8 @@ const PAGE_LABELS: Record<string, string> = {
   products:  'Products',
   coupons:   'Coupons',
   customers: 'Customers',
-  bookings:  'Bookings',
+  bookings:  'Quote Requests',
+  inquiries: 'Inquiries',
   blog:      'Blog Posts',
   settings:  'Settings',
   new:       'New',

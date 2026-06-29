@@ -10,6 +10,7 @@ import type { Product } from '@/lib/types'
 import { SHOP_CATEGORIES } from '@/lib/constants'
 import type { ProductCategory } from '@/lib/types'
 import DarkProductCard from '@/components/shop/DarkProductCard'
+import ShopMemberCta from '@/components/shop/ShopMemberCta'
 import { cn } from '@/lib/utils'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -349,6 +350,8 @@ function ShopCatalogueInner() {
         </div>
       </section>
 
+      <ShopMemberCta variant="banner" />
+
       {/* ── 2. CATEGORY NAVIGATOR ──────────────────────────────────────────── */}
       <section className="bg-white py-6 border-b border-dark/8" aria-label="Filter by category">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -372,9 +375,12 @@ function ShopCatalogueInner() {
 
           {/* Desktop Filter Sidebar */}
           <aside className="hidden lg:block w-60 flex-shrink-0">
-            <div className="bg-white border border-dark/8 rounded-2xl p-6 sticky top-24 shadow-sm">
-              <p className="font-display text-base text-dark mb-5">Filters</p>
-              <FilterPanel {...filterPanelProps} />
+            <div className="flex flex-col gap-4 sticky top-24">
+              <ShopMemberCta variant="card" />
+              <div className="bg-white border border-dark/8 rounded-2xl p-6 shadow-sm">
+                <p className="font-display text-base text-dark mb-5">Filters</p>
+                <FilterPanel {...filterPanelProps} />
+              </div>
             </div>
           </aside>
 

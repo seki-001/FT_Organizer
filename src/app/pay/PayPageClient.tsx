@@ -2,31 +2,48 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { Smartphone, CreditCard } from 'lucide-react'
-import { MpesaPaymentPanel, PaystackPaymentPanel, type MpesaPaybillInfo } from '@/components/payments/PaymentPanels'
+import { Loader2 } from 'lucide-react'
 import PaymentTrustBadges from '@/components/payments/PaymentTrustBadges'
-import { formatPrice, cn } from '@/lib/utils'
-
-type PaymentId = 'mpesa' | 'card'
+import { formatPrice } from '@/lib/utils'
 
 function generateRef() {
   return 'PAY-' + Math.random().toString(36).toUpperCase().slice(2, 8)
 }
 
-interface PayPageClientProps {
-  paybillInfo: MpesaPaybillInfo
-}
-
-export default function PayPageClient({ paybillInfo }: PayPageClientProps) {
+export default function PayPageClient() {
   const [amount, setAmount] = useState('')
   const [orderRef, setOrderRef] = useState(generateRef)
   const [email, setEmail] = useState('')
-  const [phone, setPhone] = useState('')
-  const [paymentId, setPaymentId] = useState<PaymentId>('mpesa')
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
 
   const parsedAmount = Number(amount)
   const total = Number.isFinite(parsedAmount) && parsedAmount > 0 ? parsedAmount : 0
-  const canPay = total > 0 && orderRef.trim().length > 0
+  const canPay = total > 0 && orderRef.trim().length > 0 && email.trim().length > 0
+
+  async function handlePay() {
+    if (!canPay) return
+    setLoading(true)
+    setError('')
+    try {
+      const res = await fetch('/api/payments/paystack/initiate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ amount: total, orderRef, email }),
+      })
+      const data = await res.json() as { redirectUrl?: string; error?: string }
+      if (data.error) throw new Error(data.error)
+      if (data.redirectUrl) {
+        window.location.href = data.redirectUrl
+        return
+      }
+      throw new Error('No payment page returned. Try again.')
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Payment failed')
+    } finally {
+      setLoading(false)
+    }
+  }
 
   return (
     <main className="min-h-screen bg-surface">
@@ -34,7 +51,7 @@ export default function PayPageClient({ paybillInfo }: PayPageClientProps) {
         <div className="mb-8 text-center">
           <h1 className="font-display text-3xl text-dark mb-2">Make a Payment</h1>
           <p className="text-dark/50 text-sm">
-            Pay via M-Pesa Paybill/Till or card. Use the reference from your invoice or order.
+            Pay securely via Paystack — M-Pesa, Visa, Mastercard, or bank transfer.
           </p>
         </div>
 
@@ -76,18 +93,6 @@ export default function PayPageClient({ paybillInfo }: PayPageClientProps) {
                 className="mt-1.5 w-full bg-muted rounded-lg px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-primary/30"
               />
             </div>
-
-            <div>
-              <label htmlFor="phone" className="text-sm font-medium text-dark">Phone (for M-Pesa)</label>
-              <input
-                id="phone"
-                type="tel"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                placeholder="07XX XXX XXX"
-                className="mt-1.5 w-full bg-muted rounded-lg px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-primary/30"
-              />
-            </div>
           </div>
 
           {total > 0 && (
@@ -97,55 +102,31 @@ export default function PayPageClient({ paybillInfo }: PayPageClientProps) {
             </div>
           )}
 
-          <div className="flex flex-col gap-2">
-            {([
-              { id: 'mpesa' as const, label: 'M-Pesa', icon: Smartphone, desc: 'STK Push or Paybill/Till' },
-              { id: 'card' as const, label: 'Card / Bank', icon: CreditCard, desc: 'Visa, Mastercard via Paystack' },
-            ]).map((method) => {
-              const Icon = method.icon
-              const active = paymentId === method.id
-              return (
-                <button
-                  key={method.id}
-                  type="button"
-                  onClick={() => setPaymentId(method.id)}
-                  className={cn(
-                    'flex items-center gap-4 p-4 rounded-xl border-2 text-left transition-all',
-                    active ? 'border-primary bg-primary/5' : 'border-dark/10 hover:border-dark/25',
-                  )}
-                >
-                  <div className={cn(
-                    'w-10 h-10 rounded-full flex items-center justify-center',
-                    active ? 'bg-primary text-white' : 'bg-primary/10 text-primary',
-                  )}>
-                    <Icon size={18} />
-                  </div>
-                  <div>
-                    <p className={cn('font-medium text-sm', active ? 'text-primary' : 'text-dark')}>{method.label}</p>
-                    <p className="text-xs text-dark/50">{method.desc}</p>
-                  </div>
-                </button>
-              )
-            })}
-          </div>
+          <p className="text-dark/60 text-sm leading-relaxed bg-muted rounded-xl px-4 py-3">
+            You&apos;ll be redirected to Paystack&apos;s secure checkout to complete payment.
+            M-Pesa, cards, and bank transfer are available on the same page.
+          </p>
 
-          {canPay && paymentId === 'mpesa' && (
-            <MpesaPaymentPanel
-              total={total}
-              orderRef={orderRef}
-              defaultPhone={phone}
-              paybillInfo={paybillInfo}
-              successRedirect={`/pay/callback?ref=${orderRef}&method=mpesa`}
-            />
+          {error && (
+            <p className="text-danger text-sm">{error}</p>
           )}
 
-          {canPay && paymentId === 'card' && (
-            <PaystackPaymentPanel total={total} orderRef={orderRef} email={email} />
-          )}
+          <button
+            type="button"
+            onClick={() => void handlePay()}
+            disabled={!canPay || loading}
+            className="flex items-center justify-center gap-2 w-full bg-primary hover:bg-primary/90 disabled:opacity-60 text-white font-semibold py-4 rounded-xl transition-colors min-h-[54px]"
+          >
+            {loading ? (
+              <><Loader2 size={20} className="animate-spin" /> Redirecting to Paystack…</>
+            ) : (
+              <>Pay {total > 0 ? formatPrice(total) : ''} with Paystack</>
+            )}
+          </button>
 
-          {!canPay && (
-            <p className="text-dark/40 text-sm text-center py-4">
-              Enter an amount and reference to continue.
+          {!canPay && !loading && (
+            <p className="text-dark/40 text-sm text-center">
+              Enter amount, reference, and email to continue.
             </p>
           )}
 

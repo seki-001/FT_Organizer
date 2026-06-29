@@ -186,18 +186,18 @@ export default function CartDrawer() {
                 {/* CTAs */}
                 <div className="flex flex-col gap-2.5">
                   <Link
-                    href="/checkout?mode=guest"
-                    onClick={closeCart}
-                    className="flex items-center justify-center w-full bg-primary hover:bg-primary/90 text-white font-semibold py-3.5 rounded-xl transition-colors text-sm"
-                  >
-                    Checkout as Guest
-                  </Link>
-                  <Link
                     href="/checkout?mode=account"
                     onClick={closeCart}
-                    className="flex items-center justify-center w-full border border-dark/15 text-dark hover:bg-muted font-medium py-3 rounded-xl transition-colors text-sm"
+                    className="flex items-center justify-center w-full bg-primary hover:bg-primary/90 text-white font-semibold py-3.5 rounded-xl transition-colors text-sm shadow-sm shadow-primary/20"
                   >
                     Create Account &amp; Checkout
+                  </Link>
+                  <Link
+                    href="/checkout?mode=guest"
+                    onClick={closeCart}
+                    className="flex items-center justify-center w-full border-2 border-dark/12 text-dark hover:border-primary font-medium py-3 rounded-xl transition-colors text-sm"
+                  >
+                    Continue as Guest
                   </Link>
                   <Link
                     href="/cart"

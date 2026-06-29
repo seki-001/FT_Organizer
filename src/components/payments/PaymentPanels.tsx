@@ -344,7 +344,7 @@ export function PaystackPaymentPanel({ total, orderRef, email, onSuccess }: Pays
         {loading ? (
           <><Loader2 size={20} className="animate-spin" /> Redirecting…</>
         ) : (
-          <><CreditCard size={20} /> Pay {formatPrice(total)} by Card</>
+          <><CreditCard size={20} /> Pay {formatPrice(total)} with Paystack</>
         )}
       </button>
     </div>

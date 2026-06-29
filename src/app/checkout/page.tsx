@@ -8,7 +8,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import {
   Lock, ChevronRight, ChevronLeft, Loader2,
-  Smartphone, CreditCard, Banknote, Truck, Package, Store,
+  CreditCard, Banknote, Truck, Package, Store,
   CheckCircle2, User, UserPlus, Sparkles,
 } from 'lucide-react'
 import { useCart } from '@/context/CartContext'
@@ -16,21 +16,14 @@ import { useAuth } from '@/context/AuthContext'
 import { DELIVERY_OPTIONS, PAYMENT_METHODS, COMPANY } from '@/lib/constants'
 import { CheckoutFormSchema, type CheckoutFormValues } from '@/lib/validations'
 import { formatPrice, cn } from '@/lib/utils'
-import { MpesaPaymentPanel, PaystackPaymentPanel } from '@/components/payments/PaymentPanels'
+import { PaystackPaymentPanel } from '@/components/payments/PaymentPanels'
 import PaymentTrustBadges from '@/components/payments/PaymentTrustBadges'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 type DeliveryId = 'nairobi-same-day' | 'standard-nationwide' | 'pickup'
-type PaymentId  = 'mpesa' | 'card' | 'cod'
+type PaymentId  = 'card' | 'cod'
 type CheckoutMode = 'guest' | 'account'
-
-const MPESA_PAYBILL_INFO = {
-  paybill: process.env.NEXT_PUBLIC_MPESA_PAYBILL ?? '174379',
-  till: process.env.NEXT_PUBLIC_MPESA_TILL || undefined,
-  accountName: process.env.NEXT_PUBLIC_MPESA_ACCOUNT_NAME ?? 'Faith The Organizer',
-  mode: (process.env.NEXT_PUBLIC_MPESA_MODE ?? 'paybill') as 'paybill' | 'till',
-}
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -42,10 +35,9 @@ const DELIVERY_DETAIL: Record<DeliveryId, { icon: typeof Truck; tagline: string 
   'pickup':              { icon: Store,   tagline: `Collect from ${COMPANY.address}` },
 }
 
-const PAYMENT_ICON: Record<PaymentId, typeof Smartphone> = {
-  mpesa: Smartphone,
-  card:  CreditCard,
-  cod:   Banknote,
+const PAYMENT_ICON: Record<PaymentId, typeof CreditCard> = {
+  card: CreditCard,
+  cod:  Banknote,
 }
 
 
@@ -238,7 +230,7 @@ export default function CheckoutPage() {
   const searchParams = useSearchParams()
   const { session, status: authStatus } = useAuth()
 
-  const initialMode = (searchParams.get('mode') === 'account' ? 'account' : 'guest') as CheckoutMode
+  const initialMode = (searchParams.get('mode') === 'guest' ? 'guest' : 'account') as CheckoutMode
 
   const [checkoutMode, setCheckoutMode]   = useState<CheckoutMode>(initialMode)
   const [accountPassword, setAccountPassword] = useState('')
@@ -246,7 +238,7 @@ export default function CheckoutPage() {
   const [passwordError, setPasswordError] = useState('')
   const [step, setStep]                 = useState(1)
   const [deliveryId, setDeliveryId]     = useState<DeliveryId>('nairobi-same-day')
-  const [paymentId, setPaymentId]       = useState<PaymentId>('mpesa')
+  const [paymentId, setPaymentId]       = useState<PaymentId>('card')
   const [orderRef, setOrderRef]         = useState<string | null>(null)
   const [orderCreating, setOrderCreating] = useState(false)
   const [orderError, setOrderError]     = useState('')
@@ -455,6 +447,26 @@ export default function CheckoutPage() {
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <button
                           type="button"
+                          onClick={() => setCheckoutMode('account')}
+                          aria-pressed={checkoutMode === 'account'}
+                          className={cn(
+                            'relative flex flex-col items-start gap-2 p-4 rounded-xl border-2 text-left transition-all duration-150',
+                            checkoutMode === 'account'
+                              ? 'border-primary bg-primary/5 ring-2 ring-primary/20'
+                              : 'border-dark/10 hover:border-primary/40 bg-white',
+                          )}
+                        >
+                          <span className="absolute top-3 right-3 text-[10px] font-bold uppercase tracking-wider bg-primary text-white px-2 py-0.5 rounded-full">
+                            Recommended
+                          </span>
+                          <UserPlus size={20} className={checkoutMode === 'account' ? 'text-primary' : 'text-dark/50'} />
+                          <span className="font-semibold text-sm text-dark">Create an Account</span>
+                          <span className="text-xs text-dark/55 leading-relaxed">
+                            Track orders, get promos, organizing tips and early access to sales.
+                          </span>
+                        </button>
+                        <button
+                          type="button"
                           onClick={() => { setCheckoutMode('guest'); setPasswordError('') }}
                           aria-pressed={checkoutMode === 'guest'}
                           className={cn(
@@ -468,23 +480,6 @@ export default function CheckoutPage() {
                           <span className="font-semibold text-sm text-dark">Continue as Guest</span>
                           <span className="text-xs text-dark/55 leading-relaxed">
                             Quick checkout. We&apos;ll use your details for delivery and order updates.
-                          </span>
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => setCheckoutMode('account')}
-                          aria-pressed={checkoutMode === 'account'}
-                          className={cn(
-                            'flex flex-col items-start gap-2 p-4 rounded-xl border-2 text-left transition-all duration-150',
-                            checkoutMode === 'account'
-                              ? 'border-primary bg-primary/5'
-                              : 'border-dark/10 hover:border-dark/25 bg-white',
-                          )}
-                        >
-                          <UserPlus size={20} className={checkoutMode === 'account' ? 'text-primary' : 'text-dark/50'} />
-                          <span className="font-semibold text-sm text-dark">Create an Account</span>
-                          <span className="text-xs text-dark/55 leading-relaxed">
-                            Track orders, get promos, organizing tips and early access to sales.
                           </span>
                         </button>
                       </div>
@@ -706,18 +701,6 @@ export default function CheckoutPage() {
                   <PaymentTrustBadges className="mt-2" />
 
                   {/* Payment panels */}
-                  {orderRef && paymentId === 'mpesa' && (
-                    <div className="mt-4">
-                      <MpesaPaymentPanel
-                        total={orderTotal}
-                        orderRef={orderRef}
-                        defaultPhone={watchedPhone}
-                        paybillInfo={MPESA_PAYBILL_INFO}
-                        onSuccess={clearCart}
-                        successRedirect={`/order-confirmation?ref=${orderRef}`}
-                      />
-                    </div>
-                  )}
                   {orderRef && paymentId === 'card' && (
                     <div className="mt-4">
                       <PaystackPaymentPanel
