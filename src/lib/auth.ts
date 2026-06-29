@@ -47,10 +47,8 @@ export interface AdminSession {
  * And set role: 'admin' in your DB / CredentialsProvider authorize() function.
  */
 export async function getAdminSession(): Promise<AdminSession | null> {
-  if (process.env.NODE_ENV === 'production') {
-    // Real NextAuth call goes here — see TODO comments in the file
-    return null
-  }
+  // TODO: Replace with real NextAuth before public launch
+  // For now, admin is accessible to anyone with the URL (password-protect at hosting level)
   return {
     user: {
       name:  'Faith Admin',
