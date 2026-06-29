@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import { getUserSession } from '@/lib/auth'
-import { updateProfile } from '@/lib/db/profiles'
+import { getProfile, updateProfile } from '@/lib/db/profiles'
 import { apiError, apiSuccess } from '@/lib/api-response'
 import { enforceRateLimit } from '@/lib/rate-limit'
 import { logger } from '@/lib/logger'
@@ -12,6 +12,22 @@ const ProfileUpdateSchema = z.object({
   address: z.string().optional(),
   city:    z.string().optional(),
 })
+
+export async function GET() {
+  const session = await getUserSession()
+  if (!session?.user) {
+    return apiError('Unauthorized', 'UNAUTHORIZED', 401)
+  }
+
+  const profile = await getProfile(session.user.id)
+  return apiSuccess({
+    name: profile?.full_name ?? '',
+    email: session.user.email ?? '',
+    phone: profile?.phone ?? '',
+    address: profile?.address ?? '',
+    city: profile?.city ?? '',
+  })
+}
 
 export async function POST(request: NextRequest) {
   const limited = enforceRateLimit(request, 'profile', { limit: 10, windowMs: 60_000 })

@@ -246,13 +246,24 @@ export default function CartPage() {
                 {promoError && <p className="text-danger text-xs">{promoError}</p>}
               </div>
 
-              {/* Checkout button */}
-              <Link
-                href="/checkout"
-                className="flex items-center justify-center w-full bg-primary hover:bg-primary/90 text-white font-semibold text-base py-4 rounded-xl transition-colors duration-200 min-h-[54px]"
-              >
-                Proceed to Checkout
-              </Link>
+              {/* Checkout options */}
+              <div className="flex flex-col gap-2">
+                <Link
+                  href="/checkout?mode=guest"
+                  className="flex items-center justify-center w-full bg-primary hover:bg-primary/90 text-white font-semibold text-base py-4 rounded-xl transition-colors duration-200 min-h-[54px]"
+                >
+                  Checkout as Guest
+                </Link>
+                <Link
+                  href="/checkout?mode=account"
+                  className="flex items-center justify-center w-full bg-white border-2 border-dark/12 hover:border-primary text-dark font-semibold text-sm py-3.5 rounded-xl transition-colors duration-200"
+                >
+                  Create Account &amp; Checkout
+                </Link>
+              </div>
+              <p className="text-center text-dark/40 text-xs">
+                We&apos;ll collect your contact details for delivery and order updates.
+              </p>
 
               {/* Trust row */}
               <div className="flex items-center justify-center gap-6 pt-1">

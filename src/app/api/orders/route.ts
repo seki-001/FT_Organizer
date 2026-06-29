@@ -4,6 +4,8 @@ import { apiError, apiSuccess } from '@/lib/api-response'
 import { enforceRateLimit, withRateLimitHeaders, checkRateLimit, getClientIp } from '@/lib/rate-limit'
 import { logger } from '@/lib/logger'
 import { createOrder } from '@/lib/db/orders'
+import { subscribeNewsletter } from '@/lib/db/newsletter'
+import { createCheckoutAccount } from '@/lib/checkout-account'
 import { getUserSession } from '@/lib/auth'
 import { isSupabaseAdminConfigured } from '@/lib/supabase/env'
 
@@ -35,7 +37,43 @@ export async function POST(request: NextRequest) {
       productId: item.productId && UUID_RE.test(item.productId) ? item.productId : undefined,
     }))
 
-    const { reference, id } = await createOrder({ ...parsed.data, items }, session?.user.id)
+    let userId = session?.user.id ?? null
+
+    if (!userId && parsed.data.checkoutMode === 'account') {
+      if (!parsed.data.accountPassword) {
+        return apiError('Choose a password to create your account, or continue as guest.', 'VALIDATION_ERROR', 400)
+      }
+      try {
+        userId = await createCheckoutAccount({
+          email: parsed.data.customer.email,
+          password: parsed.data.accountPassword,
+          name: parsed.data.customer.name,
+          phone: parsed.data.customer.phone,
+          address: parsed.data.customer.address,
+          city: parsed.data.customer.city,
+        })
+      } catch (err) {
+        const code = err instanceof Error ? err.message : 'ACCOUNT_CREATE_FAILED'
+        if (code === 'EMAIL_EXISTS') {
+          return apiError(
+            'An account with this email already exists. Sign in or checkout as guest.',
+            'EMAIL_EXISTS',
+            409,
+          )
+        }
+        return apiError('Could not create your account. Try guest checkout or sign in.', code, 500)
+      }
+    }
+
+    if (parsed.data.customer.marketingOptIn) {
+      try {
+        await subscribeNewsletter(parsed.data.customer.email)
+      } catch {
+        logger.warn({ event: 'checkout_newsletter_subscribe_skipped', resource_id: parsed.data.customer.email })
+      }
+    }
+
+    const { reference, id } = await createOrder({ ...parsed.data, items }, userId)
 
     logger.info({
       event: 'order_api_created',

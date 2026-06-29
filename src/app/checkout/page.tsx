@@ -3,15 +3,16 @@
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import {
   Lock, ChevronRight, ChevronLeft, Loader2,
   Smartphone, CreditCard, Banknote, Truck, Package, Store,
-  CheckCircle2,
+  CheckCircle2, User, UserPlus, Sparkles,
 } from 'lucide-react'
 import { useCart } from '@/context/CartContext'
+import { useAuth } from '@/context/AuthContext'
 import { DELIVERY_OPTIONS, PAYMENT_METHODS, COMPANY } from '@/lib/constants'
 import { CheckoutFormSchema, type CheckoutFormValues } from '@/lib/validations'
 import { formatPrice, cn } from '@/lib/utils'
@@ -22,6 +23,7 @@ import PaymentTrustBadges from '@/components/payments/PaymentTrustBadges'
 
 type DeliveryId = 'nairobi-same-day' | 'standard-nationwide' | 'pickup'
 type PaymentId  = 'mpesa' | 'card' | 'cod'
+type CheckoutMode = 'guest' | 'account'
 
 const MPESA_PAYBILL_INFO = {
   paybill: process.env.NEXT_PUBLIC_MPESA_PAYBILL ?? '174379',
@@ -233,7 +235,15 @@ function CodPanel({
 export default function CheckoutPage() {
   const { items, totalPrice, clearCart } = useCart()
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const { session, status: authStatus } = useAuth()
 
+  const initialMode = (searchParams.get('mode') === 'account' ? 'account' : 'guest') as CheckoutMode
+
+  const [checkoutMode, setCheckoutMode]   = useState<CheckoutMode>(initialMode)
+  const [accountPassword, setAccountPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
+  const [passwordError, setPasswordError] = useState('')
   const [step, setStep]                 = useState(1)
   const [deliveryId, setDeliveryId]     = useState<DeliveryId>('nairobi-same-day')
   const [paymentId, setPaymentId]       = useState<PaymentId>('mpesa')
@@ -283,6 +293,7 @@ export default function CheckoutPage() {
 
   const {
     register,
+    reset,
     trigger,
     watch,
     getValues,
@@ -290,12 +301,31 @@ export default function CheckoutPage() {
   } = useForm<CheckoutFormValues>({
     resolver: zodResolver(CheckoutFormSchema),
     mode: 'onTouched',
-    defaultValues: { name: '', email: '', phone: '', address: '', city: '', notes: '' },
+    defaultValues: { name: '', email: '', phone: '', address: '', city: '', notes: '', marketingOptIn: false },
   })
 
   const watchedPhone = watch('phone')
   const watchedEmail = watch('email')
+  const isLoggedIn = authStatus === 'authenticated' && !!session
 
+  useEffect(() => {
+    if (!isLoggedIn) return
+    fetch('/api/account/profile')
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data: { name?: string; email?: string; phone?: string; address?: string; city?: string } | null) => {
+        if (!data) return
+        reset({
+          name: data.name ?? '',
+          email: data.email ?? '',
+          phone: data.phone ?? '',
+          address: data.address ?? '',
+          city: data.city ?? '',
+          notes: '',
+          marketingOptIn: false,
+        })
+      })
+      .catch(() => {})
+  }, [isLoggedIn, reset])
   // Redirect empty cart away from checkout
   useEffect(() => {
     if (items.length === 0) router.replace('/cart')
@@ -326,6 +356,9 @@ export default function CheckoutPage() {
           discount: promoDiscount,
           total: orderTotal,
           promoCode: promoCode || undefined,
+          checkoutMode: isLoggedIn ? 'account' : checkoutMode,
+          accountPassword:
+            !isLoggedIn && checkoutMode === 'account' ? accountPassword : undefined,
           customer,
           items: items.map((item) => ({
             productSlug: item.product.slug,
@@ -373,8 +406,20 @@ export default function CheckoutPage() {
 
   async function nextStep() {
     if (step === 1) {
-      const valid = await trigger(['name', 'email', 'phone', 'address', 'city'])
+      const valid = await trigger(['name', 'email', 'phone', 'address', 'city', 'marketingOptIn'])
       if (!valid) return
+
+      if (!isLoggedIn && checkoutMode === 'account') {
+        setPasswordError('')
+        if (accountPassword.length < 8) {
+          setPasswordError('Password must be at least 8 characters.')
+          return
+        }
+        if (accountPassword !== confirmPassword) {
+          setPasswordError('Passwords do not match.')
+          return
+        }
+      }
     }
     setStep((s) => Math.min(s + 1, 3))
   }
@@ -395,8 +440,70 @@ export default function CheckoutPage() {
 
               {/* STEP 1 — Details ─────────────────────────────────────── */}
               {step === 1 && (
-                <div className="flex flex-col gap-5">
-                  <h2 className="font-display text-xl text-dark">Delivery Details</h2>
+                <div className="flex flex-col gap-6">
+                  {/* Checkout mode */}
+                  {isLoggedIn ? (
+                    <div className="flex items-center gap-3 bg-primary/5 border border-primary/15 rounded-xl px-4 py-3">
+                      <CheckCircle2 size={18} className="text-primary flex-shrink-0" />
+                      <p className="text-sm text-dark">
+                        Checking out as <strong>{session?.user.name}</strong> — order history saved to your account.
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="flex flex-col gap-3">
+                      <h2 className="font-display text-xl text-dark">How would you like to checkout?</h2>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <button
+                          type="button"
+                          onClick={() => { setCheckoutMode('guest'); setPasswordError('') }}
+                          aria-pressed={checkoutMode === 'guest'}
+                          className={cn(
+                            'flex flex-col items-start gap-2 p-4 rounded-xl border-2 text-left transition-all duration-150',
+                            checkoutMode === 'guest'
+                              ? 'border-primary bg-primary/5'
+                              : 'border-dark/10 hover:border-dark/25 bg-white',
+                          )}
+                        >
+                          <User size={20} className={checkoutMode === 'guest' ? 'text-primary' : 'text-dark/50'} />
+                          <span className="font-semibold text-sm text-dark">Continue as Guest</span>
+                          <span className="text-xs text-dark/55 leading-relaxed">
+                            Quick checkout. We&apos;ll use your details for delivery and order updates.
+                          </span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setCheckoutMode('account')}
+                          aria-pressed={checkoutMode === 'account'}
+                          className={cn(
+                            'flex flex-col items-start gap-2 p-4 rounded-xl border-2 text-left transition-all duration-150',
+                            checkoutMode === 'account'
+                              ? 'border-primary bg-primary/5'
+                              : 'border-dark/10 hover:border-dark/25 bg-white',
+                          )}
+                        >
+                          <UserPlus size={20} className={checkoutMode === 'account' ? 'text-primary' : 'text-dark/50'} />
+                          <span className="font-semibold text-sm text-dark">Create an Account</span>
+                          <span className="text-xs text-dark/55 leading-relaxed">
+                            Track orders, get promos, organizing tips and early access to sales.
+                          </span>
+                        </button>
+                      </div>
+                      {checkoutMode === 'account' && (
+                        <p className="text-xs text-dark/50">
+                          Already have an account?{' '}
+                          <Link href="/login?callbackUrl=/checkout" className="text-primary font-medium hover:underline">
+                            Sign in
+                          </Link>
+                        </p>
+                      )}
+                    </div>
+                  )}
+
+                  <div className="flex flex-col gap-5">
+                    <h2 className="font-display text-xl text-dark">Your Contact Details</h2>
+                    <p className="text-sm text-dark/55 -mt-2">
+                      We use this information to confirm your order, arrange delivery, and follow up if needed.
+                    </p>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 
                     <div className="sm:col-span-2 flex flex-col gap-1.5">
@@ -436,6 +543,50 @@ export default function CheckoutPage() {
                       </label>
                       <input id="notes" type="text" placeholder="Gate code, landmarks..." {...register('notes')} className={inputClass()} />
                     </div>
+                  </div>
+
+                  {!isLoggedIn && checkoutMode === 'account' && (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-dark/8">
+                      <div className="flex flex-col gap-1.5">
+                        <label htmlFor="password" className="text-sm font-medium text-dark">Password</label>
+                        <input
+                          id="password"
+                          type="password"
+                          autoComplete="new-password"
+                          value={accountPassword}
+                          onChange={(e) => { setAccountPassword(e.target.value); setPasswordError('') }}
+                          placeholder="At least 8 characters"
+                          className={inputClass(!!passwordError)}
+                        />
+                      </div>
+                      <div className="flex flex-col gap-1.5">
+                        <label htmlFor="confirmPassword" className="text-sm font-medium text-dark">Confirm Password</label>
+                        <input
+                          id="confirmPassword"
+                          type="password"
+                          autoComplete="new-password"
+                          value={confirmPassword}
+                          onChange={(e) => { setConfirmPassword(e.target.value); setPasswordError('') }}
+                          placeholder="Repeat password"
+                          className={inputClass(!!passwordError)}
+                        />
+                      </div>
+                      {passwordError && <p className="sm:col-span-2 text-danger text-xs">{passwordError}</p>}
+                    </div>
+                  )}
+
+                  <label className="flex items-start gap-3 cursor-pointer group">
+                    <input
+                      type="checkbox"
+                      {...register('marketingOptIn')}
+                      className="mt-1 w-4 h-4 rounded border-dark/20 text-primary focus:ring-primary/30"
+                    />
+                    <span className="text-sm text-dark/70 leading-relaxed">
+                      <Sparkles size={14} className="inline text-primary mr-1 -mt-0.5" />
+                      Send me promos, organizing tips and new product updates
+                      <span className="block text-xs text-dark/45 mt-0.5">Optional — unsubscribe anytime.</span>
+                    </span>
+                  </label>
                   </div>
                 </div>
               )}
