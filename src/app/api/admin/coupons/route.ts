@@ -1,13 +1,14 @@
 import { NextResponse } from 'next/server'
 import { getAdminSession } from '@/lib/auth'
-import { MOCK_COUPONS } from '@/lib/mock-admin-coupons'
+import { listCoupons, upsertCoupon } from '@/lib/db/coupons'
 
-export async function GET(_req: Request) {
+export async function GET() {
   const session = await getAdminSession()
   if (!session || session.user.role !== 'admin') {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
-  return NextResponse.json({ coupons: MOCK_COUPONS, total: MOCK_COUPONS.length })
+  const coupons = await listCoupons()
+  return NextResponse.json({ coupons, total: coupons.length })
 }
 
 export async function POST(request: Request) {
@@ -15,8 +16,18 @@ export async function POST(request: Request) {
   if (!session || session.user.role !== 'admin') {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
+
   const body = await request.json() as Record<string, unknown>
-  // TODO: Validate + save to DB
-  const newCoupon = { ...body, id: `cp-${Date.now()}`, uses: 0, createdAt: new Date().toISOString() }
-  return NextResponse.json({ success: true, coupon: newCoupon }, { status: 201 })
+  const coupon = await upsertCoupon({
+    code: String(body.code ?? ''),
+    type: body.type as 'percentage' | 'fixed',
+    value: Number(body.value),
+    minOrder: Number(body.minOrder ?? 0),
+    usageLimit: body.usageLimit != null ? Number(body.usageLimit) : null,
+    uses: 0,
+    active: body.active !== false,
+    expiresAt: (body.expiresAt as string) ?? null,
+  })
+
+  return NextResponse.json({ success: true, coupon }, { status: 201 })
 }

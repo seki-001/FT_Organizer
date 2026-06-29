@@ -10,6 +10,7 @@ import {
   Heart, Star, X, Minus, Plus, ChevronRight, ShoppingCart, Shield,
 } from 'lucide-react'
 import { MOCK_PRODUCTS } from '@/lib/mock-products'
+import type { Product } from '@/lib/types'
 import { SHOP_CATEGORIES } from '@/lib/constants'
 import { formatPrice, discountPercent, cn } from '@/lib/utils'
 import { useCart } from '@/context/CartContext'
@@ -153,10 +154,12 @@ const TABS: { id: Tab; label: string }[] = [
 export default function ProductPage() {
   const params  = useParams()
   const slug    = typeof params.slug === 'string' ? params.slug : Array.isArray(params.slug) ? params.slug[0] : ''
-  const product = MOCK_PRODUCTS.find((p) => p.slug === slug)
 
   const { addItem, openCart } = useCart()
 
+  const [product, setProduct] = useState<Product | null>(null)
+  const [allProducts, setAllProducts] = useState<Product[]>(MOCK_PRODUCTS)
+  const [loading, setLoading] = useState(true)
   const [activeImage,     setActiveImage]     = useState(0)
   const [selectedVariant, setSelectedVariant] = useState<ProductVariant | undefined>(undefined)
   const [quantity,        setQuantity]        = useState(1)
@@ -167,8 +170,29 @@ export default function ProductPage() {
   const [activeTab,       setActiveTab]       = useState<Tab>('description')
 
   useEffect(() => {
+    setLoading(true)
+    Promise.all([
+      fetch(`/api/products/${slug}`).then((r) => (r.ok ? r.json() : null)),
+      fetch('/api/products').then((r) => r.json()),
+    ])
+      .then(([single, list]: [{ product?: Product } | null, { products?: Product[] }]) => {
+        if (single?.product) setProduct(single.product)
+        if (list?.products?.length) setAllProducts(list.products)
+      })
+      .finally(() => setLoading(false))
+  }, [slug])
+
+  useEffect(() => {
     if (product?.variants?.[0]) setSelectedVariant(product.variants[0])
   }, [product])
+
+  if (loading) {
+    return (
+      <main className="bg-dark min-h-screen flex items-center justify-center">
+        <p className="text-white/50 text-sm">Loading product…</p>
+      </main>
+    )
+  }
 
   if (!product) {
     notFound()
@@ -179,7 +203,7 @@ export default function ProductPage() {
   const variantPrice = activePrice + (selectedVariant?.priceModifier ?? 0)
   const discount    = isOnSale ? discountPercent(product.price, product.salePrice!) : 0
 
-  const relatedProducts = MOCK_PRODUCTS
+  const relatedProducts = allProducts
     .filter((p) => p.category === product.category && p.id !== product.id)
     .slice(0, 4)
 

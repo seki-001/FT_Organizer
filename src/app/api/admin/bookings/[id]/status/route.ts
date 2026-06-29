@@ -1,20 +1,12 @@
 import { NextResponse } from 'next/server'
 import { getAdminSession } from '@/lib/auth'
+import { updateBookingStatus } from '@/lib/db/bookings'
 
 type Params = { params: { id: string } }
 
 const VALID_STATUSES = ['new', 'quoted', 'confirmed', 'completed', 'cancelled'] as const
 type BookingStatus = (typeof VALID_STATUSES)[number]
 
-/**
- * PATCH /api/admin/bookings/[id]/status
- * Updates the status of a booking.
- *
- * Body: { status: BookingStatus }
- *
- * TODO: Update real DB record.
- * TODO: Trigger status-change notification to customer (email/SMS).
- */
 export async function PATCH(request: Request, { params }: Params) {
   const session = await getAdminSession()
   if (!session || session.user.role !== 'admin') {
@@ -36,7 +28,8 @@ export async function PATCH(request: Request, { params }: Params) {
     )
   }
 
-  // TODO: Replace with real DB update
+  await updateBookingStatus(params.id, newStatus)
+
   return NextResponse.json({
     success:   true,
     bookingId: params.id,

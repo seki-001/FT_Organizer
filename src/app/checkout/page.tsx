@@ -9,18 +9,25 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import {
   Lock, ChevronRight, ChevronLeft, Loader2,
   Smartphone, CreditCard, Banknote, Truck, Package, Store,
-  CheckCircle2, AlertCircle,
+  CheckCircle2,
 } from 'lucide-react'
 import { useCart } from '@/context/CartContext'
 import { DELIVERY_OPTIONS, PAYMENT_METHODS, COMPANY } from '@/lib/constants'
 import { CheckoutFormSchema, type CheckoutFormValues } from '@/lib/validations'
 import { formatPrice, cn } from '@/lib/utils'
+import { MpesaPaymentPanel, PaystackPaymentPanel } from '@/components/payments/PaymentPanels'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 type DeliveryId = 'nairobi-same-day' | 'standard-nationwide' | 'pickup'
 type PaymentId  = 'mpesa' | 'card' | 'cod'
-type MpesaState = 'idle' | 'sending' | 'waiting' | 'success' | 'error'
+
+const MPESA_PAYBILL_INFO = {
+  paybill: process.env.NEXT_PUBLIC_MPESA_PAYBILL ?? '174379',
+  till: process.env.NEXT_PUBLIC_MPESA_TILL || undefined,
+  accountName: process.env.NEXT_PUBLIC_MPESA_ACCOUNT_NAME ?? 'Faith The Organizer',
+  mode: (process.env.NEXT_PUBLIC_MPESA_MODE ?? 'paybill') as 'paybill' | 'till',
+}
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -38,9 +45,8 @@ const PAYMENT_ICON: Record<PaymentId, typeof Smartphone> = {
   cod:   Banknote,
 }
 
-function generateOrderRef() {
-  return 'ORD-' + Math.random().toString(36).toUpperCase().slice(2, 8)
-}
+
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -174,195 +180,29 @@ function OrderSummary({
   )
 }
 
-// ─── Payment panels ───────────────────────────────────────────────────────────
-
-function MpesaPanel({
+function CodPanel({
   total,
-  orderRef,
-  defaultPhone,
+  onPlaceOrder,
+  placing,
 }: {
   total: number
-  orderRef: string
-  defaultPhone: string
+  onPlaceOrder: () => Promise<string | null>
+  placing: boolean
 }) {
-  const router = useRouter()
-  const { clearCart } = useCart()
-  const [phone, setPhone]         = useState(defaultPhone)
-  const [mpesaState, setMpesaState] = useState<MpesaState>('idle')
-  const [errorMsg, setErrorMsg]   = useState('')
-  const [checkoutReqId, setCheckoutReqId] = useState('')
-  const [pollCount, setPollCount] = useState(0)
-
-  async function initiatePush() {
-    setMpesaState('sending')
-    setErrorMsg('')
-    try {
-      const res  = await fetch('/api/payments/mpesa/initiate', {
-        method:  'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify({ phone, amount: total, orderRef }),
-      })
-      const data = await res.json() as { success: boolean; checkoutRequestId?: string; error?: string }
-      if (!data.success) throw new Error(data.error ?? 'Failed to send STK push')
-      setCheckoutReqId(data.checkoutRequestId ?? '')
-      setMpesaState('waiting')
-      setPollCount(0)
-    } catch (err) {
-      setErrorMsg(err instanceof Error ? err.message : 'Something went wrong')
-      setMpesaState('error')
-    }
-  }
-
-  // Poll for payment status
-  useEffect(() => {
-    if (mpesaState !== 'waiting' || !checkoutReqId) return
-    if (pollCount >= 10) {
-      setMpesaState('error')
-      setErrorMsg('Payment timed out. Please try again.')
-      return
-    }
-    const timer = setTimeout(async () => {
-      try {
-        const res  = await fetch(`/api/payments/mpesa/status?checkoutRequestId=${checkoutReqId}`)
-        const data = await res.json() as { status: 'pending' | 'success' | 'failed' }
-        if (data.status === 'success') {
-          setMpesaState('success')
-          clearCart()
-          router.push(`/order-confirmation?ref=${orderRef}`)
-        } else if (data.status === 'failed') {
-          setMpesaState('error')
-          setErrorMsg('Payment was declined. Please try again.')
-        } else {
-          setPollCount((c) => c + 1)
-        }
-      } catch {
-        setPollCount((c) => c + 1)
-      }
-    }, 3000)
-    return () => clearTimeout(timer)
-  }, [mpesaState, checkoutReqId, pollCount, clearCart, router, orderRef])
-
-  return (
-    <div className="flex flex-col gap-4 mt-4">
-      <div className="flex flex-col gap-1.5">
-        <label htmlFor="mpesa-phone" className="text-sm font-medium text-dark">
-          M-Pesa Phone Number
-        </label>
-        <input
-          id="mpesa-phone"
-          type="tel"
-          value={phone}
-          onChange={(e) => setPhone(e.target.value)}
-          placeholder="07XX XXX XXX"
-          disabled={mpesaState === 'waiting' || mpesaState === 'success'}
-          className={inputClass()}
-        />
-        <p className="text-dark/40 text-xs">Format: 07XX XXX XXX</p>
-      </div>
-
-      {/* Waiting instruction */}
-      {mpesaState === 'waiting' && (
-        <div className="flex items-start gap-3 bg-green-50 border border-green-200 rounded-xl px-4 py-3">
-          <Smartphone size={20} className="text-green-600 flex-shrink-0 mt-0.5" aria-hidden="true" />
-          <div>
-            <p className="text-green-800 font-medium text-sm">Check your phone</p>
-            <p className="text-green-700 text-xs mt-0.5 leading-relaxed">
-              Enter your M-Pesa PIN to complete payment. Waiting for confirmation…
-            </p>
-            <div className="flex items-center gap-1.5 mt-2 text-green-600 text-xs">
-              <Loader2 size={13} className="animate-spin" aria-hidden="true" />
-              Polling ({pollCount}/10)…
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Error */}
-      {mpesaState === 'error' && (
-        <div className="flex items-start gap-3 bg-danger/5 border border-danger/20 rounded-xl px-4 py-3">
-          <AlertCircle size={18} className="text-danger flex-shrink-0 mt-0.5" aria-hidden="true" />
-          <div className="flex-1">
-            <p className="text-danger text-sm font-medium">{errorMsg}</p>
-          </div>
-        </div>
-      )}
-
-      {/* CTA */}
-      {(mpesaState === 'idle' || mpesaState === 'error') && (
-        <button
-          type="button"
-          onClick={initiatePush}
-          className="flex items-center justify-center gap-2 w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-4 rounded-xl transition-colors duration-200 min-h-[54px]"
-        >
-          <Smartphone size={20} aria-hidden="true" />
-          {mpesaState === 'error' ? 'Try Again' : `Pay ${formatPrice(total)} via M-Pesa`}
-        </button>
-      )}
-
-      {mpesaState === 'sending' && (
-        <button
-          type="button"
-          disabled
-          className="flex items-center justify-center gap-2 w-full bg-green-600/70 text-white font-semibold py-4 rounded-xl min-h-[54px]"
-        >
-          <Loader2 size={20} className="animate-spin" aria-hidden="true" />
-          Sending STK Push…
-        </button>
-      )}
-    </div>
-  )
-}
-
-function CardPanel({ total, orderRef }: { total: number; orderRef: string }) {
-  const [loading, setLoading] = useState(false)
-
-  async function handlePay() {
-    setLoading(true)
-    try {
-      const res  = await fetch('/api/payments/flutterwave/initiate', {
-        method:  'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify({ amount: total, orderRef }),
-      })
-      const data = await res.json() as { redirectUrl?: string }
-      if (data.redirectUrl) window.location.href = data.redirectUrl
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  return (
-    <div className="flex flex-col gap-4 mt-4">
-      <p className="text-dark/60 text-sm leading-relaxed bg-muted rounded-xl px-4 py-3">
-        You&apos;ll be redirected to Flutterwave&apos;s secure payment page to enter your card details.
-        Visa and Mastercard accepted.
-      </p>
-      <button
-        type="button"
-        onClick={handlePay}
-        disabled={loading}
-        className="flex items-center justify-center gap-2 w-full bg-primary hover:bg-primary/90 disabled:opacity-60 text-white font-semibold py-4 rounded-xl transition-colors duration-200 min-h-[54px]"
-      >
-        {loading ? (
-          <><Loader2 size={20} className="animate-spin" /> Redirecting…</>
-        ) : (
-          <><CreditCard size={20} aria-hidden="true" /> Pay {formatPrice(total)} by Card</>
-        )}
-      </button>
-    </div>
-  )
-}
-
-function CodPanel({ total, orderRef }: { total: number; orderRef: string }) {
   const router = useRouter()
   const { clearCart } = useCart()
   const [loading, setLoading] = useState(false)
 
   async function handlePlace() {
     setLoading(true)
-    await new Promise((r) => setTimeout(r, 800))
-    clearCart()
-    router.push(`/order-confirmation?ref=${orderRef}`)
+    try {
+      const ref = await onPlaceOrder()
+      if (!ref) return
+      clearCart()
+      router.push(`/order-confirmation?ref=${ref}`)
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -373,11 +213,11 @@ function CodPanel({ total, orderRef }: { total: number; orderRef: string }) {
       </p>
       <button
         type="button"
-        onClick={handlePlace}
-        disabled={loading}
+        onClick={() => void handlePlace()}
+        disabled={loading || placing}
         className="flex items-center justify-center gap-2 w-full bg-primary hover:bg-primary/90 disabled:opacity-60 text-white font-semibold py-4 rounded-xl transition-colors duration-200 min-h-[54px]"
       >
-        {loading ? (
+        {loading || placing ? (
           <><Loader2 size={20} className="animate-spin" /> Placing Order…</>
         ) : (
           <><Banknote size={20} aria-hidden="true" /> Place Order — {formatPrice(total)}</>
@@ -390,13 +230,15 @@ function CodPanel({ total, orderRef }: { total: number; orderRef: string }) {
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function CheckoutPage() {
-  const { items, totalPrice } = useCart()
+  const { items, totalPrice, clearCart } = useCart()
   const router = useRouter()
 
   const [step, setStep]                 = useState(1)
   const [deliveryId, setDeliveryId]     = useState<DeliveryId>('nairobi-same-day')
   const [paymentId, setPaymentId]       = useState<PaymentId>('mpesa')
-  const [orderRef]                      = useState(generateOrderRef)
+  const [orderRef, setOrderRef]         = useState<string | null>(null)
+  const [orderCreating, setOrderCreating] = useState(false)
+  const [orderError, setOrderError]     = useState('')
   const [promoCode,     setPromoCode]     = useState('')
   const [promoInput,    setPromoInput]    = useState('')
   const [promoDiscount, setPromoDiscount] = useState(0)
@@ -442,6 +284,7 @@ export default function CheckoutPage() {
     register,
     trigger,
     watch,
+    getValues,
     formState: { errors },
   } = useForm<CheckoutFormValues>({
     resolver: zodResolver(CheckoutFormSchema),
@@ -450,11 +293,82 @@ export default function CheckoutPage() {
   })
 
   const watchedPhone = watch('phone')
+  const watchedEmail = watch('email')
 
   // Redirect empty cart away from checkout
   useEffect(() => {
     if (items.length === 0) router.replace('/cart')
   }, [items, router])
+
+  async function createCheckoutOrder(method: PaymentId = paymentId): Promise<string | null> {
+    if (orderRef) {
+      await fetch(`/api/orders/${orderRef}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ paymentMethod: method }),
+      })
+      return orderRef
+    }
+
+    setOrderCreating(true)
+    setOrderError('')
+    try {
+      const customer = getValues()
+      const res = await fetch('/api/orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          deliveryMethod: deliveryId,
+          paymentMethod: method,
+          subtotal: totalPrice,
+          deliveryFee,
+          discount: promoDiscount,
+          total: orderTotal,
+          promoCode: promoCode || undefined,
+          customer,
+          items: items.map((item) => ({
+            productSlug: item.product.slug,
+            productName: item.product.name,
+            productId: UUID_RE.test(item.product.id) ? item.product.id : undefined,
+            quantity: item.quantity,
+            unitPrice: (item.product.salePrice ?? item.product.price) + (item.variant?.priceModifier ?? 0),
+            variant: item.variant
+              ? { id: item.variant.id, name: item.variant.name, value: item.variant.value }
+              : undefined,
+          })),
+        }),
+      })
+      const data = await res.json() as { reference?: string; error?: string }
+      if (!res.ok || !data.reference) {
+        throw new Error(data.error ?? 'Could not create your order.')
+      }
+      setOrderRef(data.reference)
+      return data.reference
+    } catch (err) {
+      setOrderError(err instanceof Error ? err.message : 'Could not create your order.')
+      return null
+    } finally {
+      setOrderCreating(false)
+    }
+  }
+
+  useEffect(() => {
+    if (step === 3 && !orderRef && !orderCreating) {
+      void createCheckoutOrder()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [step])
+
+  useEffect(() => {
+    if (orderRef && step === 3) {
+      void fetch(`/api/orders/${orderRef}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ paymentMethod: paymentId }),
+      })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [paymentId])
 
   async function nextStep() {
     if (step === 1) {
@@ -576,6 +490,32 @@ export default function CheckoutPage() {
                 <div className="flex flex-col gap-4">
                   <h2 className="font-display text-xl text-dark">Payment</h2>
 
+                  {orderCreating && (
+                    <div className="flex items-center gap-2 text-dark/60 text-sm bg-muted rounded-xl px-4 py-3">
+                      <Loader2 size={16} className="animate-spin" />
+                      Creating your order…
+                    </div>
+                  )}
+
+                  {orderError && (
+                    <div className="bg-danger/5 border border-danger/20 text-danger text-sm rounded-xl px-4 py-3">
+                      {orderError}
+                      <button
+                        type="button"
+                        onClick={() => void createCheckoutOrder()}
+                        className="block mt-2 underline font-medium"
+                      >
+                        Try again
+                      </button>
+                    </div>
+                  )}
+
+                  {orderRef && (
+                    <p className="text-dark/50 text-xs font-mono">
+                      Order reference: <strong className="text-dark">{orderRef}</strong>
+                    </p>
+                  )}
+
                   {/* Payment method selector */}
                   <div className="flex flex-col gap-2">
                     {PAYMENT_METHODS.map((method) => {
@@ -612,14 +552,34 @@ export default function CheckoutPage() {
                   </div>
 
                   {/* Payment panels */}
-                  {paymentId === 'mpesa' && (
-                    <MpesaPanel total={orderTotal} orderRef={orderRef} defaultPhone={watchedPhone} />
+                  {orderRef && paymentId === 'mpesa' && (
+                    <div className="mt-4">
+                      <MpesaPaymentPanel
+                        total={orderTotal}
+                        orderRef={orderRef}
+                        defaultPhone={watchedPhone}
+                        paybillInfo={MPESA_PAYBILL_INFO}
+                        onSuccess={clearCart}
+                        successRedirect={`/order-confirmation?ref=${orderRef}`}
+                      />
+                    </div>
                   )}
-                  {paymentId === 'card' && (
-                    <CardPanel total={orderTotal} orderRef={orderRef} />
+                  {orderRef && paymentId === 'card' && (
+                    <div className="mt-4">
+                      <PaystackPaymentPanel
+                        total={orderTotal}
+                        orderRef={orderRef}
+                        email={watchedEmail}
+                        onSuccess={clearCart}
+                      />
+                    </div>
                   )}
                   {paymentId === 'cod' && (
-                    <CodPanel total={orderTotal} orderRef={orderRef} />
+                    <CodPanel
+                      total={orderTotal}
+                      placing={orderCreating}
+                      onPlaceOrder={() => createCheckoutOrder('cod')}
+                    />
                   )}
                 </div>
               )}

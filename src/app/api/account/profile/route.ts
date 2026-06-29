@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
+import { getUserSession } from '@/lib/auth'
+import { updateProfile } from '@/lib/db/profiles'
 import { apiError, apiSuccess } from '@/lib/api-response'
-import { enforceRateLimit, withRateLimitHeaders, checkRateLimit, getClientIp } from '@/lib/rate-limit'
+import { enforceRateLimit } from '@/lib/rate-limit'
 import { logger } from '@/lib/logger'
 
 const ProfileUpdateSchema = z.object({
@@ -15,6 +17,11 @@ export async function POST(request: NextRequest) {
   const limited = enforceRateLimit(request, 'profile', { limit: 10, windowMs: 60_000 })
   if (limited) return limited
 
+  const session = await getUserSession()
+  if (!session?.user) {
+    return apiError('Unauthorized', 'UNAUTHORIZED', 401)
+  }
+
   try {
     const body = await request.json() as unknown
     const parsed = ProfileUpdateSchema.safeParse(body)
@@ -23,14 +30,16 @@ export async function POST(request: NextRequest) {
       return apiError('Invalid data.', 'VALIDATION_ERROR', 400)
     }
 
-    logger.info({
-      event: 'profile_updated',
-      ip_address: getClientIp(request),
+    await updateProfile(session.user.id, {
+      name: parsed.data.name,
+      phone: parsed.data.phone,
+      address: parsed.data.address,
+      city: parsed.data.city,
     })
 
-    const ip = getClientIp(request)
-    const rate = checkRateLimit(`profile:${ip}`, { limit: 10, windowMs: 60_000 })
-    return withRateLimitHeaders(apiSuccess({ success: true }), rate.remaining, rate.resetAt)
+    logger.info({ event: 'profile_updated', user_id: session.user.id })
+
+    return apiSuccess({ success: true })
   } catch {
     logger.error({ event: 'profile_update_failed', error_code: 'INTERNAL_ERROR' })
     return apiError('Server error.', 'INTERNAL_ERROR', 500)

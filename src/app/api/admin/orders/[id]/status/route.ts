@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { getAdminSession } from '@/lib/auth'
+import { updateOrderStatus } from '@/lib/db/orders'
 
 const VALID_STATUSES = [
   'processing',
@@ -11,16 +12,6 @@ const VALID_STATUSES = [
 
 type OrderStatus = (typeof VALID_STATUSES)[number]
 
-/**
- * PATCH /api/admin/orders/[id]/status
- * Updates the status of a single order.
- *
- * Body: { status: OrderStatus }
- *
- * TODO: Persist to real DB — e.g.:
- *   await prisma.order.update({ where: { id: params.id }, data: { orderStatus: status } })
- * TODO: Trigger notification (WhatsApp / email) to customer on status change.
- */
 export async function PATCH(
   request: Request,
   { params }: { params: { id: string } },
@@ -44,7 +35,8 @@ export async function PATCH(
     )
   }
 
-  // TODO: Replace with real DB update
+  await updateOrderStatus(params.id, body.status as OrderStatus)
+
   return NextResponse.json({
     success:   true,
     orderId:   params.id,

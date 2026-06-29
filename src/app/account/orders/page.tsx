@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { X, Package, CheckCircle2, Truck, ShoppingBag, Clock } from 'lucide-react'
@@ -210,12 +210,27 @@ function OrderDrawer({ order, onClose }: { order: Order; onClose: () => void }) 
 
 export default function AccountOrdersPage() {
   const [selected, setSelected] = useState<Order | null>(null)
+  const [orders, setOrders] = useState<Order[]>(MOCK_ORDERS)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetch('/api/account/orders')
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d: { orders?: Order[] } | null) => {
+        if (d?.orders) setOrders(d.orders)
+      })
+      .finally(() => setLoading(false))
+  }, [])
 
   return (
     <div className="flex flex-col gap-6">
       <h1 className="font-display text-2xl font-bold text-dark">My Orders</h1>
 
-      {MOCK_ORDERS.length === 0 ? (
+      {loading ? (
+        <div className="bg-white rounded-2xl border border-dark/8 shadow-sm p-12 text-center text-dark/50 text-sm">
+          Loading your orders…
+        </div>
+      ) : orders.length === 0 ? (
         <div className="bg-white rounded-2xl border border-dark/8 shadow-sm p-12 text-center flex flex-col items-center gap-4">
           <ShoppingBag size={48} className="text-dark/20" aria-hidden="true" />
           <p className="text-dark/50">No orders yet.</p>
@@ -240,7 +255,7 @@ export default function AccountOrdersPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-dark/5">
-                  {MOCK_ORDERS.map((order) => (
+                  {orders.map((order) => (
                     <tr key={order.id} className="hover:bg-muted/50 transition-colors">
                       <td className="px-5 py-4 font-mono text-xs text-dark font-medium">{order.id}</td>
                       <td className="px-5 py-4 text-dark/60 whitespace-nowrap">{formatDate(order.createdAt)}</td>
@@ -267,7 +282,7 @@ export default function AccountOrdersPage() {
 
           {/* Mobile cards */}
           <div className="flex flex-col gap-3 md:hidden">
-            {MOCK_ORDERS.map((order) => (
+            {orders.map((order) => (
               <div key={order.id} className="bg-white rounded-xl border border-dark/8 shadow-sm p-4 flex flex-col gap-3">
                 <div className="flex items-start justify-between gap-2">
                   <div>

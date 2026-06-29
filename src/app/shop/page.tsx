@@ -6,6 +6,7 @@ import { useSearchParams } from 'next/navigation'
 import { AnimatePresence, motion } from 'framer-motion'
 import { SlidersHorizontal, X, PackageX, ChevronDown } from 'lucide-react'
 import { MOCK_PRODUCTS } from '@/lib/mock-products'
+import type { Product } from '@/lib/types'
 import { SHOP_CATEGORIES } from '@/lib/constants'
 import type { ProductCategory } from '@/lib/types'
 import DarkProductCard from '@/components/shop/DarkProductCard'
@@ -256,6 +257,17 @@ function ShopCatalogueInner() {
   const [priceMax, setPriceMax] = useState(MAX_PRICE)
   const [inStockOnly, setInStockOnly] = useState(false)
   const [drawerOpen, setDrawerOpen] = useState(false)
+  const [products, setProducts] = useState<Product[]>(MOCK_PRODUCTS)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetch('/api/products')
+      .then((r) => r.json())
+      .then((d: { products?: Product[] }) => {
+        if (d.products?.length) setProducts(d.products)
+      })
+      .finally(() => setLoading(false))
+  }, [])
 
   const handleClearAll = useCallback(() => {
     setActiveCategory('all')
@@ -267,8 +279,8 @@ function ShopCatalogueInner() {
 
   const filtered = useMemo(() => {
     let base = activeCategory === 'all'
-      ? MOCK_PRODUCTS
-      : MOCK_PRODUCTS.filter((p) => p.category === activeCategory)
+      ? products
+      : products.filter((p) => p.category === activeCategory)
 
     if (inStockOnly) base = base.filter((p) => p.inStock)
 
@@ -283,9 +295,9 @@ function ShopCatalogueInner() {
       if (sort === 'price-asc')  return aPrice - bPrice
       if (sort === 'price-desc') return bPrice - aPrice
       if (sort === 'rating')     return b.rating - a.rating
-      return MOCK_PRODUCTS.indexOf(a) - MOCK_PRODUCTS.indexOf(b)
+      return products.indexOf(a) - products.indexOf(b)
     })
-  }, [activeCategory, sort, priceMin, priceMax, inStockOnly])
+  }, [activeCategory, sort, priceMin, priceMax, inStockOnly, products])
 
   const filterPanelProps: FilterPanelProps = {
     sort, setSort,
@@ -408,7 +420,11 @@ function ShopCatalogueInner() {
             </div>
 
             {/* Product grid */}
-            {filtered.length > 0 ? (
+            {loading ? (
+              <div className="flex flex-col items-center gap-4 py-24 text-center">
+                <p className="text-white/50 text-sm">Loading products…</p>
+              </div>
+            ) : filtered.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
                 {filtered.map((product) => (
                   <DarkProductCard key={product.id} product={product} />

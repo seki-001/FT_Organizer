@@ -42,12 +42,13 @@ const inputClass = 'w-full border border-dark/15 rounded-lg px-4 py-3 text-sm te
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function RegisterPage() {
-  const { signIn } = useAuth()
+  const { signUp, signInWithGoogle } = useAuth()
   const router     = useRouter()
 
   const [showPw,        setShowPw]        = useState(false)
   const [showConfirmPw, setShowConfirmPw] = useState(false)
   const [apiError,      setApiError]      = useState('')
+  const [googleLoading, setGoogleLoading] = useState(false)
 
   const {
     register,
@@ -57,12 +58,13 @@ export default function RegisterPage() {
 
   async function onSubmit(data: RegisterForm) {
     setApiError('')
-    // TODO: POST /api/auth/register to create the account in your DB,
-    // then sign in automatically.
-    await new Promise((r) => setTimeout(r, 800))
-    const result = await signIn(data.email, data.password)
+    const result = await signUp(data.email, data.password, data.name)
     if (result.ok) {
-      router.push('/account')
+      if (result.needsEmailConfirmation) {
+        router.push('/verify-email')
+      } else {
+        router.push('/account')
+      }
     } else {
       setApiError(result.error ?? 'Could not create account. Please try again.')
     }
@@ -209,12 +211,19 @@ export default function RegisterPage() {
         {/* Google */}
         <button
           type="button"
-          onClick={() => {
-            // TODO: signIn('google') from next-auth/react
+          disabled={googleLoading}
+          onClick={async () => {
+            setApiError('')
+            setGoogleLoading(true)
+            const result = await signInWithGoogle()
+            if (!result.ok) {
+              setApiError(result.error ?? 'Google sign-in failed.')
+              setGoogleLoading(false)
+            }
           }}
-          className="flex items-center justify-center gap-3 w-full border border-dark/15 hover:border-dark/30 text-dark font-medium py-3 rounded-lg transition-colors text-sm min-h-[48px]"
+          className="flex items-center justify-center gap-3 w-full border border-dark/15 hover:border-dark/30 text-dark font-medium py-3 rounded-lg transition-colors text-sm min-h-[48px] disabled:opacity-60"
         >
-          <GoogleIcon />
+          {googleLoading ? <Loader2 size={16} className="animate-spin" /> : <GoogleIcon />}
           Continue with Google
         </button>
 

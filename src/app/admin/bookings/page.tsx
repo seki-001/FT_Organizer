@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo, useCallback } from 'react'
+import { useState, useMemo, useCallback, useEffect } from 'react'
 import {
   DndContext, DragOverlay, PointerSensor, useSensor, useSensors,
   useDraggable, useDroppable,
@@ -210,7 +210,9 @@ function KanbanColumn({
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function AdminBookingsPage() {
-  const [bookings,    setBookings]    = useState<AdminBooking[]>(MOCK_ADMIN_BOOKINGS)
+  const [bookings,    setBookings]    = useState<AdminBooking[]>([])
+  const [loading,     setLoading]     = useState(true)
+  const [loadError,   setLoadError]   = useState('')
   const [selectedId,  setSelectedId]  = useState<string | null>(null)
   const [activeId,    setActiveId]    = useState<string | null>(null)
   const [view,        setView]        = useState<'pipeline' | 'list'>('pipeline')
@@ -220,6 +222,24 @@ export default function AdminBookingsPage() {
   const [statusFilter,  setStatusFilter]  = useState('all')
   const [serviceFilter, setServiceFilter] = useState('all')
   const [dateFilter,    setDateFilter]    = useState('all')
+
+  useEffect(() => {
+    void (async () => {
+      setLoading(true)
+      setLoadError('')
+      try {
+        const res = await fetch('/api/admin/bookings')
+        if (!res.ok) throw new Error('Failed to load bookings')
+        const data = await res.json() as { bookings: AdminBooking[] }
+        setBookings(data.bookings ?? [])
+      } catch {
+        setLoadError('Could not load bookings. Showing sample data.')
+        setBookings(MOCK_ADMIN_BOOKINGS)
+      } finally {
+        setLoading(false)
+      }
+    })()
+  }, [])
 
   // ── DnD sensors with 8px activation distance ─────────────────────────────
   const sensors = useSensors(
@@ -366,9 +386,15 @@ export default function AdminBookingsPage() {
         {/* Header */}
         <AdminPageHeader
           title="Bookings"
-          subtitle="Manage service appointments"
+          subtitle={loading ? 'Loading bookings…' : `${bookings.length} bookings`}
           action={{ label: 'Export CSV', icon: Download, variant: 'outline', onClick: handleExport }}
         />
+
+        {loadError && (
+          <p className="text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-4 py-2 text-sm">
+            {loadError}
+          </p>
+        )}
 
         {/* Quick stats */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">

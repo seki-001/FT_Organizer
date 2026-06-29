@@ -1,17 +1,9 @@
 import { NextResponse } from 'next/server'
 import { getAdminSession } from '@/lib/auth'
+import { updateBookingNotes } from '@/lib/db/bookings'
 
 type Params = { params: { id: string } }
 
-/**
- * PATCH /api/admin/bookings/[id]/notes
- * Saves admin-only internal notes for a booking.
- * These notes are never visible to the customer.
- *
- * Body: { notes: string }
- *
- * TODO: Update real DB record (internalNotes field).
- */
 export async function PATCH(request: Request, { params }: Params) {
   const session = await getAdminSession()
   if (!session || session.user.role !== 'admin') {
@@ -29,7 +21,11 @@ export async function PATCH(request: Request, { params }: Params) {
     return NextResponse.json({ error: 'Missing "notes" field' }, { status: 400 })
   }
 
-  // TODO: Replace with real DB update
+  const ok = await updateBookingNotes(params.id, body.notes)
+  if (!ok) {
+    return NextResponse.json({ error: 'Could not save notes' }, { status: 500 })
+  }
+
   return NextResponse.json({
     success:   true,
     bookingId: params.id,

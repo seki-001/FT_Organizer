@@ -55,8 +55,8 @@ export const DELIVERY_OPTIONS = [
 ]
 
 export const PAYMENT_METHODS = [
-  { id: 'mpesa', label: 'M-Pesa', description: 'Pay via M-Pesa STK Push' },
-  { id: 'card', label: 'Card', description: 'Visa or Mastercard via Flutterwave' },
+  { id: 'mpesa', label: 'M-Pesa', description: 'STK Push, Paybill, or Till' },
+  { id: 'card', label: 'Card', description: 'Visa or Mastercard via Paystack' },
   { id: 'cod', label: 'Cash on Delivery', description: 'Nairobi deliveries only' },
 ]
 

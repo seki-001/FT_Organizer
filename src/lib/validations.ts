@@ -36,3 +36,26 @@ export const CheckoutFormSchema = z.object({
 })
 
 export type CheckoutFormValues = z.infer<typeof CheckoutFormSchema>
+
+const orderItemSchema = z.object({
+  productSlug: z.string().min(1),
+  productName: z.string().min(1),
+  productId: z.string().uuid().optional(),
+  quantity: z.number().int().positive(),
+  unitPrice: z.number().int().positive(),
+  variant: z.record(z.unknown()).optional(),
+})
+
+export const CreateOrderSchema = z.object({
+  deliveryMethod: z.enum(['nairobi-same-day', 'standard-nationwide', 'pickup']),
+  paymentMethod: z.enum(['mpesa', 'card', 'cod']),
+  subtotal: z.number().int().nonnegative(),
+  deliveryFee: z.number().int().nonnegative(),
+  discount: z.number().int().nonnegative().default(0),
+  total: z.number().int().positive(),
+  promoCode: z.string().optional(),
+  customer: CheckoutFormSchema,
+  items: z.array(orderItemSchema).min(1),
+})
+
+export type CreateOrderInput = z.infer<typeof CreateOrderSchema>

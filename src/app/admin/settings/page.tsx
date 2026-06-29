@@ -79,9 +79,8 @@ export default function AdminSettingsPage() {
         {/* Payment Settings */}
         <SettingsCard title="Payment Settings">
           <div className="flex flex-col gap-4">
-            <ReadonlyField label="M-Pesa Number"    value={COMPANY.whatsapp} />
-            <ReadonlyField label="IntaSend Mode"    value="Sandbox (Test)" />
-            <ReadonlyField label="Flutterwave Mode" value="Test Mode" />
+            <ReadonlyField label="M-Pesa Mode"       value="Daraja (Paybill / Till)" />
+            <ReadonlyField label="Card Payments"     value="Paystack" />
             <p className="text-dark/40 text-xs leading-relaxed">
               Payment gateway keys are managed via environment variables.
               See{' '}

@@ -1,28 +1,18 @@
 'use client'
 
-/**
- * Mock auth context that mirrors NextAuth's useSession / signOut interface.
- *
- * HOW TO SWAP IN REAL NEXT-AUTH:
- * 1. `npm install next-auth`
- * 2. Create `src/app/api/auth/[...nextauth]/route.ts` (stub already exists)
- * 3. Wrap your root layout with <SessionProvider> from "next-auth/react"
- * 4. In any component that imports from here, switch to:
- *      import { useSession, signOut } from 'next-auth/react'
- *    The hook return shape is identical, so the swap is 1-line per file.
- */
-
 import {
   createContext,
   useContext,
   useState,
   useCallback,
   useMemo,
+  useEffect,
   type ReactNode,
 } from 'react'
 import { useRouter } from 'next/navigation'
-
-// ─── Types ────────────────────────────────────────────────────────────────────
+import { createClient } from '@/lib/supabase/client'
+import { isSupabaseConfigured } from '@/lib/supabase/env'
+import { humanizeAuthError } from '@/lib/auth-errors'
 
 export interface SessionUser {
   name:   string
@@ -45,74 +35,152 @@ interface AuthContextValue {
   session: Session | null
   status:  SessionStatus
   signIn:  (email: string, password: string) => Promise<{ ok: boolean; error?: string }>
+  signInWithGoogle: () => Promise<{ ok: boolean; error?: string }>
+  signUp:  (email: string, password: string, name: string) => Promise<{ ok: boolean; error?: string; needsEmailConfirmation?: boolean }>
   signOut: () => void
   update:  (user: Partial<SessionUser>) => void
 }
-
-// ─── Mock session (dev default — logged in) ───────────────────────────────────
 
 const MOCK_USER: SessionUser = {
   name:  'Demo User',
   email: 'demo@example.com',
 }
 
-// ─── Context ─────────────────────────────────────────────────────────────────
-
 const AuthContext = createContext<AuthContextValue | null>(null)
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  // Default to 'authenticated' so account pages are visible in development.
-  // In production with real NextAuth this provider is replaced by <SessionProvider>.
-  const [session, setSession] = useState<Session | null>({ user: MOCK_USER })
-  const [status,  setStatus]  = useState<SessionStatus>('authenticated')
+  const useSupabase = isSupabaseConfigured()
+  const [session, setSession] = useState<Session | null>(useSupabase ? null : { user: MOCK_USER })
+  const [status, setStatus] = useState<SessionStatus>(useSupabase ? 'loading' : 'authenticated')
   const router = useRouter()
 
-  const signIn = useCallback(async (email: string, _password: string) => {
-    setStatus('loading')
-    // TODO: Replace with real NextAuth signIn('credentials', { email, password })
-    await new Promise((r) => setTimeout(r, 800))
-    const mockSession: Session = { user: { name: email.split('@')[0], email } }
-    setSession(mockSession)
-    setStatus('authenticated')
+  useEffect(() => {
+    if (!useSupabase) return
+
+    const supabase = createClient()
+
+    supabase.auth.getSession().then(({ data: { session: s } }) => {
+      if (s?.user) {
+        setSession({
+          user: {
+            name: s.user.user_metadata?.full_name ?? s.user.email?.split('@')[0] ?? 'User',
+            email: s.user.email ?? '',
+            image: s.user.user_metadata?.avatar_url,
+          },
+        })
+        setStatus('authenticated')
+      } else {
+        setSession(null)
+        setStatus('unauthenticated')
+      }
+    })
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, s) => {
+      if (s?.user) {
+        setSession({
+          user: {
+            name: s.user.user_metadata?.full_name ?? s.user.email?.split('@')[0] ?? 'User',
+            email: s.user.email ?? '',
+            image: s.user.user_metadata?.avatar_url,
+          },
+        })
+        setStatus('authenticated')
+      } else {
+        setSession(null)
+        setStatus('unauthenticated')
+      }
+    })
+
+    return () => subscription.unsubscribe()
+  }, [useSupabase])
+
+  const signIn = useCallback(async (email: string, password: string) => {
+    if (!useSupabase) {
+      await new Promise((r) => setTimeout(r, 400))
+      setSession({ user: { name: email.split('@')[0], email } })
+      setStatus('authenticated')
+      return { ok: true }
+    }
+
+    const supabase = createClient()
+    const { error } = await supabase.auth.signInWithPassword({ email, password })
+    if (error) return { ok: false, error: humanizeAuthError(error.message) }
     return { ok: true }
-  }, [])
+  }, [useSupabase])
+
+  const signInWithGoogle = useCallback(async () => {
+    if (!useSupabase) {
+      return { ok: false, error: 'Google sign-in requires Supabase configuration.' }
+    }
+
+    const supabase = createClient()
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback`,
+      },
+    })
+    if (error) return { ok: false, error: error.message }
+    return { ok: true }
+  }, [useSupabase])
+
+  const signUp = useCallback(async (email: string, password: string, name: string) => {
+    if (!useSupabase) {
+      setSession({ user: { name, email } })
+      setStatus('authenticated')
+      return { ok: true }
+    }
+
+    const supabase = createClient()
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: { full_name: name },
+        emailRedirectTo: `${window.location.origin}/auth/callback?next=/account`,
+      },
+    })
+    if (error) return { ok: false, error: humanizeAuthError(error.message) }
+    if (data.user && !data.session) {
+      return { ok: true, needsEmailConfirmation: true }
+    }
+    return { ok: true }
+  }, [useSupabase])
 
   const signOut = useCallback(() => {
+    if (useSupabase) {
+      const supabase = createClient()
+      void supabase.auth.signOut()
+    }
     setSession(null)
     setStatus('unauthenticated')
     router.push('/login')
-    // TODO: Replace with NextAuth signOut({ callbackUrl: '/login' })
-  }, [router])
+  }, [router, useSupabase])
 
   const update = useCallback((user: Partial<SessionUser>) => {
-    setSession((prev) => prev ? { user: { ...prev.user, ...user } } : prev)
+    setSession((prev) => (prev ? { user: { ...prev.user, ...user } } : prev))
   }, [])
 
   const value = useMemo<AuthContextValue>(
-    () => ({ session, status, signIn, signOut, update }),
-    [session, status, signIn, signOut, update]
+    () => ({ session, status, signIn, signInWithGoogle, signUp, signOut, update }),
+    [session, status, signIn, signInWithGoogle, signUp, signOut, update],
   )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }
 
-// ─── Hooks ───────────────────────────────────────────────────────────────────
-
-/** Drop-in replacement for NextAuth's useSession() */
 export function useSession(): SessionResult {
   const ctx = useContext(AuthContext)
   if (!ctx) throw new Error('useSession must be used inside <AuthProvider>')
   return { data: ctx.session, status: ctx.status }
 }
 
-/** Drop-in replacement for NextAuth's signOut() */
 export function useSignOut(): () => void {
   const ctx = useContext(AuthContext)
   if (!ctx) throw new Error('useSignOut must be used inside <AuthProvider>')
   return ctx.signOut
 }
 
-/** Access full auth context (signIn, update, etc.) */
 export function useAuth(): AuthContextValue {
   const ctx = useContext(AuthContext)
   if (!ctx) throw new Error('useAuth must be used inside <AuthProvider>')

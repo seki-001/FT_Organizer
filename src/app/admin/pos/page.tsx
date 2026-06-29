@@ -1,11 +1,12 @@
 'use client'
 
 import { useState, useMemo, useCallback } from 'react'
-import { Search, Plus, Minus, Trash2, Receipt, User, DollarSign, Smartphone, CreditCard, X, ChevronDown, CheckCircle2 } from 'lucide-react'
+import { Search, Plus, Minus, Trash2, Receipt, User, DollarSign, Smartphone, CreditCard, X, CheckCircle2, Printer } from 'lucide-react'
 import { MOCK_PRODUCTS } from '@/lib/mock-products'
 import { SHOP_CATEGORIES } from '@/lib/constants'
 import { formatPrice } from '@/lib/utils'
-import type { SaleItem, PaymentMethod } from '@/lib/types'
+import type { SaleItem, PaymentMethod, Sale } from '@/lib/types'
+import { POSReceipt, printPOSReceipt } from './POSReceipt'
 
 interface CartLine {
   productId: string
@@ -36,6 +37,7 @@ export default function POSPage() {
   const [note, setNote] = useState('')
   const [showSuccess, setShowSuccess] = useState(false)
   const [lastReceipt, setLastReceipt] = useState<string | null>(null)
+  const [completedSale, setCompletedSale] = useState<Sale | null>(null)
 
   const filteredProducts = useMemo(() => {
     return MOCK_PRODUCTS.filter(p => {
@@ -75,7 +77,7 @@ export default function POSPage() {
   const completeSale = () => {
     if (cart.length === 0) return
     const receiptNo = generateReceiptNo()
-    const sale = {
+    const sale: Sale = {
       id: receiptNo,
       items: cart.map(l => ({
         productId: l.productId,
@@ -96,13 +98,14 @@ export default function POSPage() {
       note,
     }
 
-    // Persist to localStorage
+    // Persist to localStorage (until POS is wired to Supabase)
     try {
       const existing = JSON.parse(localStorage.getItem('fto_sales') ?? '[]')
       existing.unshift(sale)
       localStorage.setItem('fto_sales', JSON.stringify(existing.slice(0, 500)))
     } catch {}
 
+    setCompletedSale(sale)
     setLastReceipt(receiptNo)
     setShowSuccess(true)
     setCart([])
@@ -111,25 +114,37 @@ export default function POSPage() {
     setNote('')
   }
 
-  if (showSuccess) {
+  if (showSuccess && completedSale) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[70vh] gap-6">
+        <div className="sr-only" aria-hidden="true">
+          <POSReceipt sale={completedSale} />
+        </div>
         <div className="w-20 h-20 rounded-full bg-success/10 flex items-center justify-center">
           <CheckCircle2 size={40} className="text-success" />
         </div>
         <div className="text-center">
           <h2 className="text-2xl font-bold text-dark">Sale Complete!</h2>
           <p className="text-dark/50 mt-1">Receipt #{lastReceipt}</p>
+          <p className="text-dark/40 text-sm mt-1 capitalize">
+            Paid via {completedSale.paymentMethod}
+          </p>
         </div>
-        <div className="flex gap-3">
+        <div className="flex flex-wrap justify-center gap-3">
           <button
-            onClick={() => setShowSuccess(false)}
+            onClick={() => printPOSReceipt()}
+            className="flex items-center gap-2 border border-dark/15 text-dark px-6 py-2.5 rounded-xl hover:bg-muted transition-colors"
+          >
+            <Printer size={16} /> Print Receipt
+          </button>
+          <button
+            onClick={() => { setShowSuccess(false); setCompletedSale(null) }}
             className="bg-primary text-white font-semibold px-6 py-2.5 rounded-xl hover:bg-primary/90 transition-colors"
           >
             New Sale
           </button>
           <a
-            href={`/admin/reports`}
+            href="/admin/reports"
             className="border border-dark/15 text-dark px-6 py-2.5 rounded-xl hover:bg-muted transition-colors"
           >
             View Reports

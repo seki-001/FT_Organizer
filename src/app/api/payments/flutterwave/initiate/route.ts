@@ -3,6 +3,7 @@ import { z } from 'zod'
 import { apiError, apiSuccess } from '@/lib/api-response'
 import { enforceRateLimit, withRateLimitHeaders, checkRateLimit, getClientIp } from '@/lib/rate-limit'
 import { logger } from '@/lib/logger'
+import { insertPaymentEvent } from '@/lib/db/payments'
 
 const InitiateSchema = z.object({
   amount:   z.number().positive(),
@@ -22,6 +23,15 @@ export async function POST(request: NextRequest) {
     }
 
     const { amount, orderRef } = parsed.data
+
+    await insertPaymentEvent({
+      orderReference: orderRef,
+      provider: 'flutterwave',
+      eventType: 'payment_initiated',
+      amount: Math.round(amount),
+      status: 'pending',
+      payload: {},
+    })
 
     logger.info({
       event: 'flutterwave_initiated',

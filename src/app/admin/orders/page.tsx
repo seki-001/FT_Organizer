@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo, useCallback } from 'react'
+import { useState, useMemo, useCallback, useEffect } from 'react'
 import Link from 'next/link'
 import {
   Search, ChevronDown, Eye, Pencil, Download,
@@ -8,7 +8,6 @@ import {
 } from 'lucide-react'
 import AdminPageHeader from '@/components/admin/AdminPageHeader'
 import OrderSlideOver  from './_components/OrderSlideOver'
-import { MOCK_ADMIN_ORDERS } from '@/lib/mock-admin-orders'
 import { cn, formatPrice } from '@/lib/utils'
 import type { Order } from '@/lib/types'
 
@@ -93,8 +92,29 @@ function SelectWrapper({
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function AdminOrdersPage() {
-  const [orders,          setOrders]          = useState<Order[]>(MOCK_ADMIN_ORDERS)
+  const [orders,          setOrders]          = useState<Order[]>([])
+  const [loading,         setLoading]         = useState(true)
+  const [loadError,       setLoadError]       = useState('')
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null)
+
+  useEffect(() => {
+    void (async () => {
+      setLoading(true)
+      setLoadError('')
+      try {
+        const res = await fetch('/api/admin/orders')
+        if (!res.ok) throw new Error('Failed to load orders')
+        const data = await res.json() as { orders: Order[] }
+        setOrders(data.orders ?? [])
+      } catch {
+        setLoadError('Could not load orders. Showing sample data.')
+        const { MOCK_ADMIN_ORDERS } = await import('@/lib/mock-admin-orders')
+        setOrders(MOCK_ADMIN_ORDERS)
+      } finally {
+        setLoading(false)
+      }
+    })()
+  }, [])
 
   // Filters
   const [search,         setSearch]         = useState('')
@@ -163,9 +183,15 @@ export default function AdminOrdersPage() {
 
         <AdminPageHeader
           title="Orders"
-          subtitle="Manage and update customer orders"
+          subtitle={loading ? 'Loading orders…' : `${orders.length} orders`}
           action={{ label: 'Export CSV', icon: Download, variant: 'outline' }}
         />
+
+        {loadError && (
+          <p className="text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-4 py-2 text-sm">
+            {loadError}
+          </p>
+        )}
 
         {/* Status summary row */}
         <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">

@@ -2,6 +2,7 @@ import { NextRequest } from 'next/server'
 import { z } from 'zod'
 import { apiError, apiSuccess } from '@/lib/api-response'
 import { enforceRateLimit, withRateLimitHeaders, checkRateLimit, getClientIp } from '@/lib/rate-limit'
+import { subscribeNewsletter } from '@/lib/db/newsletter'
 import { logger } from '@/lib/logger'
 
 const SubscribeSchema = z.object({
@@ -19,6 +20,8 @@ export async function POST(request: NextRequest) {
     if (!parsed.success) {
       return apiError('Please provide a valid email address.', 'VALIDATION_ERROR', 400)
     }
+
+    await subscribeNewsletter(parsed.data.email)
 
     logger.info({
       event: 'newsletter_subscribed',

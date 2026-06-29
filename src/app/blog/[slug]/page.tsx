@@ -10,7 +10,7 @@ import { useState, useCallback } from 'react'
 import { MOCK_POSTS } from '@/lib/mock-posts'
 import { COMPANY } from '@/lib/constants'
 import { cn } from '@/lib/utils'
-import type { BlogCategory } from '@/lib/types'
+import type { BlogPost, BlogCategory } from '@/lib/types'
 import BlogPostSidebar from '../_components/BlogPostSidebar'
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -100,7 +100,7 @@ function MobileShareBar({ title, slug }: { title: string; slug: string }) {
 
 // ─── Related post card ────────────────────────────────────────────────────────
 
-function RelatedPostCard({ post }: { post: typeof MOCK_POSTS[number] }) {
+function RelatedPostCard({ post }: { post: BlogPost }) {
   return (
     <Link href={`/blog/${post.slug}`} className="block group">
       <div className="rounded-2xl overflow-hidden border border-dark/8 bg-white hover:shadow-md transition-shadow duration-200">
@@ -136,13 +136,37 @@ function RelatedPostCard({ post }: { post: typeof MOCK_POSTS[number] }) {
 export default function BlogPostPage() {
   const params = useParams()
   const slug   = typeof params.slug === 'string' ? params.slug : Array.isArray(params.slug) ? params.slug[0] : ''
-  const post   = MOCK_POSTS.find((p) => p.slug === slug)
+
+  const [post, setPost] = useState<BlogPost | null>(null)
+  const [allPosts, setAllPosts] = useState<BlogPost[]>(MOCK_POSTS)
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => { window.scrollTo(0, 0) }, [slug])
 
+  useEffect(() => {
+    setLoading(true)
+    Promise.all([
+      fetch(`/api/blog/${slug}`).then((r) => (r.ok ? r.json() : null)),
+      fetch('/api/blog').then((r) => r.json()),
+    ])
+      .then(([single, list]: [{ post?: BlogPost } | null, { posts?: BlogPost[] }]) => {
+        if (single?.post) setPost(single.post)
+        if (list?.posts?.length) setAllPosts(list.posts)
+      })
+      .finally(() => setLoading(false))
+  }, [slug])
+
+  if (loading) {
+    return (
+      <main className="bg-dark min-h-screen flex items-center justify-center">
+        <p className="text-white/50 text-sm">Loading article…</p>
+      </main>
+    )
+  }
+
   if (!post) notFound()
 
-  const related = MOCK_POSTS.filter((p) => p.category === post.category && p.slug !== post.slug).slice(0, 3)
+  const related = allPosts.filter((p) => p.category === post.category && p.slug !== post.slug).slice(0, 3)
 
   return (
     <main className="bg-dark">

@@ -1,15 +1,8 @@
 import { NextResponse } from 'next/server'
 import { getAdminSession } from '@/lib/auth'
-import { MOCK_PRODUCTS } from '@/lib/mock-products'
+import { listProducts, insertProduct } from '@/lib/db/products'
+import type { Product } from '@/lib/types'
 
-/**
- * GET /api/admin/products
- * Returns products with optional filtering and sorting.
- *
- * Query params: search, category, stock, sort
- *
- * TODO: Replace with real DB query.
- */
 export async function GET(request: Request) {
   const session = await getAdminSession()
   if (!session || session.user.role !== 'admin') {
@@ -17,43 +10,16 @@ export async function GET(request: Request) {
   }
 
   const { searchParams } = new URL(request.url)
-  const search   = (searchParams.get('search') ?? '').toLowerCase().trim()
-  const category = searchParams.get('category') ?? 'all'
-  const stock    = searchParams.get('stock')    ?? 'all'
-  const sort     = searchParams.get('sort')     ?? 'newest'
-
-  let products = [...MOCK_PRODUCTS]
-
-  if (search) {
-    products = products.filter(p =>
-      p.name.toLowerCase().includes(search) ||
-      p.slug.includes(search),
-    )
-  }
-
-  if (category !== 'all') {
-    products = products.filter(p => p.category === category)
-  }
-
-  if (stock === 'in-stock')     products = products.filter(p =>  p.inStock && p.stockCount >= 5)
-  if (stock === 'low-stock')    products = products.filter(p =>  p.inStock && p.stockCount > 0 && p.stockCount < 5)
-  if (stock === 'out-of-stock') products = products.filter(p => !p.inStock || p.stockCount === 0)
-
-  if (sort === 'name-asc')   products.sort((a, b) => a.name.localeCompare(b.name))
-  if (sort === 'price-low')  products.sort((a, b) => (a.salePrice ?? a.price) - (b.salePrice ?? b.price))
-  if (sort === 'stock-low')  products.sort((a, b) => a.stockCount - b.stockCount)
+  const products = await listProducts({
+    search:   (searchParams.get('search') ?? '').toLowerCase().trim(),
+    category: searchParams.get('category') ?? 'all',
+    stock:    searchParams.get('stock')    ?? 'all',
+    sort:     searchParams.get('sort')     ?? 'newest',
+  })
 
   return NextResponse.json({ products, total: products.length })
 }
 
-/**
- * POST /api/admin/products
- * Creates a new product.
- *
- * TODO: Validate with zod schema.
- * TODO: Save to database (Prisma/Supabase).
- * TODO: Upload images to Cloudinary or Vercel Blob.
- */
 export async function POST(request: Request) {
   const session = await getAdminSession()
   if (!session || session.user.role !== 'admin') {
@@ -67,14 +33,17 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 })
   }
 
-  // TODO: Replace with real DB insert + image upload
-  const newProduct = {
-    ...body,
-    id:          `p-${Date.now()}`,
-    inStock:     (body.stockCount as number ?? 0) > 0,
-    rating:      0,
-    reviewCount: 0,
-  }
+  const product = await insertProduct({
+    slug: body.slug as string,
+    name: body.name as string,
+    price: Number(body.price),
+    category: body.category as Product['category'],
+    description: (body.description as string) ?? '',
+    salePrice: body.salePrice != null ? Number(body.salePrice) : undefined,
+    stockCount: Number(body.stockCount ?? 0),
+    images: (body.images as string[]) ?? [],
+    featured: Boolean(body.featured),
+  })
 
-  return NextResponse.json({ success: true, product: newProduct }, { status: 201 })
+  return NextResponse.json({ success: true, product }, { status: 201 })
 }

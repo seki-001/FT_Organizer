@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { BookingFormSchema } from '@/lib/validations'
 import { apiError, apiSuccess } from '@/lib/api-response'
 import { enforceRateLimit, withRateLimitHeaders, checkRateLimit, getClientIp } from '@/lib/rate-limit'
+import { insertBooking } from '@/lib/db/bookings'
 import { logger } from '@/lib/logger'
 
 function generateReference(): string {
@@ -25,13 +26,13 @@ export async function POST(request: NextRequest) {
 
     const booking = parsed.data
     const reference = generateReference()
-    const status = 'new' as const
-    const createdAt = new Date().toISOString()
+
+    await insertBooking(booking, reference)
 
     logger.info({
       event: 'booking_created',
       resource_id: reference,
-      action: status,
+      action: 'new',
       ip_address: getClientIp(request),
       service: booking.service,
     })
@@ -39,7 +40,7 @@ export async function POST(request: NextRequest) {
     const ip = getClientIp(request)
     const rate = checkRateLimit(`bookings:${ip}`, { limit: 5, windowMs: 60_000 })
     return withRateLimitHeaders(
-      apiSuccess({ success: true, reference, status, createdAt }, 201),
+      apiSuccess({ success: true, reference, status: 'new', createdAt: new Date().toISOString() }, 201),
       rate.remaining,
       rate.resetAt,
     )

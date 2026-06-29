@@ -1,8 +1,8 @@
 import { NextRequest } from 'next/server'
 import { z } from 'zod'
-import { MOCK_COUPONS } from '@/lib/mock-admin-coupons'
 import { apiError } from '@/lib/api-response'
 import { enforceRateLimit } from '@/lib/rate-limit'
+import { findCouponByCode } from '@/lib/db/coupons'
 
 const ValidateSchema = z.object({
   code: z.string().min(1),
@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
 
   const code = parsed.data.code.toUpperCase().trim()
   const orderTotal = parsed.data.orderTotal
-  const coupon = MOCK_COUPONS.find((c) => c.code === code)
+  const coupon = await findCouponByCode(code)
 
   if (!coupon) {
     return Response.json({ valid: false, message: `"${code}" is not a valid coupon code.` })

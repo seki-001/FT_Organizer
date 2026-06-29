@@ -1,12 +1,12 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Clock, ArrowRight, CheckCircle2, Loader2 } from 'lucide-react'
 import { MOCK_POSTS } from '@/lib/mock-posts'
-import type { BlogCategory } from '@/lib/types'
+import type { BlogPost, BlogCategory } from '@/lib/types'
 import { cn } from '@/lib/utils'
 import { useScrollAnimation } from '@/hooks/useScrollAnimation'
 import { staggerContainer, staggerItem, EASE_STANDARD } from '@/lib/animations'
@@ -45,7 +45,7 @@ function authorInitials(name: string) {
 // ─── Post card variants ───────────────────────────────────────────────────────
 
 // Large card (row 1, col-span-8, h-96)
-function LargePostCard({ post }: { post: typeof MOCK_POSTS[number] }) {
+function LargePostCard({ post }: { post: BlogPost }) {
   return (
     <Link href={`/blog/${post.slug}`} className="block group">
       <div className="rounded-2xl overflow-hidden border border-dark/8 bg-white hover:shadow-lg transition-shadow duration-300">
@@ -82,7 +82,7 @@ function LargePostCard({ post }: { post: typeof MOCK_POSTS[number] }) {
 }
 
 // Small horizontal card (row 1, stacked)
-function SmallHorizontalCard({ post }: { post: typeof MOCK_POSTS[number] }) {
+function SmallHorizontalCard({ post }: { post: BlogPost }) {
   return (
     <Link href={`/blog/${post.slug}`} className="block group">
       <div className="flex h-[9.5rem] rounded-2xl overflow-hidden border border-dark/8 bg-white
@@ -116,7 +116,7 @@ function SmallHorizontalCard({ post }: { post: typeof MOCK_POSTS[number] }) {
 }
 
 // Standard card (rows 2 + 3, h-64)
-function StandardPostCard({ post }: { post: typeof MOCK_POSTS[number] }) {
+function StandardPostCard({ post }: { post: BlogPost }) {
   return (
     <Link href={`/blog/${post.slug}`} className="block group h-64">
       <div className="h-full flex flex-col rounded-2xl overflow-hidden border border-dark/8 bg-white
@@ -231,8 +231,19 @@ function NewsletterBand() {
 
 export default function BlogIndexPage() {
   const [activeFilter, setActiveFilter] = useState<FilterCategory>('all')
+  const [posts, setPosts] = useState<BlogPost[]>(MOCK_POSTS)
+  const [loading, setLoading] = useState(true)
 
-  const [featured, ...rest] = MOCK_POSTS
+  useEffect(() => {
+    fetch('/api/blog')
+      .then((r) => r.json())
+      .then((d: { posts?: BlogPost[] }) => {
+        if (d.posts?.length) setPosts(d.posts)
+      })
+      .finally(() => setLoading(false))
+  }, [])
+
+  const [featured, ...rest] = posts
   const filtered = activeFilter === 'all' ? rest : rest.filter((p) => p.category === activeFilter)
 
   // Distribute posts into bento slots

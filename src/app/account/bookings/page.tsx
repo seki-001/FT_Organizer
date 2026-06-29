@@ -1,5 +1,6 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { Calendar, MessageCircle, Home, Briefcase, Building2 } from 'lucide-react'
 import { MOCK_BOOKINGS } from '@/lib/mock-account'
@@ -119,6 +120,18 @@ function BookingCard({ booking }: { booking: Booking }) {
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function AccountBookingsPage() {
+  const [bookings, setBookings] = useState<Booking[]>(MOCK_BOOKINGS)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetch('/api/account/bookings')
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d: { bookings?: Booking[] } | null) => {
+        if (d?.bookings) setBookings(d.bookings)
+      })
+      .finally(() => setLoading(false))
+  }, [])
+
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
@@ -131,7 +144,11 @@ export default function AccountBookingsPage() {
         </Link>
       </div>
 
-      {MOCK_BOOKINGS.length === 0 ? (
+      {loading ? (
+        <div className="bg-white rounded-2xl border border-dark/8 shadow-sm p-12 text-center text-dark/50 text-sm">
+          Loading your bookings…
+        </div>
+      ) : bookings.length === 0 ? (
         <div className="bg-white rounded-2xl border border-dark/8 shadow-sm p-12 text-center flex flex-col items-center gap-4">
           <Calendar size={48} className="text-dark/20" aria-hidden="true" />
           <p className="text-dark/50">No bookings yet.</p>
@@ -141,7 +158,7 @@ export default function AccountBookingsPage() {
         </div>
       ) : (
         <div className="flex flex-col gap-4">
-          {MOCK_BOOKINGS.map((booking) => (
+          {bookings.map((booking) => (
             <BookingCard key={booking.id} booking={booking} />
           ))}
         </div>

@@ -9,6 +9,7 @@ import { z } from 'zod'
 import { Eye, EyeOff, Loader2 } from 'lucide-react'
 import { useAuth } from '@/context/AuthContext'
 import { COMPANY } from '@/lib/constants'
+import { humanizeAuthError } from '@/lib/auth-errors'
 
 const LoginSchema = z.object({
   email:    z.string().email('Enter a valid email address'),
@@ -30,13 +31,14 @@ function GoogleIcon() {
 const inputClass = 'w-full border border-dark/15 rounded-lg px-4 py-3 text-sm text-dark placeholder:text-dark/30 outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-colors'
 
 export default function LoginClient() {
-  const { signIn } = useAuth()
+  const { signIn, signInWithGoogle } = useAuth()
   const router     = useRouter()
   const params     = useSearchParams()
   const callback   = params.get('callbackUrl') ?? '/account'
 
-  const [showPw,   setShowPw]   = useState(false)
-  const [apiError, setApiError] = useState('')
+  const [showPw,        setShowPw]        = useState(false)
+  const [apiError,      setApiError]      = useState('')
+  const [googleLoading, setGoogleLoading] = useState(false)
 
   const {
     register,
@@ -50,7 +52,7 @@ export default function LoginClient() {
     if (result.ok) {
       router.push(callback)
     } else {
-      setApiError(result.error ?? 'Invalid email or password.')
+      setApiError(result.error ? humanizeAuthError(result.error) : 'Invalid email or password.')
     }
   }
 
@@ -131,12 +133,19 @@ export default function LoginClient() {
 
         <button
           type="button"
-          onClick={() => {
-            // TODO: signIn('google') from next-auth/react
+          disabled={googleLoading}
+          onClick={async () => {
+            setApiError('')
+            setGoogleLoading(true)
+            const result = await signInWithGoogle()
+            if (!result.ok) {
+              setApiError(result.error ?? 'Google sign-in failed.')
+              setGoogleLoading(false)
+            }
           }}
-          className="flex items-center justify-center gap-3 w-full border border-dark/15 hover:border-dark/30 text-dark font-medium py-3 rounded-lg transition-colors text-sm min-h-[48px]"
+          className="flex items-center justify-center gap-3 w-full border border-dark/15 hover:border-dark/30 text-dark font-medium py-3 rounded-lg transition-colors text-sm min-h-[48px] disabled:opacity-60"
         >
-          <GoogleIcon />
+          {googleLoading ? <Loader2 size={16} className="animate-spin" /> : <GoogleIcon />}
           Continue with Google
         </button>
 
