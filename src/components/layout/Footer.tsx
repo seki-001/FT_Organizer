@@ -1,8 +1,8 @@
 import Link from 'next/link'
-import Image from 'next/image'
 import { Instagram } from 'lucide-react'
 import { COMPANY, SERVICES, SHOP_CATEGORIES } from '@/lib/constants'
 import PaymentTrustBadges from '@/components/payments/PaymentTrustBadges'
+import BrandLogo from '@/components/brand/BrandLogo'
 
 export default function Footer() {
   return (
@@ -10,15 +10,7 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-4 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10 mb-14">
           <div className="md:col-span-1">
-            <Link href="/" className="inline-block mb-4">
-              <Image
-                src="/images/brand/fto-logo.png"
-                alt="Faith The Organizer"
-                width={160}
-                height={56}
-                className="h-12 w-auto"
-              />
-            </Link>
+            <BrandLogo variant="on-dark" className="h-12 sm:h-14 mb-4" href="/" />
             <p className="text-white/40 text-sm leading-relaxed mb-5">
               Nairobi&apos;s premier home & office organizing service — from clutter to calm.
             </p>

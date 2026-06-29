@@ -12,6 +12,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { NAV_LINKS, SERVICES, SHOP_CATEGORIES, COMPANY } from '@/lib/constants'
 import { MOCK_PRODUCTS } from '@/lib/mock-products'
 import { useCart } from '@/context/CartContext'
+import BrandLogo from '@/components/brand/BrandLogo'
 import { useWishlist } from '@/context/WishlistContext'
 import { cn, formatPrice } from '@/lib/utils'
 
@@ -595,17 +596,7 @@ export default function Header() {
         >
           <div className="max-w-7xl mx-auto px-4 lg:px-8 h-16 flex items-center justify-between gap-4">
 
-            {/* Logo */}
-            <Link href="/" className="flex-shrink-0 flex items-center">
-              <Image
-                src="/images/brand/fto-logo.png"
-                alt="Faith The Organizer"
-                width={140}
-                height={48}
-                className="h-9 sm:h-10 w-auto"
-                priority
-              />
-            </Link>
+            <BrandLogo variant="on-dark" priority />
 
             {/* Desktop nav — hidden on mobile */}
             <nav aria-label="Primary navigation" className="hidden lg:flex items-center">
