@@ -595,15 +595,16 @@ export default function Header() {
         >
           <div className="max-w-7xl mx-auto px-4 lg:px-8 h-16 flex items-center justify-between gap-4">
 
-            {/* Logo — replace /logos/logo-dark.png with your actual PNG to activate */}
-            <Link href="/" className="flex-shrink-0 flex items-center gap-2.5">
-              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center flex-shrink-0">
-                <span className="text-white text-sm font-bold font-display">F</span>
-              </div>
-              <div className="flex flex-col leading-none">
-                <span className="text-white font-bold text-base tracking-tight">Faith The</span>
-                <span className="text-primary font-bold text-base tracking-tight font-display italic">Organizer</span>
-              </div>
+            {/* Logo */}
+            <Link href="/" className="flex-shrink-0 flex items-center">
+              <Image
+                src="/images/brand/fto-logo.png"
+                alt="Faith The Organizer"
+                width={140}
+                height={48}
+                className="h-9 sm:h-10 w-auto"
+                priority
+              />
             </Link>
 
             {/* Desktop nav — hidden on mobile */}

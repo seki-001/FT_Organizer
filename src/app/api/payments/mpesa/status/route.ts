@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
 
   const stored = await getPaymentEventByExternalId(checkoutRequestId)
 
-  if (checkoutRequestId.startsWith('mock_')) {
+  if (checkoutRequestId.startsWith('mock_') && !isMpesaConfigured()) {
     const mockPoll = Number(request.nextUrl.searchParams.get('poll') ?? '0')
     const status = mockPoll < 2 ? 'pending' : 'success'
     if (status === 'success' && stored?.order_reference) {

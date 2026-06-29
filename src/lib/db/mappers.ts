@@ -3,6 +3,7 @@ import type { BlogPost, Booking, Order, Product, ProductVariant } from '@/lib/ty
 import type { Tables } from '@/types/database'
 import type { Json } from '@/types/database'
 import { MOCK_PRODUCTS } from '@/lib/mock-products'
+import { imagesForProduct } from '@/lib/product-images'
 
 export function rowToBooking(row: Tables<'bookings'>): Booking {
   return {
@@ -41,6 +42,8 @@ export function rowToAdminBooking(row: Tables<'bookings'>): AdminBooking {
 }
 
 export function rowToProduct(row: Tables<'products'>): Product {
+  const dbImages = Array.isArray(row.images) ? (row.images as string[]) : []
+  const images = imagesForProduct(row.slug, dbImages.length ? dbImages : undefined)
   return {
     id: row.id,
     slug: row.slug,
@@ -49,7 +52,7 @@ export function rowToProduct(row: Tables<'products'>): Product {
     price: row.price,
     salePrice: row.sale_price ?? undefined,
     category: row.category as Product['category'],
-    images: Array.isArray(row.images) ? (row.images as string[]) : [],
+    images,
     inStock: row.in_stock,
     stockCount: row.stock_count,
     rating: Number(row.rating),

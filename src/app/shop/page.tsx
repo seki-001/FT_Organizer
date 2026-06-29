@@ -65,11 +65,11 @@ function FilterPanel({
   ]
 
   return (
-    <div className="flex flex-col gap-6 text-sm text-white/70">
+    <div className="flex flex-col gap-6 text-sm text-dark/70">
 
       {/* Sort By */}
       <div className="flex flex-col gap-3">
-        <p className="text-xs font-semibold text-white/40 uppercase tracking-widest">Sort By</p>
+        <p className="text-xs font-semibold text-dark/40 uppercase tracking-widest">Sort By</p>
         <div className="flex flex-col gap-1.5">
           {SORT_OPTIONS.map((opt) => (
             <label key={opt.value} className="flex items-center gap-2.5 cursor-pointer group">
@@ -79,7 +79,7 @@ function FilterPanel({
                   'w-4 h-4 rounded-full border-2 flex items-center justify-center transition-colors flex-shrink-0',
                   sort === opt.value
                     ? 'border-primary bg-primary'
-                    : 'border-white/20 group-hover:border-primary/60'
+                    : 'border-dark/20 group-hover:border-primary/60'
                 )}
               >
                 {sort === opt.value && (
@@ -90,7 +90,7 @@ function FilterPanel({
                 onClick={() => setSort(opt.value)}
                 className={cn(
                   'transition-colors',
-                  sort === opt.value ? 'text-white font-medium' : 'text-white/60 hover:text-white'
+                  sort === opt.value ? 'text-dark font-medium' : 'text-dark/55 hover:text-dark'
                 )}
               >
                 {opt.label}
@@ -100,11 +100,11 @@ function FilterPanel({
         </div>
       </div>
 
-      <div className="border-t border-white/8" />
+      <div className="border-t border-dark/8" />
 
       {/* Category */}
       <div className="flex flex-col gap-3">
-        <p className="text-xs font-semibold text-white/40 uppercase tracking-widest">Category</p>
+        <p className="text-xs font-semibold text-dark/40 uppercase tracking-widest">Category</p>
         <div className="flex flex-col gap-1.5">
           {allCategories.map((cat) => (
             <label key={cat.slug} className="flex items-center gap-3 cursor-pointer group">
@@ -114,7 +114,7 @@ function FilterPanel({
                   'w-4 h-4 rounded-full border-2 flex items-center justify-center transition-colors flex-shrink-0',
                   activeCategory === cat.slug
                     ? 'border-primary bg-primary'
-                    : 'border-white/20 group-hover:border-white/40',
+                    : 'border-dark/20 group-hover:border-dark/40',
                 )}
               >
                 {activeCategory === cat.slug && (
@@ -125,7 +125,7 @@ function FilterPanel({
                 onClick={() => setActiveCategory(cat.slug as ProductCategory | 'all')}
                 className={cn(
                   'text-sm transition-colors',
-                  activeCategory === cat.slug ? 'text-white' : 'text-white/50 group-hover:text-white',
+                  activeCategory === cat.slug ? 'text-dark' : 'text-dark/50 group-hover:text-dark',
                 )}
               >
                 {cat.label}
@@ -135,11 +135,11 @@ function FilterPanel({
         </div>
       </div>
 
-      <div className="border-t border-white/8" />
+      <div className="border-t border-dark/8" />
 
       {/* Price Range */}
       <div className="flex flex-col gap-3">
-        <p className="text-xs font-semibold text-white/40 uppercase tracking-widest">Price Range (KSh)</p>
+        <p className="text-xs font-semibold text-dark/40 uppercase tracking-widest">Price Range (KSh)</p>
         <div className="flex items-center gap-2">
           <input
             type="number"
@@ -147,7 +147,7 @@ function FilterPanel({
             onChange={(e) => setPriceMin(Math.max(0, Number(e.target.value)))}
             placeholder="Min"
             aria-label="Minimum price"
-            className="w-0 flex-1 bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:ring-2 focus:ring-primary/20"
+            className="w-0 flex-1 bg-muted border border-dark/10 rounded-lg px-3 py-2 text-xs text-dark focus:outline-none focus:ring-2 focus:ring-primary/20"
           />
           <span className="text-dark/30 text-xs">—</span>
           <input
@@ -156,7 +156,7 @@ function FilterPanel({
             onChange={(e) => setPriceMax(Math.min(MAX_PRICE, Number(e.target.value)))}
             placeholder="Max"
             aria-label="Maximum price"
-            className="w-0 flex-1 bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:ring-2 focus:ring-primary/20"
+            className="w-0 flex-1 bg-muted border border-dark/10 rounded-lg px-3 py-2 text-xs text-dark focus:outline-none focus:ring-2 focus:ring-primary/20"
           />
         </div>
         {/* Visual range bar */}
@@ -171,7 +171,7 @@ function FilterPanel({
         </div>
       </div>
 
-      <div className="border-t border-white/8" />
+      <div className="border-t border-dark/8" />
 
       {/* Availability */}
       <div className="flex items-center justify-between">
@@ -198,7 +198,7 @@ function FilterPanel({
         </button>
       </div>
 
-      <div className="border-t border-white/8" />
+      <div className="border-t border-dark/8" />
 
       {/* Clear All */}
       <button
@@ -226,8 +226,8 @@ function CategoryCard({
       className={cn(
         'flex-shrink-0 px-4 py-2 rounded-full text-xs font-medium border transition-all duration-150',
         active
-          ? 'bg-white text-dark border-white font-semibold'
-          : 'border-white/15 text-white/50 hover:border-white/30 hover:text-white',
+          ? 'bg-primary text-white border-primary font-semibold'
+          : 'border-dark/15 text-dark/55 hover:border-primary/30 hover:text-dark bg-white',
       )}
       aria-pressed={active}
     >
@@ -314,17 +314,17 @@ function ShopCatalogueInner() {
   ]
 
   return (
-    <main className="bg-dark">
+    <main className="bg-surface min-h-screen">
 
       {/* ── 1. HERO BANNER ─────────────────────────────────────────────────── */}
-      <section className="relative h-72 sm:h-80 bg-dark overflow-hidden flex items-center">
+      <section className="relative h-56 sm:h-64 bg-white overflow-hidden flex items-center border-b border-dark/8">
         {/* Background image */}
         <div className="absolute inset-0">
           <Image
             src="/images/shop/shop-hero.jpg"
             alt="Shop Organizing Products — Faith The Organizer"
             fill
-            className="object-cover opacity-40"
+            className="object-cover opacity-30"
             priority
             sizes="100vw"
           />
@@ -332,10 +332,10 @@ function ShopCatalogueInner() {
 
         {/* Centered content */}
         <div className="relative z-10 w-full text-center px-4">
-          <h1 className="font-display text-4xl sm:text-5xl text-white font-bold leading-tight">
+          <h1 className="font-display text-4xl sm:text-5xl text-dark font-bold leading-tight">
             Shop Organizing Products
           </h1>
-          <p className="text-white/60 mt-3 text-lg">Delivered across Nairobi</p>
+          <p className="text-dark/55 mt-3 text-lg">Delivered across Nairobi</p>
         </div>
 
         {/* Floating pill badges */}
@@ -350,7 +350,7 @@ function ShopCatalogueInner() {
       </section>
 
       {/* ── 2. CATEGORY NAVIGATOR ──────────────────────────────────────────── */}
-      <section className="bg-dark py-6 border-b border-white/8" aria-label="Filter by category">
+      <section className="bg-white py-6 border-b border-dark/8" aria-label="Filter by category">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-3 overflow-x-auto scrollbar-hide pb-1">
             {allCategoryItems.map((cat) => (
@@ -372,8 +372,8 @@ function ShopCatalogueInner() {
 
           {/* Desktop Filter Sidebar */}
           <aside className="hidden lg:block w-60 flex-shrink-0">
-            <div className="bg-white/4 border border-white/8 rounded-2xl p-6 sticky top-24">
-              <p className="font-display text-base text-white mb-5">Filters</p>
+            <div className="bg-white border border-dark/8 rounded-2xl p-6 sticky top-24 shadow-sm">
+              <p className="font-display text-base text-dark mb-5">Filters</p>
               <FilterPanel {...filterPanelProps} />
             </div>
           </aside>
@@ -393,8 +393,8 @@ function ShopCatalogueInner() {
                   <SlidersHorizontal size={15} />
                   Filters
                 </button>
-                <p className="text-white/50 text-sm">
-                  <span className="font-semibold text-white">{filtered.length}</span>{' '}
+                <p className="text-dark/50 text-sm">
+                  <span className="font-semibold text-dark">{filtered.length}</span>{' '}
                   {filtered.length === 1 ? 'product' : 'products'}
                 </p>
               </div>
@@ -422,7 +422,7 @@ function ShopCatalogueInner() {
             {/* Product grid */}
             {loading ? (
               <div className="flex flex-col items-center gap-4 py-24 text-center">
-                <p className="text-white/50 text-sm">Loading products…</p>
+                <p className="text-dark/50 text-sm">Loading products…</p>
               </div>
             ) : filtered.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -499,7 +499,7 @@ function ShopCatalogueInner() {
 
 export default function ShopCataloguePage() {
   return (
-    <Suspense fallback={<div className="bg-dark min-h-screen" />}>
+    <Suspense fallback={<div className="bg-surface min-h-screen" />}>
       <ShopCatalogueInner />
     </Suspense>
   )

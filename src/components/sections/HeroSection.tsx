@@ -28,6 +28,22 @@ export default function HeroSection() {
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.05 }}
+          className="mb-6"
+        >
+          <Image
+            src="/images/brand/fto-logo.png"
+            alt="Faith The Organizer — From Clutter to Order"
+            width={280}
+            height={120}
+            priority
+            className="w-44 sm:w-56 md:w-64 h-auto drop-shadow-lg"
+          />
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.1 }}
           className="mb-5 inline-flex"
         >

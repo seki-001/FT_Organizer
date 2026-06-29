@@ -16,6 +16,7 @@ import { DELIVERY_OPTIONS, PAYMENT_METHODS, COMPANY } from '@/lib/constants'
 import { CheckoutFormSchema, type CheckoutFormValues } from '@/lib/validations'
 import { formatPrice, cn } from '@/lib/utils'
 import { MpesaPaymentPanel, PaystackPaymentPanel } from '@/components/payments/PaymentPanels'
+import PaymentTrustBadges from '@/components/payments/PaymentTrustBadges'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -550,6 +551,8 @@ export default function CheckoutPage() {
                       )
                     })}
                   </div>
+
+                  <PaymentTrustBadges className="mt-2" />
 
                   {/* Payment panels */}
                   {orderRef && paymentId === 'mpesa' && (

@@ -2,8 +2,9 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { Smartphone, CreditCard, Lock } from 'lucide-react'
+import { Smartphone, CreditCard } from 'lucide-react'
 import { MpesaPaymentPanel, PaystackPaymentPanel, type MpesaPaybillInfo } from '@/components/payments/PaymentPanels'
+import PaymentTrustBadges from '@/components/payments/PaymentTrustBadges'
 import { formatPrice, cn } from '@/lib/utils'
 
 type PaymentId = 'mpesa' | 'card'
@@ -148,10 +149,7 @@ export default function PayPageClient({ paybillInfo }: PayPageClientProps) {
             </p>
           )}
 
-          <div className="flex items-center justify-center gap-1.5 text-dark/35 text-xs pt-2">
-            <Lock size={12} />
-            Secure payments via Safaricom Daraja &amp; Paystack
-          </div>
+          <PaymentTrustBadges className="pt-2" />
         </div>
 
         <p className="text-center text-dark/40 text-xs mt-6">

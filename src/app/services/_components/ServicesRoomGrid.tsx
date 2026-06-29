@@ -12,20 +12,20 @@ import { staggerContainer, staggerItem, EASE_STANDARD } from '@/lib/animations'
 
 // ─── Room image + category data mapped to each service ───────────────────────
 
-import { IMG } from '@/lib/image-placeholders'
+import { IMG, serviceImage } from '@/lib/image-placeholders'
 
 const SERVICE_META: Record<string, { category: string; image: string }> = {
-  'general-decluttering':   { category: 'Home & Living',    image: IMG.services.default },
-  'whole-house-organizing': { category: 'Full Home',         image: IMG.gallery.transform1 },
-  'moving-house':           { category: 'Relocation',        image: IMG.gallery.transform2 },
-  'shelving-and-storage':   { category: 'Bedroom & Closet',  image: IMG.gallery.transform2 },
-  'packing-and-removal':    { category: 'Relocation',        image: IMG.gallery.transform5 },
-  'paperwork-management':   { category: 'Home Office',       image: IMG.gallery.transform4 },
-  'online-coaching':        { category: 'Online',            image: IMG.services.default },
-  'online-consulting':      { category: 'Online',            image: IMG.services.default },
-  'home-staging':           { category: 'Interior',          image: IMG.gallery.transform1 },
-  'space-planning':         { category: 'Design',            image: IMG.gallery.transform5 },
-  'office-organizing':      { category: 'Workplace',         image: IMG.gallery.transform4 },
+  'general-decluttering':   { category: 'Home & Living',    image: serviceImage('general-decluttering') },
+  'whole-house-organizing': { category: 'Full Home',         image: serviceImage('whole-house-organizing') },
+  'moving-house':           { category: 'Relocation',        image: serviceImage('moving-house') },
+  'shelving-and-storage':   { category: 'Bedroom & Closet',  image: serviceImage('shelving-and-storage') },
+  'packing-and-removal':    { category: 'Relocation',        image: serviceImage('packing-and-removal') },
+  'paperwork-management':   { category: 'Home Office',       image: serviceImage('paperwork-management') },
+  'online-coaching':        { category: 'Online',            image: serviceImage('online-coaching') },
+  'online-consulting':      { category: 'Online',            image: serviceImage('online-consulting') },
+  'home-staging':           { category: 'Interior',          image: serviceImage('home-staging') },
+  'space-planning':         { category: 'Design',            image: serviceImage('space-planning') },
+  'office-organizing':      { category: 'Workplace',         image: serviceImage('office-organizing') },
 }
 
 // ─── Single room card ─────────────────────────────────────────────────────────

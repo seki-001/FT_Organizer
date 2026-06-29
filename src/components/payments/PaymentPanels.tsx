@@ -7,6 +7,26 @@ import {
   Building2, Hash,
 } from 'lucide-react'
 import { formatPrice, cn } from '@/lib/utils'
+import PaymentTrustBadges from '@/components/payments/PaymentTrustBadges'
+
+const SAVED_PHONES_KEY = 'fto_saved_phones'
+
+function loadSavedPhones(): string[] {
+  if (typeof window === 'undefined') return []
+  try {
+    const raw = localStorage.getItem(SAVED_PHONES_KEY)
+    return raw ? (JSON.parse(raw) as string[]) : []
+  } catch {
+    return []
+  }
+}
+
+function savePhoneToList(phone: string) {
+  const trimmed = phone.trim()
+  if (!trimmed) return
+  const next = [trimmed, ...loadSavedPhones().filter((p) => p !== trimmed)].slice(0, 8)
+  localStorage.setItem(SAVED_PHONES_KEY, JSON.stringify(next))
+}
 
 type MpesaState = 'idle' | 'sending' | 'waiting' | 'success' | 'error'
 
@@ -45,6 +65,11 @@ export function MpesaPaymentPanel({
   const [checkoutReqId, setCheckoutReqId] = useState('')
   const [pollCount, setPollCount] = useState(0)
   const [copied, setCopied] = useState<string | null>(null)
+  const [savedPhones, setSavedPhones] = useState<string[]>([])
+
+  useEffect(() => {
+    setSavedPhones(loadSavedPhones())
+  }, [])
 
   useEffect(() => {
     if (defaultPhone && !phone) setPhone(defaultPhone)
@@ -176,11 +201,39 @@ export function MpesaPaymentPanel({
           type="tel"
           value={phone}
           onChange={(e) => setPhone(e.target.value)}
-          placeholder="07XX XXX XXX"
+          placeholder="07XX XXX XXX or 2547XX XXX XXX"
           disabled={mpesaState === 'waiting' || mpesaState === 'success'}
           className={inputClass()}
         />
-        <p className="text-dark/40 text-xs">Format: 07XX XXX XXX</p>
+        <p className="text-dark/40 text-xs">
+          Any Safaricom number works with live credentials. Sandbox test: <strong className="text-dark/60">254708374149</strong> (PIN 174379).
+        </p>
+        {savedPhones.length > 0 && (
+          <div className="flex flex-wrap gap-2 pt-1">
+            {savedPhones.map((p) => (
+              <button
+                key={p}
+                type="button"
+                onClick={() => setPhone(p)}
+                className="text-xs px-3 py-1.5 rounded-full border border-dark/15 bg-white text-dark/70 hover:border-primary hover:text-primary transition-colors"
+              >
+                {p}
+              </button>
+            ))}
+          </div>
+        )}
+        {phone.trim() && !savedPhones.includes(phone.trim()) && (
+          <button
+            type="button"
+            onClick={() => {
+              savePhoneToList(phone)
+              setSavedPhones(loadSavedPhones())
+            }}
+            className="text-xs text-primary hover:underline text-left w-fit"
+          >
+            Save this number for quick testing
+          </button>
+        )}
       </div>
 
       {mpesaState === 'waiting' && (
@@ -223,6 +276,8 @@ export function MpesaPaymentPanel({
           Sending STK Push…
         </button>
       )}
+
+      <PaymentTrustBadges className="pt-2" />
     </div>
   )
 }
@@ -268,6 +323,13 @@ export function PaystackPaymentPanel({ total, orderRef, email, onSuccess }: Pays
         You&apos;ll be redirected to Paystack&apos;s secure page to pay by card, bank, or mobile money.
         Visa, Mastercard, and M-Pesa are accepted.
       </p>
+      <div className="bg-white border border-dark/10 rounded-xl px-4 py-3 text-xs text-dark/55 space-y-1.5">
+        <p className="font-medium text-dark/70">Paystack test cards (staging)</p>
+        <p><span className="font-mono text-dark/80">4084 0840 8408 4081</span> — Visa, any CVV, future expiry</p>
+        <p><span className="font-mono text-dark/80">5060 6666 6666 6666 6666</span> — Verve test card</p>
+        <p className="text-dark/45">OTP on test redirect: <strong>123456</strong></p>
+      </div>
+      <PaymentTrustBadges />
       {error && (
         <p className="text-danger text-sm">{error}</p>
       )}

@@ -15,6 +15,7 @@ import { SHOP_CATEGORIES } from '@/lib/constants'
 import { formatPrice, discountPercent, cn } from '@/lib/utils'
 import { useCart } from '@/context/CartContext'
 import ProductCard from '@/components/shop/ProductCard'
+import PaymentTrustBadges from '@/components/payments/PaymentTrustBadges'
 import type { ProductVariant } from '@/lib/types'
 
 // ─── Mock reviews ─────────────────────────────────────────────────────────────
@@ -188,8 +189,8 @@ export default function ProductPage() {
 
   if (loading) {
     return (
-      <main className="bg-dark min-h-screen flex items-center justify-center">
-        <p className="text-white/50 text-sm">Loading product…</p>
+      <main className="bg-surface min-h-screen flex items-center justify-center">
+        <p className="text-dark/50 text-sm">Loading product…</p>
       </main>
     )
   }
@@ -215,7 +216,7 @@ export default function ProductPage() {
   function handleAddToCart() {
     if (!product!.inStock || cartState !== 'idle') return
     setCartState('adding')
-    addItem(product!, selectedVariant)
+    addItem(product!, selectedVariant, quantity)
     openCart()
     setTimeout(() => setCartState('added'), 300)
     setTimeout(() => setCartState('idle'), 1800)
@@ -223,20 +224,20 @@ export default function ProductPage() {
 
   return (
     <>
-      <main className="bg-dark">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="bg-surface min-h-screen pb-24">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
 
           {/* 1. BREADCRUMB ─────────────────────────────────────────────── */}
-          <nav aria-label="Breadcrumb" className="flex items-center flex-wrap gap-1.5 text-white/40 text-sm mb-8">
-            <Link href="/"      className="hover:text-white transition-colors">Home</Link>
+          <nav aria-label="Breadcrumb" className="flex items-center flex-wrap gap-1.5 text-dark/45 text-sm mb-6 sm:mb-8">
+            <Link href="/"      className="hover:text-dark transition-colors">Home</Link>
             <ChevronRight size={14} aria-hidden="true" />
-            <Link href="/shop"  className="hover:text-white transition-colors">Shop</Link>
+            <Link href="/shop"  className="hover:text-dark transition-colors">Shop</Link>
             <ChevronRight size={14} aria-hidden="true" />
-            <Link href={`/shop?category=${product.category}`} className="hover:text-white transition-colors">
+            <Link href={`/shop?category=${product.category}`} className="hover:text-dark transition-colors">
               {categoryLabel(product.category)}
             </Link>
             <ChevronRight size={14} aria-hidden="true" />
-            <span className="text-white/70">{product.name}</span>
+            <span className="text-dark/80 font-medium">{product.name}</span>
           </nav>
 
           {/* 2. PRODUCT LAYOUT ─────────────────────────────────────────── */}
@@ -290,7 +291,7 @@ export default function ProductPage() {
             </div>
 
             {/* RIGHT — Product info (sticky on desktop) ────────────── */}
-            <div className="flex flex-col gap-5 lg:sticky lg:top-24 lg:self-start">
+            <div className="flex flex-col gap-5 lg:sticky lg:top-24 lg:self-start bg-white rounded-3xl border border-dark/8 p-5 sm:p-7 shadow-sm">
 
               {/* Category + name */}
               <div className="flex flex-col gap-2">
@@ -403,17 +404,17 @@ export default function ProductPage() {
               {product.inStock && (
                 <div className="flex flex-col gap-2">
                   <p className="text-sm font-medium text-dark">Quantity</p>
-                  <div className="flex items-center w-fit">
+                  <div className="flex items-center w-fit bg-white rounded-xl border-2 border-dark/15 overflow-hidden shadow-sm">
                     <button type="button"
                       onClick={() => setQuantity((q) => Math.max(1, q - 1))}
                       disabled={quantity <= 1}
                       aria-label="Decrease quantity"
-                      className="flex items-center justify-center w-10 h-10 rounded-l-xl border border-dark/15 hover:bg-muted disabled:opacity-40 transition-colors"
+                      className="flex items-center justify-center w-11 h-11 text-dark hover:bg-muted disabled:opacity-40 transition-colors"
                     >
                       <Minus size={16} />
                     </button>
                     <div
-                      className="flex items-center justify-center w-14 h-10 border-t border-b border-dark/15 text-dark font-semibold text-sm"
+                      className="flex items-center justify-center min-w-[3rem] h-11 px-2 bg-white text-dark font-bold text-base tabular-nums border-x border-dark/10"
                       aria-live="polite"
                       aria-label={`Quantity: ${quantity}`}
                     >
@@ -423,7 +424,7 @@ export default function ProductPage() {
                       onClick={() => setQuantity((q) => Math.min(product.stockCount, q + 1))}
                       disabled={quantity >= product.stockCount}
                       aria-label="Increase quantity"
-                      className="flex items-center justify-center w-10 h-10 rounded-r-xl border border-dark/15 hover:bg-muted disabled:opacity-40 transition-colors"
+                      className="flex items-center justify-center w-11 h-11 text-dark hover:bg-muted disabled:opacity-40 transition-colors"
                     >
                       <Plus size={16} />
                     </button>
@@ -488,26 +489,27 @@ export default function ProductPage() {
               </div>
 
               {/* Delivery info */}
-              <div className="bg-white rounded-2xl border border-dark/8 p-4 flex flex-col gap-3">
+              <div className="bg-surface rounded-2xl border border-dark/8 p-4 flex flex-col gap-3">
                 <div className="flex items-center gap-3 text-sm text-dark/70">
-                  <Truck size={15} className="text-dark/40 flex-shrink-0" aria-hidden="true" />
+                  <Truck size={15} className="text-primary flex-shrink-0" aria-hidden="true" />
                   <span><span className="font-medium text-dark">Free delivery</span> — Nairobi CBD &amp; surrounds</span>
                 </div>
                 <div className="flex items-center gap-3 text-sm text-dark/70">
-                  <Package size={15} className="text-dark/40 flex-shrink-0" aria-hidden="true" />
+                  <Package size={15} className="text-primary flex-shrink-0" aria-hidden="true" />
                   <span><span className="font-medium text-dark">KSh 300</span> — Standard nationwide delivery</span>
                 </div>
                 <div className="flex items-center gap-3 text-sm text-dark/70">
-                  <Clock size={15} className="text-dark/40 flex-shrink-0" aria-hidden="true" />
+                  <Clock size={15} className="text-primary flex-shrink-0" aria-hidden="true" />
                   Same-day dispatch on orders placed before 2 pm
                 </div>
+                <PaymentTrustBadges className="pt-2 border-t border-dark/8" />
               </div>
 
             </div>
           </div>
 
           {/* 3. TABBED DETAILS ──────────────────────────────────────────── */}
-          <div className="mt-16">
+          <div className="mt-12 sm:mt-16 bg-white rounded-3xl border border-dark/8 p-5 sm:p-8 shadow-sm">
 
             {/* Tab bar */}
             <div className="flex border-b border-dark/10 mb-8" role="tablist">
