@@ -10,22 +10,28 @@ export interface AccordionItem {
 
 interface AccordionProps {
   items: AccordionItem[]
+  variant?: 'light' | 'dark'
 }
 
-function AccordionRow({ item, isOpen, onToggle }: {
+function AccordionRow({ item, isOpen, onToggle, variant }: {
   item:     AccordionItem
   isOpen:   boolean
   onToggle: () => void
+  variant:  'light' | 'dark'
 }) {
+  const borderClass = variant === 'dark' ? 'border-white/10' : 'border-dark/8'
+  const questionClass = variant === 'dark' ? 'text-white' : 'text-dark'
+  const answerClass = variant === 'dark' ? 'text-white/60' : 'text-dark/60'
+
   return (
-    <div className="border-b border-dark/8 last:border-b-0">
+    <div className={`border-b ${borderClass} last:border-b-0`}>
       <button
         type="button"
         onClick={onToggle}
         aria-expanded={isOpen}
         className="w-full flex items-center justify-between gap-6 py-6 text-left min-h-[44px]"
       >
-        <span className="font-display text-lg text-dark leading-snug">
+        <span className={`font-display text-lg leading-snug ${questionClass}`}>
           {item.question}
         </span>
 
@@ -53,7 +59,7 @@ function AccordionRow({ item, isOpen, onToggle }: {
             transition={{ duration: 0.28, ease: [0.4, 0, 0.2, 1] }}
             className="overflow-hidden"
           >
-            <p className="text-dark/60 leading-relaxed pb-6 text-base">
+            <p className={`leading-relaxed pb-6 text-base ${answerClass}`}>
               {item.answer}
             </p>
           </motion.div>
@@ -63,7 +69,7 @@ function AccordionRow({ item, isOpen, onToggle }: {
   )
 }
 
-export default function Accordion({ items }: AccordionProps) {
+export default function Accordion({ items, variant = 'light' }: AccordionProps) {
   const [openIndex, setOpenIndex] = useState<number | null>(null)
 
   return (
@@ -72,6 +78,7 @@ export default function Accordion({ items }: AccordionProps) {
         <AccordionRow
           key={item.question}
           item={item}
+          variant={variant}
           isOpen={openIndex === i}
           onToggle={() => setOpenIndex((prev) => (prev === i ? null : i))}
         />

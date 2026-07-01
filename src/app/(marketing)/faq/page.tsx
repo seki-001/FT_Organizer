@@ -102,7 +102,7 @@ export default function FaqPage() {
               Services
             </p>
           </div>
-          <Accordion items={SERVICE_FAQS} />
+          <Accordion items={SERVICE_FAQS} variant="dark" />
         </section>
 
         {/* Shop */}
@@ -112,7 +112,7 @@ export default function FaqPage() {
               Shop
             </p>
           </div>
-          <Accordion items={SHOP_FAQS} />
+          <Accordion items={SHOP_FAQS} variant="dark" />
         </section>
 
       </div>

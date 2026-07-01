@@ -69,7 +69,7 @@ export default function ServicesHubPage() {
             </p>
           </div>
           <div className="bg-white/4 border border-white/8 rounded-3xl px-6 sm:px-10 py-2">
-            <Accordion items={FAQ_ITEMS} />
+            <Accordion items={FAQ_ITEMS} variant="dark" />
           </div>
         </div>
       </section>
