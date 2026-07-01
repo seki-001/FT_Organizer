@@ -221,7 +221,7 @@ export default function RegisterPage() {
           onClick={async () => {
             setApiError('')
             setGoogleLoading(true)
-            const result = await signInWithGoogle()
+            const result = await signInWithGoogle('/account')
             if (!result.ok) {
               setApiError(toAuthErrorMessage(result.error, 'Google sign-in failed.'))
               setGoogleLoading(false)

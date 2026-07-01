@@ -75,8 +75,9 @@ AUTH_SMTP_FROM_EMAIL=onboarding@resend.dev
 2. Run seed: `supabase db seed` or paste `supabase/seed.sql`.
 3. **Auth redirect URLs** (Supabase Dashboard → Authentication → URL Configuration):
    - Site URL: `https://ft-organizer.vercel.app`
-   - Redirect URLs: `https://ft-organizer.vercel.app/auth/callback`, `https://ft-organizer.vercel.app/reset-password`
-4. **Promote a team admin** after first sign-up:
+   - Redirect URLs: `https://ft-organizer.vercel.app/auth/callback`, `https://ft-organizer.vercel.app/reset-password`, `http://localhost:3000/auth/callback`
+4. **Google sign-in** (Supabase → Authentication → Providers → Google): enable and add Client ID + Secret from [Google Cloud Console](https://console.cloud.google.com/). In Google, set authorized redirect URI to `https://<your-project-ref>.supabase.co/auth/v1/callback`.
+5. **Promote a team admin** after first sign-up:
    ```sql
    UPDATE public.profiles SET role = 'admin'
    WHERE id = (SELECT id FROM auth.users WHERE email = 'your@email.com');
@@ -135,3 +136,4 @@ AUTH_SMTP_FROM_EMAIL=onboarding@resend.dev
 | Paystack redirect fails | Add staging URL to Paystack callback whitelist |
 | Admin shows mock data | Log in as admin; check `/api/admin/orders` returns 200 |
 | Empty shop | Run `supabase/seed.sql` or import products via admin |
+| Google sign-in fails | Enable Google in Supabase Providers; add `/auth/callback` redirect URLs; redeploy after setting `NEXT_PUBLIC_SUPABASE_*` on Vercel |

@@ -47,7 +47,7 @@ interface AuthContextValue {
   session: Session | null
   status:  SessionStatus
   signIn:  (email: string, password: string) => Promise<{ ok: boolean; error?: string }>
-  signInWithGoogle: () => Promise<{ ok: boolean; error?: string }>
+  signInWithGoogle: (nextPath?: string) => Promise<{ ok: boolean; error?: string }>
   signUp:  (email: string, password: string, name: string) => Promise<{ ok: boolean; error?: string; needsEmailConfirmation?: boolean }>
   signOut: () => void
   update:  (user: Partial<SessionUser>) => void
@@ -121,21 +121,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return { ok: true }
   }, [useSupabase])
 
-  const signInWithGoogle = useCallback(async () => {
-    if (!useSupabase) {
-      return { ok: false, error: 'Google sign-in requires Supabase configuration.' }
-    }
-
-    const supabase = createClient()
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
-      },
-    })
-    if (error) return { ok: false, error: humanizeAuthError(error.message) }
+  const signInWithGoogle = useCallback(async (nextPath = '/account') => {
+    const safeNext = nextPath.startsWith('/') ? nextPath : '/account'
+    window.location.href = `/api/auth/google?next=${encodeURIComponent(safeNext)}`
     return { ok: true }
-  }, [useSupabase])
+  }, [])
 
   const signUp = useCallback(async (email: string, password: string, name: string) => {
     if (!useSupabase) {

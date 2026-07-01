@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useForm } from 'react-hook-form'
@@ -40,6 +40,21 @@ export default function LoginClient() {
   const [showPw,        setShowPw]        = useState(false)
   const [apiError,      setApiError]      = useState('')
   const [googleLoading, setGoogleLoading] = useState(false)
+
+  const errorParam = params.get('error')
+
+  useEffect(() => {
+    if (!errorParam) return
+    if (errorParam === 'supabase_not_configured') {
+      setApiError('Sign-in is not configured on this deployment. Contact support or try email sign-in.')
+      return
+    }
+    if (errorParam === 'auth_callback_failed') {
+      setApiError('Google sign-in could not be completed. Please try again.')
+      return
+    }
+    setApiError(humanizeAuthError(errorParam))
+  }, [errorParam])
 
   const {
     register,
@@ -140,7 +155,7 @@ export default function LoginClient() {
           onClick={async () => {
             setApiError('')
             setGoogleLoading(true)
-            const result = await signInWithGoogle()
+            const result = await signInWithGoogle(callback)
             if (!result.ok) {
               setApiError(result.error ?? 'Google sign-in failed.')
               setGoogleLoading(false)
