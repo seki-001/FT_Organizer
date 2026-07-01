@@ -1,3 +1,5 @@
+import { getSiteUrl } from '@/lib/site-url'
+
 const SANDBOX_MPESA_BASE = 'https://sandbox.safaricom.co.ke'
 const PROD_MPESA_BASE = 'https://api.safaricom.co.ke'
 
@@ -7,18 +9,7 @@ const SANDBOX_MPESA_PASSKEY =
 
 export type MpesaMode = 'paybill' | 'till'
 
-export function getSiteUrl(): string {
-  const explicit =
-    process.env.NEXT_PUBLIC_SITE_URL ??
-    process.env.NEXT_PUBLIC_APP_URL
-
-  if (explicit) return explicit.replace(/\/$/, '')
-
-  // Vercel preview / production — used when NEXT_PUBLIC_SITE_URL not set per-deploy
-  if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`
-
-  return 'http://localhost:3000'
-}
+export { getSiteUrl }
 
 export function isMpesaConfigured(): boolean {
   return Boolean(process.env.MPESA_CONSUMER_KEY && process.env.MPESA_CONSUMER_SECRET)

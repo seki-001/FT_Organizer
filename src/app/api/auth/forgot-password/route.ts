@@ -6,6 +6,7 @@ import { enforceRateLimit } from '@/lib/rate-limit'
 import { logger } from '@/lib/logger'
 import { isSupabaseConfigured } from '@/lib/supabase/env'
 import { logStorefrontActivity } from '@/lib/activity-log'
+import { getAuthCallbackUrl, getRequestOrigin } from '@/lib/site-url'
 
 const ForgotPasswordSchema = z.object({
   email: z.string().email('Enter a valid email address'),
@@ -31,8 +32,8 @@ export async function POST(request: NextRequest) {
     return apiError('Enter a valid email address.', 'VALIDATION_ERROR', 400)
   }
 
-  const origin = process.env.NEXT_PUBLIC_SITE_URL ?? request.nextUrl.origin
-  const redirectTo = `${origin}/auth/callback?next=/reset-password`
+  const origin = getRequestOrigin(request)
+  const redirectTo = getAuthCallbackUrl(origin, '/reset-password')
 
   try {
     const supabase = await createClient()

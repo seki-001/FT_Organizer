@@ -2,10 +2,11 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { isSupabaseConfigured } from '@/lib/supabase/env'
 import { humanizeAuthError } from '@/lib/auth-errors'
+import { getAuthCallbackUrl, getRequestOrigin, safeAuthNextPath } from '@/lib/site-url'
 
 export async function GET(request: NextRequest) {
   const loginUrl = new URL('/login', request.url)
-  const next = request.nextUrl.searchParams.get('next') ?? '/account'
+  const next = safeAuthNextPath(request.nextUrl.searchParams.get('next'))
 
   if (!isSupabaseConfigured()) {
     loginUrl.searchParams.set('error', 'supabase_not_configured')
@@ -14,12 +15,12 @@ export async function GET(request: NextRequest) {
 
   try {
     const supabase = await createClient()
-    const origin = request.nextUrl.origin
+    const origin = getRequestOrigin(request)
 
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${origin}/auth/callback?next=${encodeURIComponent(next)}`,
+        redirectTo: getAuthCallbackUrl(origin, next),
       },
     })
 

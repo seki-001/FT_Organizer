@@ -15,6 +15,32 @@ Push to `dev` → Vercel auto-deploys staging in ~60 seconds.
 
 ---
 
+## Sharing staging with clients or testers
+
+Per-deployment preview URLs (e.g. `ft-organizer-abc123-….vercel.app`) are **protected by default** — outsiders see a Vercel login / “Request Access” screen. This is normal Vercel behaviour, not a bug in the app.
+
+### Option A — Shareable link (recommended for one-off reviews)
+
+1. Vercel → **ft-organizer** → **Deployments**
+2. Open the latest **`dev`** deployment
+3. Click **Share**
+4. Set access to **Anyone with the link**
+5. Copy and send **that URL** (it includes a bypass token in the query string)
+
+Recipients can open it without a Vercel account.
+
+### Option B — Stable public staging URL
+
+Use **`https://ft-organizer.vercel.app`** if it is assigned to the `dev` branch in Vercel → Settings → Domains. That domain is often public (no login wall).
+
+To make a custom preview domain always public: Vercel → **Deployment Protection** → **Deployment Protection Exceptions** → add the domain.
+
+### Option C — Invite collaborators
+
+Vercel → Project → **Settings** → **Members** — invite them as Viewers so they can open protected previews after logging into Vercel.
+
+---
+
 ## 1. Vercel environment variables (staging)
 
 Set these in **Vercel → Project → Settings → Environment Variables** for **Preview** and/or **Development** (not Production until go-live):
@@ -75,7 +101,11 @@ AUTH_SMTP_FROM_EMAIL=onboarding@resend.dev
 2. Run seed: `supabase db seed` or paste `supabase/seed.sql`.
 3. **Auth redirect URLs** (Supabase Dashboard → Authentication → URL Configuration):
    - Site URL: `https://ft-organizer.vercel.app`
-   - Redirect URLs: `https://ft-organizer.vercel.app/auth/callback`, `https://ft-organizer.vercel.app/reset-password`, `http://localhost:3000/auth/callback`
+   - Redirect URLs (wildcards for Vercel previews):
+     - `http://localhost:3000/**`
+     - `https://ft-organizer.vercel.app/**`
+     - `https://*-peterssekirevu-7401s-projects.vercel.app/**`
+   - Or push from repo: `printf 'Y\n' | supabase config push --project-ref ysafyvvqzzxdcikurvpo`
 4. **Google sign-in** (Supabase → Authentication → Providers → Google): enable and add Client ID + Secret from [Google Cloud Console](https://console.cloud.google.com/). In Google, set authorized redirect URI to `https://<your-project-ref>.supabase.co/auth/v1/callback`.
 5. **Promote a team admin** after first sign-up:
    ```sql
@@ -136,4 +166,5 @@ AUTH_SMTP_FROM_EMAIL=onboarding@resend.dev
 | Paystack redirect fails | Add staging URL to Paystack callback whitelist |
 | Admin shows mock data | Log in as admin; check `/api/admin/orders` returns 200 |
 | Empty shop | Run `supabase/seed.sql` or import products via admin |
-| Google sign-in fails | Enable Google in Supabase Providers; add `/auth/callback` redirect URLs; redeploy after setting `NEXT_PUBLIC_SUPABASE_*` on Vercel |
+| Google sign-in fails | Enable Google in Supabase Providers; push auth config (`supabase config push`) so preview `*.vercel.app` URLs are allowed; redeploy after setting `NEXT_PUBLIC_SUPABASE_*` on Vercel |
+| Google sign-in redirects to production | Supabase redirect allow-list missing preview wildcard — run `supabase config push` for staging project |
