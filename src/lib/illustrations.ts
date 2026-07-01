@@ -16,17 +16,15 @@ export const ILLUSTRATIONS = {
 export type IllustrationKey = keyof typeof ILLUSTRATIONS
 
 export const SERVICE_ILLUSTRATIONS: Record<string, IllustrationKey> = {
-  'general-decluttering': 'homeOrganizing',
-  'whole-house-organizing': 'carpenter',
-  'moving-house': 'movingBoxes',
-  'shelving-and-storage': 'closetStudio',
-  'packing-and-removal': 'movingBoxes',
-  'paperwork-management': 'cleaningTeam',
-  'online-coaching': 'homeOrganizing',
-  'online-consulting': 'homeRenovation',
-  'home-staging': 'painter',
-  'space-planning': 'diyBuilders',
-  'office-organizing': 'cleaningTeam',
+  'professional-organizing': 'homeOrganizing',
+  'storage-design-installation': 'closetStudio',
+  'cleaning-housekeeping': 'painter',
+  'relocation-transition': 'movingBoxes',
+  'home-management': 'carpenter',
+  'events-catering-decor': 'homeRenovation',
+  'training-development': 'cleaningTeam',
+  'staffing-workforce': 'cleaningTeam',
+  'organizing-products': 'closetStudio',
 }
 
 export function illustrationForService(slug: string): string {

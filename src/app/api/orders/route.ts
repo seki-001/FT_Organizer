@@ -8,6 +8,7 @@ import { subscribeNewsletter } from '@/lib/db/newsletter'
 import { createCheckoutAccount } from '@/lib/checkout-account'
 import { getUserSession } from '@/lib/auth'
 import { isSupabaseAdminConfigured } from '@/lib/supabase/env'
+import { logActivity } from '@/lib/activity-log'
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 
@@ -74,6 +75,20 @@ export async function POST(request: NextRequest) {
     }
 
     const { reference, id } = await createOrder({ ...parsed.data, items }, userId)
+
+    await logActivity({
+      action: 'order.placed',
+      description: `Order ${reference} placed by ${parsed.data.customer.name}`,
+      userId,
+      actorEmail: parsed.data.customer.email,
+      actorName: parsed.data.customer.name,
+      resourceType: 'order',
+      resourceId: reference,
+      metadata: { total: parsed.data.total, itemCount: items.length },
+      ipAddress: getClientIp(request),
+      userAgent: request.headers.get('user-agent'),
+      source: 'storefront',
+    })
 
     logger.info({
       event: 'order_api_created',

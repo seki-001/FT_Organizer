@@ -20,17 +20,15 @@ export const SERVICES: ServiceItem[] = [
     priceFrom: SITE_VISIT_FEE,
     siteVisit: true,
   },
-  { slug: 'general-decluttering', title: 'General Decluttering', icon: 'Trash2', priceFrom: 5000 },
-  { slug: 'whole-house-organizing', title: 'Whole House Organizing', icon: 'Home', priceFrom: 15000 },
-  { slug: 'moving-house', title: 'Moving House', icon: 'Truck', priceFrom: 8000 },
-  { slug: 'shelving-and-storage', title: 'Shelving & Storage', icon: 'Archive', priceFrom: 6000 },
-  { slug: 'packing-and-removal', title: 'Packing & Removal', icon: 'Package', priceFrom: 7000 },
-  { slug: 'paperwork-management', title: 'Paperwork Management', icon: 'FileText', priceFrom: 4000 },
-  { slug: 'online-coaching', title: 'Online Coaching', icon: 'Video', priceFrom: 3000 },
-  { slug: 'online-consulting', title: 'Online Consulting', icon: 'MessageSquare', priceFrom: 2500 },
-  { slug: 'home-staging', title: 'Home Staging', icon: 'Sparkles', priceFrom: 12000 },
-  { slug: 'space-planning', title: 'Space Planning', icon: 'Layout', priceFrom: 8000 },
-  { slug: 'office-organizing', title: 'Office Organizing', icon: 'Briefcase', priceFrom: 10000 },
+  { slug: 'professional-organizing', title: 'Professional Organizing & Decluttering', icon: 'Home', priceFrom: 5000 },
+  { slug: 'storage-design-installation', title: 'Storage Design & Installation', icon: 'Archive', priceFrom: 6000 },
+  { slug: 'cleaning-housekeeping', title: 'Cleaning & Housekeeping', icon: 'Sparkles', priceFrom: 4000 },
+  { slug: 'relocation-transition', title: 'Relocation & Transition', icon: 'Truck', priceFrom: 8000 },
+  { slug: 'home-management', title: 'Home Management', icon: 'Layout', priceFrom: 7000 },
+  { slug: 'events-catering-decor', title: 'Events, Catering & Décor', icon: 'PartyPopper', priceFrom: 10000 },
+  { slug: 'training-development', title: 'Training & Professional Development', icon: 'GraduationCap', priceFrom: 5000 },
+  { slug: 'staffing-workforce', title: 'Staffing & Workforce Solutions', icon: 'Users', priceFrom: 5000 },
+  { slug: 'organizing-products', title: 'Organizing Products & Storage', icon: 'Package', priceFrom: 2500 },
 ]
 
 export const NAV_LINKS = [
@@ -89,7 +87,7 @@ export const MEDIA_FEATURES = [
 
 export const COMPANY = {
   name: 'Faith The Organizer',
-  tagline: 'From Clutter to Order',
+  tagline: 'Home, Workplace, Training & Staffing Solutions',
   phone: '+254 704 488 188',
   email: 'faith@organizer.co.ke',
   emailPersonal: 'faiththeorganizer@gmail.com',

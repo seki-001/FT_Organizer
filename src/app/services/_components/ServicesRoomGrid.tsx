@@ -15,18 +15,16 @@ import { staggerContainer, staggerItem, EASE_STANDARD } from '@/lib/animations'
 import { IMG, serviceImage } from '@/lib/image-placeholders'
 
 const SERVICE_META: Record<string, { category: string; image: string }> = {
-  'general-decluttering':   { category: 'Home & Living',    image: serviceImage('general-decluttering') },
-  'whole-house-organizing': { category: 'Full Home',         image: serviceImage('whole-house-organizing') },
-  'moving-house':           { category: 'Relocation',        image: serviceImage('moving-house') },
-  'shelving-and-storage':   { category: 'Bedroom & Closet',  image: serviceImage('shelving-and-storage') },
-  'packing-and-removal':    { category: 'Relocation',        image: serviceImage('packing-and-removal') },
-  'paperwork-management':   { category: 'Home Office',       image: serviceImage('paperwork-management') },
-  'online-coaching':        { category: 'Online',            image: serviceImage('online-coaching') },
-  'online-consulting':      { category: 'Online',            image: serviceImage('online-consulting') },
-  'home-staging':           { category: 'Interior',          image: serviceImage('home-staging') },
-  'space-planning':         { category: 'Design',            image: serviceImage('space-planning') },
-  'office-organizing':      { category: 'Workplace',         image: serviceImage('office-organizing') },
-  'site-visit':             { category: 'Assessment',        image: serviceImage('site-visit') },
+  'professional-organizing':     { category: 'Organizing',   image: serviceImage('professional-organizing') },
+  'storage-design-installation': { category: 'Storage',      image: serviceImage('storage-design-installation') },
+  'cleaning-housekeeping':       { category: 'Cleaning',     image: serviceImage('cleaning-housekeeping') },
+  'relocation-transition':       { category: 'Relocation',   image: serviceImage('relocation-transition') },
+  'home-management':             { category: 'Management',   image: serviceImage('home-management') },
+  'events-catering-decor':       { category: 'Events',       image: serviceImage('events-catering-decor') },
+  'training-development':        { category: 'Training',     image: serviceImage('training-development') },
+  'staffing-workforce':          { category: 'Staffing',     image: serviceImage('staffing-workforce') },
+  'organizing-products':         { category: 'Products',     image: serviceImage('organizing-products') },
+  'site-visit':                  { category: 'Assessment',   image: serviceImage('site-visit') },
 }
 
 // ─── Single room card ─────────────────────────────────────────────────────────

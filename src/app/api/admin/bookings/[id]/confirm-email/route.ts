@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { getAdminSession } from '@/lib/auth'
 import { logger } from '@/lib/logger'
+import { logAdminActivity } from '@/lib/activity-log'
 
 type Params = { params: { id: string } }
 
@@ -23,7 +24,7 @@ type Params = { params: { id: string } }
  *     html:    renderBookingConfirmationEmail(booking), // see src/emails/
  *   })
  */
-export async function POST(_request: Request, { params }: Params) {
+export async function POST(request: Request, { params }: Params) {
   const session = await getAdminSession()
   if (!session || session.user.role !== 'admin') {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -33,6 +34,13 @@ export async function POST(_request: Request, { params }: Params) {
     event: 'booking_confirmation_email_stub',
     resource_id: params.id,
     user_id: session.user.email,
+  })
+
+  await logAdminActivity(session, request, {
+    action: 'booking.confirmation_sent',
+    description: `Sent booking confirmation email for ${params.id}`,
+    resourceType: 'booking',
+    resourceId: params.id,
   })
 
   return NextResponse.json({

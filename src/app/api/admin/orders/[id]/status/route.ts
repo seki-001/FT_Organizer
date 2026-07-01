@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { getAdminSession } from '@/lib/auth'
 import { updateOrderStatus } from '@/lib/db/orders'
+import { logAdminActivity } from '@/lib/activity-log'
 
 const VALID_STATUSES = [
   'processing',
@@ -36,6 +37,14 @@ export async function PATCH(
   }
 
   await updateOrderStatus(params.id, body.status as OrderStatus)
+
+  await logAdminActivity(session, request, {
+    action: 'order.status_updated',
+    description: `Order ${params.id} status changed to ${body.status}`,
+    resourceType: 'order',
+    resourceId: params.id,
+    metadata: { newStatus: body.status },
+  })
 
   return NextResponse.json({
     success:   true,

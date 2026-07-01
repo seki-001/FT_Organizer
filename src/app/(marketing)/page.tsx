@@ -6,6 +6,7 @@ import FeaturedProductsEditorial from '@/components/sections/FeaturedProductsEdi
 import TransformationShowcase from '@/components/sections/TransformationShowcase'
 import TestimonialsSection from '@/components/sections/TestimonialsSection'
 import AboutTeaser from '@/components/sections/AboutTeaser'
+import WhyChooseUsSection from '@/components/sections/WhyChooseUsSection'
 import EditorialBlogPreview from '@/components/sections/EditorialBlogPreview'
 import MediaFeaturesSection from '@/components/sections/MediaFeaturesSection'
 import FooterCTABand from '@/components/sections/FooterCTABand'
@@ -13,7 +14,7 @@ import FooterCTABand from '@/components/sections/FooterCTABand'
 export const metadata: Metadata = {
   title: 'Home',
   description:
-    "Nairobi's premier home & office organizing service. Book decluttering, whole-house organizing, office organizing and more.",
+    "Nairobi's premier organizing service — home, workplace, training and staffing solutions.",
 }
 
 export default function HomePage() {
@@ -26,6 +27,7 @@ export default function HomePage() {
       <TransformationShowcase />
       <TestimonialsSection />
       <AboutTeaser />
+      <WhyChooseUsSection />
       <EditorialBlogPreview />
       <MediaFeaturesSection />
       <FooterCTABand />

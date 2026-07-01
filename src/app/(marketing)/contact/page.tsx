@@ -45,7 +45,7 @@ export default function ContactPage() {
             {[
               { icon: Phone, label: 'Phone / WhatsApp', value: COMPANY.phone, href: `tel:${COMPANY.phone}` },
               { icon: Mail, label: 'Email', value: COMPANY.email, href: `mailto:${COMPANY.email}` },
-              { icon: MapPin, label: 'Location', value: 'Nairobi, Kenya', href: '#' },
+              { icon: MapPin, label: 'Location', value: COMPANY.addressFull, href: `https://maps.google.com/?q=${encodeURIComponent(COMPANY.addressFull)}` },
             ].map((item) => (
               <a
                 key={item.label}
@@ -63,6 +63,7 @@ export default function ContactPage() {
             ))}
             <SocialLinks variant="dark" />
             <a
+              href={COMPANY.whatsappLink}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-3 p-5 rounded-2xl bg-[#25D366]/10 border border-[#25D366]/20 hover:border-[#25D366]/40 transition-colors"

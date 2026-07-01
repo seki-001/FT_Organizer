@@ -28,12 +28,12 @@ const ORDERED_NAV = NAV_ORDER
 // ─── Room cards for the Services mega menu ────────────────────────────────────
 
 const ROOMS = [
-  { label: 'Kitchen',           slug: 'general-decluttering',   image: IMG.rooms.kitchen },
-  { label: 'Living Room',       slug: 'whole-house-organizing',  image: IMG.rooms.livingRoom },
-  { label: 'Bedroom & Closet',  slug: 'shelving-and-storage',    image: IMG.rooms.bedroom },
-  { label: 'Home Office',       slug: 'office-organizing',       image: IMG.rooms.office },
-  { label: 'Moving',            slug: 'moving-house',            image: IMG.rooms.moving },
-  { label: 'Whole Home',        slug: 'whole-house-organizing',  image: IMG.rooms.wholeHome },
+  { label: 'Home Organization',    slug: 'professional-organizing',       image: IMG.rooms.kitchen },
+  { label: 'Storage & Closets',    slug: 'storage-design-installation',   image: IMG.rooms.bedroom },
+  { label: 'Cleaning Services',    slug: 'cleaning-housekeeping',         image: IMG.rooms.bathroom },
+  { label: 'Relocation',           slug: 'relocation-transition',         image: IMG.rooms.moving },
+  { label: 'Home Management',      slug: 'home-management',               image: IMG.rooms.livingRoom },
+  { label: 'Staffing & Training',  slug: 'staffing-workforce',            image: IMG.rooms.office },
 ]
 
 // ─── Search overlay ───────────────────────────────────────────────────────────
@@ -458,18 +458,25 @@ function MobileMenu({
           if (item.hasSubmenu && item.label === 'Services') {
             return (
               <motion.div key={item.label} variants={MOBILE_ITEM}>
-                <button type="button"
-                  onClick={() => setServicesOpen(o => !o)}
-                  className={cn(
-                    'w-full flex items-center justify-between px-3 py-4 rounded-xl font-display text-2xl font-bold transition-colors',
-                    isActive ? 'text-primary' : 'text-dark hover:text-primary',
-                  )}
-                >
-                  <span>Services</span>
-                  <motion.span animate={{ rotate: servicesOpen ? 180 : 0 }} transition={{ duration: 0.2 }}>
-                    <ChevronDown size={20} className="text-dark/30" />
-                  </motion.span>
-                </button>
+                <div className="flex items-center justify-between px-3 py-4">
+                  <Link href="/services" onClick={onClose}
+                    className={cn(
+                      'font-display text-2xl font-bold transition-colors',
+                      isActive ? 'text-primary' : 'text-dark hover:text-primary',
+                    )}
+                  >
+                    Services
+                  </Link>
+                  <button type="button"
+                    onClick={() => setServicesOpen(o => !o)}
+                    aria-label={servicesOpen ? 'Collapse services menu' : 'Expand services menu'}
+                    className="flex items-center justify-center w-10 h-10 rounded-xl text-dark/40 hover:bg-muted"
+                  >
+                    <motion.span animate={{ rotate: servicesOpen ? 180 : 0 }} transition={{ duration: 0.2 }}>
+                      <ChevronDown size={20} />
+                    </motion.span>
+                  </button>
+                </div>
 
                 <AnimatePresence>
                   {servicesOpen && (
@@ -511,18 +518,25 @@ function MobileMenu({
           if (item.hasSubmenu && item.label === 'Shop') {
             return (
               <motion.div key={item.label} variants={MOBILE_ITEM}>
-                <button type="button"
-                  onClick={() => setShopOpen((o) => !o)}
-                  className={cn(
-                    'w-full flex items-center justify-between px-3 py-4 rounded-xl font-display text-2xl font-bold transition-colors',
-                    isActive ? 'text-primary' : 'text-dark hover:text-primary',
-                  )}
-                >
-                  <span>Shop</span>
-                  <motion.span animate={{ rotate: shopOpen ? 180 : 0 }} transition={{ duration: 0.2 }}>
-                    <ChevronDown size={20} className="text-dark/30" />
-                  </motion.span>
-                </button>
+                <div className="flex items-center justify-between px-3 py-4">
+                  <Link href="/shop" onClick={onClose}
+                    className={cn(
+                      'font-display text-2xl font-bold transition-colors',
+                      isActive ? 'text-primary' : 'text-dark hover:text-primary',
+                    )}
+                  >
+                    Shop
+                  </Link>
+                  <button type="button"
+                    onClick={() => setShopOpen((o) => !o)}
+                    aria-label={shopOpen ? 'Collapse shop menu' : 'Expand shop menu'}
+                    className="flex items-center justify-center w-10 h-10 rounded-xl text-dark/40 hover:bg-muted"
+                  >
+                    <motion.span animate={{ rotate: shopOpen ? 180 : 0 }} transition={{ duration: 0.2 }}>
+                      <ChevronDown size={20} />
+                    </motion.span>
+                  </button>
+                </div>
 
                 <AnimatePresence>
                   {shopOpen && (
@@ -671,11 +685,12 @@ export default function Header() {
                 )
 
                 if (hasMegaMenu) {
+                  const menuKey = navLink.label.toLowerCase() as 'services' | 'shop'
                   return (
-                    <button
+                    <Link
                       key={navLink.href}
-                      type="button"
-                      onMouseEnter={() => openMenu(navLink.label.toLowerCase() as 'services' | 'shop')}
+                      href={navLink.href}
+                      onMouseEnter={() => openMenu(menuKey)}
                       onMouseLeave={scheduleClose}
                       className={linkClass}
                     >
@@ -684,7 +699,7 @@ export default function Header() {
                         size={13}
                         className={cn('transition-transform duration-200 text-dark/35', menuOpen && 'rotate-180')}
                       />
-                    </button>
+                    </Link>
                   )
                 }
 

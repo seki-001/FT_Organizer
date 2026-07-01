@@ -5,6 +5,7 @@ import { apiError, apiSuccess } from '@/lib/api-response'
 import { enforceRateLimit } from '@/lib/rate-limit'
 import { logger } from '@/lib/logger'
 import { isSupabaseConfigured } from '@/lib/supabase/env'
+import { logStorefrontActivity } from '@/lib/activity-log'
 
 const ForgotPasswordSchema = z.object({
   email: z.string().email('Enter a valid email address'),
@@ -40,6 +41,13 @@ export async function POST(request: NextRequest) {
     if (error) {
       logger.warn({ event: 'forgot_password_failed', error_code: error.code })
     }
+
+    await logStorefrontActivity(request, {
+      action: 'password.reset_requested',
+      description: `Password reset requested for ${parsed.data.email}`,
+      actorEmail: parsed.data.email,
+      resourceType: 'auth',
+    })
 
     // Always return success — do not reveal whether the email exists.
     return apiSuccess({ success: true })

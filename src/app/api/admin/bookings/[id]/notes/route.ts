@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { getAdminSession } from '@/lib/auth'
 import { updateBookingNotes } from '@/lib/db/bookings'
+import { logAdminActivity } from '@/lib/activity-log'
 
 type Params = { params: { id: string } }
 
@@ -25,6 +26,13 @@ export async function PATCH(request: Request, { params }: Params) {
   if (!ok) {
     return NextResponse.json({ error: 'Could not save notes' }, { status: 500 })
   }
+
+  await logAdminActivity(session, request, {
+    action: 'booking.notes_updated',
+    description: `Updated notes on booking ${params.id}`,
+    resourceType: 'booking',
+    resourceId: params.id,
+  })
 
   return NextResponse.json({
     success:   true,

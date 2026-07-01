@@ -9,7 +9,7 @@ import { z } from 'zod'
 import { Eye, EyeOff, Loader2, Lock } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { COMPANY } from '@/lib/constants'
-import { humanizeAuthError } from '@/lib/auth-errors'
+import { humanizeAuthError, toAuthErrorMessage } from '@/lib/auth-errors'
 import BrandLogo from '@/components/brand/BrandLogo'
 
 const ResetSchema = z.object({
@@ -42,7 +42,7 @@ export default function ResetPasswordPage() {
     const { error } = await supabase.auth.updateUser({ password: data.password })
 
     if (error) {
-      setApiError(humanizeAuthError(error.message))
+      setApiError(toAuthErrorMessage(error.message, 'Could not reset your password. Please try again.'))
       return
     }
 

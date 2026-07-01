@@ -7,12 +7,12 @@ import { MediaBlend } from '@/components/ui/illustrations'
 import { IMG } from '@/lib/image-placeholders'
 
 const SERVICE_BLURBS: Record<string, string> = {
-  'general-decluttering': 'Clear clutter room by room with a proven system tailored to your home.',
-  'whole-house-organizing': 'Full-home transformation — every room sorted, labelled, and sustainable.',
-  'moving-house': 'Pack, unpack, and settle in faster with stress-free move support.',
+  'professional-organizing': 'Regain control of your spaces with sustainable organizing and decluttering systems.',
+  'storage-design-installation': 'Custom storage design and installation that maximizes space and functionality.',
+  'cleaning-housekeeping': 'Professional cleaning and housekeeping for residential and commercial environments.',
 }
 
-const FEATURED_SERVICES = SERVICES.slice(0, 3)
+const FEATURED_SERVICES = SERVICES.filter((s) => !s.siteVisit).slice(0, 3)
 
 export default function ServicesStrip() {
   return (
@@ -22,7 +22,7 @@ export default function ServicesStrip() {
           label="Our services"
           title="Everything you need"
           titleAccent="for a tidy space"
-          description="Professional organizing across Nairobi — friendly cartoon-guided process, real results in your home."
+          description="Comprehensive home, workplace, training and staffing solutions across Nairobi."
           action={{ label: 'All services', href: '/services' }}
         />
 

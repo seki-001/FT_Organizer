@@ -14,6 +14,18 @@ import { createClient } from '@/lib/supabase/client'
 import { isSupabaseConfigured } from '@/lib/supabase/env'
 import { humanizeAuthError } from '@/lib/auth-errors'
 
+async function logClientActivity(action: string, description: string) {
+  try {
+    await fetch('/api/activity-log', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action, description }),
+    })
+  } catch {
+    // non-blocking
+  }
+}
+
 export interface SessionUser {
   name:   string
   email:  string
@@ -105,6 +117,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const supabase = createClient()
     const { error } = await supabase.auth.signInWithPassword({ email, password })
     if (error) return { ok: false, error: humanizeAuthError(error.message) }
+    void logClientActivity('user.login', `${email} signed in`)
     return { ok: true }
   }, [useSupabase])
 
@@ -120,7 +133,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         redirectTo: `${window.location.origin}/auth/callback`,
       },
     })
-    if (error) return { ok: false, error: error.message }
+    if (error) return { ok: false, error: humanizeAuthError(error.message) }
     return { ok: true }
   }, [useSupabase])
 
@@ -141,21 +154,30 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       },
     })
     if (error) return { ok: false, error: humanizeAuthError(error.message) }
+
+    if (data.user?.identities?.length === 0) {
+      return { ok: false, error: 'An account with this email already exists. Try signing in instead.' }
+    }
+
     if (data.user && !data.session) {
       return { ok: true, needsEmailConfirmation: true }
     }
+
+    void logClientActivity('user.register', `${name} (${email}) created an account`)
     return { ok: true }
   }, [useSupabase])
 
   const signOut = useCallback(() => {
+    const email = session?.user.email
     if (useSupabase) {
       const supabase = createClient()
       void supabase.auth.signOut()
     }
+    if (email) void logClientActivity('user.logout', `${email} signed out`)
     setSession(null)
     setStatus('unauthenticated')
     router.push('/login')
-  }, [router, useSupabase])
+  }, [router, useSupabase, session?.user.email])
 
   const update = useCallback((user: Partial<SessionUser>) => {
     setSession((prev) => (prev ? { user: { ...prev.user, ...user } } : prev))

@@ -1,4 +1,5 @@
-import Image from 'next/image'
+import { COMPANY } from '@/lib/constants'
+import { COMPANY_MISSION } from '@/lib/service-content'
 import { IMG } from '@/lib/image-placeholders'
 import { ILLUSTRATIONS } from '@/lib/illustrations'
 import { MediaBlend } from '@/components/ui/illustrations'
@@ -11,18 +12,19 @@ export default function AboutTeaser() {
 
         <div className="max-w-5xl mx-auto text-center mb-16">
           <h2 className="text-dark text-3xl md:text-4xl lg:text-5xl leading-tight font-sans font-medium">
-            We help Nairobi families{' '}
-            <span className="head-serif italic text-primary">reclaim their space</span>
-            {' '}and build homes that feel calm, functional, and{' '}
-            <span className="head-serif italic text-dark">beautifully organised.</span>
+            {COMPANY.name} —{' '}
+            <span className="head-serif italic text-primary">{COMPANY_MISSION.tagline}</span>
           </h2>
+          <p className="text-dark/60 text-base leading-relaxed mt-6 max-w-3xl mx-auto">
+            {COMPANY_MISSION.about[0]}
+          </p>
         </div>
 
         <div className="flex flex-col lg:flex-row gap-10 items-start mb-14">
           <div className="flex gap-10 lg:flex-col lg:gap-8 flex-shrink-0">
             {[
-              { value: '500+', label: 'Homes Organized' },
-              { value: '7 yrs', label: 'In Business' },
+              { value: '500+', label: 'Spaces Transformed' },
+              { value: '9', label: 'Service Categories' },
               { value: '4.9★', label: 'Client Rating' },
             ].map((stat) => (
               <div key={stat.label}>

@@ -329,6 +329,40 @@ export interface Database {
         Update: Partial<Database['public']['Tables']['payment_events']['Insert']>
         Relationships: []
       }
+      activity_logs: {
+        Row: {
+          id: string
+          user_id: string | null
+          actor_email: string | null
+          actor_name: string | null
+          action: string
+          resource_type: string | null
+          resource_id: string | null
+          description: string
+          metadata: Json
+          ip_address: string | null
+          user_agent: string | null
+          source: 'storefront' | 'admin' | 'system'
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          user_id?: string | null
+          actor_email?: string | null
+          actor_name?: string | null
+          action: string
+          resource_type?: string | null
+          resource_id?: string | null
+          description: string
+          metadata?: Json
+          ip_address?: string | null
+          user_agent?: string | null
+          source?: 'storefront' | 'admin' | 'system'
+          created_at?: string
+        }
+        Update: Partial<Database['public']['Tables']['activity_logs']['Insert']>
+        Relationships: []
+      }
     }
     Views: Record<string, never>
     Functions: {

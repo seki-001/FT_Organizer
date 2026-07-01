@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { getAdminSession } from '@/lib/auth'
 import { listAllPosts, upsertPost } from '@/lib/db/blog'
+import { logAdminActivity } from '@/lib/activity-log'
 import type { BlogPost } from '@/lib/types'
 
 export async function GET(request: Request) {
@@ -42,6 +43,18 @@ export async function POST(request: Request) {
     readTime: Number(body.readTime ?? body.read_time ?? 5),
     tags: Array.isArray(body.tags) ? body.tags as string[] : [],
     published: body.published !== false,
+  })
+
+  if (!post) {
+    return NextResponse.json({ error: 'Could not create post' }, { status: 500 })
+  }
+
+  await logAdminActivity(session, request, {
+    action: 'blog.created',
+    description: `Created blog post "${post.title}"`,
+    resourceType: 'blog',
+    resourceId: post.slug,
+    metadata: { title: post.title, published: Boolean(post.publishedAt) },
   })
 
   return NextResponse.json({ success: true, post }, { status: 201 })

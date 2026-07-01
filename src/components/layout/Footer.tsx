@@ -18,7 +18,7 @@ export default function Footer() {
               <BrandLogo variant="on-dark" href="/" size="xl" />
             </div>
             <p className="text-white/50 text-sm leading-relaxed mb-5">
-              Nairobi&apos;s premier home & office organizing service — from clutter to calm.
+              {COMPANY.tagline} — comprehensive solutions for homes, workplaces, and institutions.
             </p>
             <SocialLinks variant="dark" className="mb-1" />
           </GlassPanel>

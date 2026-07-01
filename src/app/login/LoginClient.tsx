@@ -9,7 +9,7 @@ import { z } from 'zod'
 import { Eye, EyeOff, Loader2 } from 'lucide-react'
 import { useAuth } from '@/context/AuthContext'
 import { COMPANY } from '@/lib/constants'
-import { humanizeAuthError } from '@/lib/auth-errors'
+import { humanizeAuthError, toAuthErrorMessage } from '@/lib/auth-errors'
 import BrandLogo from '@/components/brand/BrandLogo'
 
 const LoginSchema = z.object({
@@ -53,7 +53,7 @@ export default function LoginClient() {
     if (result.ok) {
       router.push(callback)
     } else {
-      setApiError(result.error ? humanizeAuthError(result.error) : 'Invalid email or password.')
+      setApiError(toAuthErrorMessage(result.error, 'Invalid email or password.'))
     }
   }
 

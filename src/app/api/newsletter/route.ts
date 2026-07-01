@@ -4,6 +4,7 @@ import { apiError, apiSuccess } from '@/lib/api-response'
 import { enforceRateLimit, withRateLimitHeaders, checkRateLimit, getClientIp } from '@/lib/rate-limit'
 import { subscribeNewsletter } from '@/lib/db/newsletter'
 import { logger } from '@/lib/logger'
+import { logStorefrontActivity } from '@/lib/activity-log'
 
 const SubscribeSchema = z.object({
   email: z.string().email('Invalid email address'),
@@ -22,6 +23,13 @@ export async function POST(request: NextRequest) {
     }
 
     await subscribeNewsletter(parsed.data.email)
+
+    await logStorefrontActivity(request, {
+      action: 'newsletter.subscribed',
+      description: `${parsed.data.email} subscribed to the newsletter`,
+      actorEmail: parsed.data.email,
+      resourceType: 'newsletter',
+    })
 
     logger.info({
       event: 'newsletter_subscribed',

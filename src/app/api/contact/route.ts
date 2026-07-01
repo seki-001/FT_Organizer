@@ -4,6 +4,7 @@ import { apiError, apiSuccess } from '@/lib/api-response'
 import { enforceRateLimit, withRateLimitHeaders, checkRateLimit, getClientIp } from '@/lib/rate-limit'
 import { insertContactSubmission } from '@/lib/db/contact'
 import { logger } from '@/lib/logger'
+import { logActivity } from '@/lib/activity-log'
 
 export async function POST(request: NextRequest) {
   const limited = enforceRateLimit(request, 'contact', { limit: 5, windowMs: 60_000 })
@@ -19,13 +20,25 @@ export async function POST(request: NextRequest) {
 
     await insertContactSubmission(parsed.data)
 
+    const ip = getClientIp(request)
+    await logActivity({
+      action: 'contact.submitted',
+      description: `${parsed.data.name} submitted a contact form: ${parsed.data.subject}`,
+      actorEmail: parsed.data.email,
+      actorName: parsed.data.name,
+      resourceType: 'contact',
+      metadata: { subject: parsed.data.subject },
+      ipAddress: ip,
+      userAgent: request.headers.get('user-agent'),
+      source: 'storefront',
+    })
+
     logger.info({
       event: 'contact_submitted',
       resource_id: parsed.data.subject,
-      ip_address: getClientIp(request),
+      ip_address: ip,
     })
 
-    const ip = getClientIp(request)
     const rate = checkRateLimit(`contact:${ip}`, { limit: 5, windowMs: 60_000 })
     return withRateLimitHeaders(
       apiSuccess({ success: true }, 201),

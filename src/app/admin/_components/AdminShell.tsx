@@ -7,7 +7,7 @@ import { usePathname, useRouter } from 'next/navigation'
 import {
   LayoutDashboard, ShoppingBag, Package, Tag, Users, Calendar,
   FileText, Settings, Menu, X, ChevronRight, LogOut,
-  BarChart2, Home, Receipt, TrendingDown, Truck, PieChart, Mail, Search,
+  BarChart2, Home, Receipt, TrendingDown, Truck, PieChart, Mail, Search, Activity,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { clientAvatarForUser } from '@/lib/avatars'
@@ -32,6 +32,7 @@ const NAV_SECTIONS: NavSection[] = [
     label: 'Overview',
     items: [
       { label: 'Dashboard', href: '/admin',           icon: LayoutDashboard },
+      { label: 'Activity Log', href: '/admin/activity', icon: Activity },
       { label: 'Reports',   href: '/admin/reports',   icon: PieChart        },
       { label: 'Analytics', href: '/admin/analytics', icon: BarChart2       },
     ],
@@ -77,6 +78,7 @@ const NAV_SECTIONS: NavSection[] = [
 // ─── Breadcrumb builder ───────────────────────────────────────────────────────
 
 const PAGE_LABELS: Record<string, string> = {
+  activity: 'Activity Log',
   analytics: 'Analytics',
   orders:    'Orders',
   products:  'Products',

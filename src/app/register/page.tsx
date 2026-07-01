@@ -9,6 +9,7 @@ import { z } from 'zod'
 import { Eye, EyeOff, Loader2, CheckCircle2 } from 'lucide-react'
 import { useAuth } from '@/context/AuthContext'
 import { COMPANY } from '@/lib/constants'
+import { toAuthErrorMessage } from '@/lib/auth-errors'
 import BrandLogo from '@/components/brand/BrandLogo'
 
 // ─── Schema ───────────────────────────────────────────────────────────────────
@@ -18,7 +19,9 @@ const RegisterSchema = z.object({
   email:           z.string().email('Enter a valid email address'),
   password:        z.string().min(8, 'Password must be at least 8 characters'),
   confirmPassword: z.string(),
-  terms:           z.literal(true, { errorMap: () => ({ message: 'You must agree to the Terms & Conditions' }) }),
+  terms: z.boolean().refine((v) => v === true, {
+    message: 'You must agree to the Terms & Conditions',
+  }),
 }).refine((d) => d.password === d.confirmPassword, {
   message: 'Passwords do not match',
   path:    ['confirmPassword'],
@@ -67,7 +70,7 @@ export default function RegisterPage() {
         router.push('/account')
       }
     } else {
-      setApiError(result.error ?? 'Could not create account. Please try again.')
+      setApiError(toAuthErrorMessage(result.error, 'Could not create account. Please try again.'))
     }
   }
 
@@ -176,7 +179,7 @@ export default function RegisterPage() {
             <input
               id="terms"
               type="checkbox"
-              {...register('terms')}
+              {...register('terms', { setValueAs: (v) => v === true || v === 'on' })}
               className="mt-0.5 w-4 h-4 accent-primary cursor-pointer flex-shrink-0"
             />
             <label htmlFor="terms" className="text-sm text-dark/60 leading-relaxed cursor-pointer">
@@ -220,7 +223,7 @@ export default function RegisterPage() {
             setGoogleLoading(true)
             const result = await signInWithGoogle()
             if (!result.ok) {
-              setApiError(result.error ?? 'Google sign-in failed.')
+              setApiError(toAuthErrorMessage(result.error, 'Google sign-in failed.'))
               setGoogleLoading(false)
             }
           }}

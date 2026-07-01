@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { getAdminSession } from '@/lib/auth'
 import { updateProductBySlug, deleteProductBySlug } from '@/lib/db/products'
+import { logAdminActivity } from '@/lib/activity-log'
 import type { Product } from '@/lib/types'
 
 type Params = { params: { slug: string } }
@@ -36,10 +37,18 @@ export async function PATCH(request: Request, { params }: Params) {
     return NextResponse.json({ error: 'Could not update product' }, { status: 500 })
   }
 
+  await logAdminActivity(session, request, {
+    action: 'product.updated',
+    description: `Updated product "${product.name}"`,
+    resourceType: 'product',
+    resourceId: params.slug,
+    metadata: { name: product.name },
+  })
+
   return NextResponse.json({ success: true, product })
 }
 
-export async function DELETE(_request: Request, { params }: Params) {
+export async function DELETE(request: Request, { params }: Params) {
   const session = await getAdminSession()
   if (!session || session.user.role !== 'admin') {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -49,6 +58,13 @@ export async function DELETE(_request: Request, { params }: Params) {
   if (!ok) {
     return NextResponse.json({ error: 'Could not delete product' }, { status: 500 })
   }
+
+  await logAdminActivity(session, request, {
+    action: 'product.deleted',
+    description: `Deleted product "${params.slug}"`,
+    resourceType: 'product',
+    resourceId: params.slug,
+  })
 
   return NextResponse.json({ success: true, slug: params.slug })
 }

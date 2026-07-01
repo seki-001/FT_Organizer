@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { getAdminSession } from '@/lib/auth'
 import { listProducts, insertProduct } from '@/lib/db/products'
+import { logAdminActivity } from '@/lib/activity-log'
 import type { Product } from '@/lib/types'
 
 export async function GET(request: Request) {
@@ -43,6 +44,18 @@ export async function POST(request: Request) {
     stockCount: Number(body.stockCount ?? 0),
     images: (body.images as string[]) ?? [],
     featured: Boolean(body.featured),
+  })
+
+  if (!product) {
+    return NextResponse.json({ error: 'Could not create product' }, { status: 500 })
+  }
+
+  await logAdminActivity(session, request, {
+    action: 'product.created',
+    description: `Created product "${product.name}"`,
+    resourceType: 'product',
+    resourceId: product.slug,
+    metadata: { name: product.name, price: product.price },
   })
 
   return NextResponse.json({ success: true, product }, { status: 201 })

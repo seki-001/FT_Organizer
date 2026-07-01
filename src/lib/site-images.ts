@@ -72,17 +72,15 @@ export const ROOM_IMAGES = {
 
 export const SERVICE_IMAGES: Record<string, string> = {
   'site-visit': SITE_IMAGES.sceneConsultation,
-  'general-decluttering': SITE_IMAGES.sceneLivingRoom,
-  'whole-house-organizing': SITE_IMAGES.sceneStorage,
-  'moving-house': SITE_IMAGES.movingPacking,
-  'shelving-and-storage': SITE_IMAGES.sceneCloset,
-  'packing-and-removal': SITE_IMAGES.wovenBaskets,
-  'paperwork-management': SITE_IMAGES.scenePantry,
-  'online-coaching': SITE_IMAGES.sceneConsultation,
-  'online-consulting': SITE_IMAGES.sceneEntryway,
-  'home-staging': SITE_IMAGES.sceneBathroom,
-  'space-planning': SITE_IMAGES.sceneKitchen,
-  'office-organizing': SITE_IMAGES.sceneOffice,
+  'professional-organizing': SITE_IMAGES.sceneLivingRoom,
+  'storage-design-installation': SITE_IMAGES.sceneCloset,
+  'cleaning-housekeeping': SITE_IMAGES.sceneBathroom,
+  'relocation-transition': SITE_IMAGES.movingPacking,
+  'home-management': SITE_IMAGES.sceneStorage,
+  'events-catering-decor': SITE_IMAGES.sceneEntryway,
+  'training-development': SITE_IMAGES.sceneConsultation,
+  'staffing-workforce': SITE_IMAGES.sceneOffice,
+  'organizing-products': SITE_IMAGES.wovenBaskets,
 }
 
 export const CATEGORY_IMAGES: Record<string, string> = {

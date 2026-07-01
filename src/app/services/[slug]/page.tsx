@@ -5,10 +5,12 @@ import Link from 'next/link'
 import {
   Trash2, Home, Truck, Archive, Package, FileText,
   Video, MessageSquare, Sparkles, Layout, Briefcase, MapPin,
+  PartyPopper, GraduationCap, Users,
   CheckCircle2,
   type LucideIcon,
 } from 'lucide-react'
 import { SERVICES, SITE_VISIT_FEE } from '@/lib/constants'
+import { getServiceContent, getServiceIncludes } from '@/lib/service-content'
 import { formatPrice } from '@/lib/utils'
 import ServiceCard from '@/components/ui/ServiceCard'
 import FooterCTABand from '@/components/sections/FooterCTABand'
@@ -20,6 +22,7 @@ import type { Testimonial } from '@/lib/types'
 const ICON_MAP: Record<string, LucideIcon> = {
   Trash2, Home, Truck, Archive, Package, FileText,
   Video, MessageSquare, Sparkles, Layout, Briefcase, MapPin,
+  PartyPopper, GraduationCap, Users,
 }
 
 // ─── Shared placeholder data ──────────────────────────────────────────────────
@@ -141,7 +144,12 @@ export default async function ServicePage({
 
   const Icon = ICON_MAP[service.icon] ?? Briefcase
   const isSiteVisit = service.siteVisit === true
-  const includes = isSiteVisit ? SITE_VISIT_INCLUDES : PLACEHOLDER_INCLUDES
+  const content = getServiceContent(slug)
+  const includes = isSiteVisit
+    ? SITE_VISIT_INCLUDES
+    : getServiceIncludes(slug).length > 0
+      ? getServiceIncludes(slug)
+      : PLACEHOLDER_INCLUDES
   const relatedServices = SERVICES.filter((s) => s.slug !== slug && !s.siteVisit).slice(0, 3)
 
   return (
@@ -209,8 +217,8 @@ export default async function ServicePage({
                   <span className="head-serif italic text-accent/90">Included</span>
                 </h2>
                 <p className="text-white/60 leading-relaxed">
-                  Every {service.title.toLowerCase()} session is tailored to your specific
-                  space and needs. Here is what you can expect when you book with us.
+                  {content?.overview ??
+                    `Every ${service.title.toLowerCase()} session is tailored to your specific space and needs. Here is what you can expect when you book with us.`}
                 </p>
               </div>
               <ul className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-white/4 border border-white/8 rounded-3xl p-6">

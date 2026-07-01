@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { getAdminSession } from '@/lib/auth'
 import { listCoupons, upsertCoupon } from '@/lib/db/coupons'
+import { logAdminActivity } from '@/lib/activity-log'
 
 export async function GET() {
   const session = await getAdminSession()
@@ -27,6 +28,18 @@ export async function POST(request: Request) {
     uses: 0,
     active: body.active !== false,
     expiresAt: (body.expiresAt as string) ?? null,
+  })
+
+  if (!coupon) {
+    return NextResponse.json({ error: 'Could not create coupon' }, { status: 500 })
+  }
+
+  await logAdminActivity(session, request, {
+    action: 'coupon.created',
+    description: `Created coupon "${coupon.code}"`,
+    resourceType: 'coupon',
+    resourceId: coupon.id,
+    metadata: { code: coupon.code, type: coupon.type, value: coupon.value },
   })
 
   return NextResponse.json({ success: true, coupon }, { status: 201 })

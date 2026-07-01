@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { getAdminSession } from '@/lib/auth'
+import { logAdminActivity } from '@/lib/activity-log'
 
 const CAT_MAP: Record<string, string> = {
   'BASKETS': 'baskets',
@@ -88,6 +90,11 @@ function groupProducts(rows: string[][]): Array<{
 }
 
 export async function POST(req: NextRequest) {
+  const session = await getAdminSession()
+  if (!session || session.user.role !== 'admin') {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
   try {
     const formData = await req.formData()
     const file = formData.get('file') as File | null
@@ -130,6 +137,13 @@ export async function POST(req: NextRequest) {
     const invalid = products.filter(p => !p.name || p.price <= 0)
     invalid.forEach(p => errors.push(`Skipped "${p.name}": missing name or price`))
     const valid = products.filter(p => p.name && p.price > 0)
+
+    await logAdminActivity(session, req, {
+      action: 'product.import_preview',
+      description: `Previewed product import: ${valid.length} valid, ${invalid.length} skipped`,
+      resourceType: 'product',
+      metadata: { imported: valid.length, skipped: invalid.length, fileName: file.name },
+    })
 
     return NextResponse.json({
       success: true,

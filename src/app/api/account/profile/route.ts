@@ -5,6 +5,7 @@ import { getProfile, updateProfile } from '@/lib/db/profiles'
 import { apiError, apiSuccess } from '@/lib/api-response'
 import { enforceRateLimit } from '@/lib/rate-limit'
 import { logger } from '@/lib/logger'
+import { logStorefrontActivity } from '@/lib/activity-log'
 
 const ProfileUpdateSchema = z.object({
   name:    z.string().min(2),
@@ -51,6 +52,16 @@ export async function POST(request: NextRequest) {
       phone: parsed.data.phone,
       address: parsed.data.address,
       city: parsed.data.city,
+    })
+
+    await logStorefrontActivity(request, {
+      action: 'profile.updated',
+      description: `${parsed.data.name} updated their profile`,
+      userId: session.user.id,
+      actorEmail: session.user.email,
+      actorName: parsed.data.name,
+      resourceType: 'profile',
+      resourceId: session.user.id,
     })
 
     logger.info({ event: 'profile_updated', user_id: session.user.id })

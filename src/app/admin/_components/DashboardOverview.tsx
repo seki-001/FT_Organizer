@@ -4,7 +4,8 @@ import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
 import AdminCard from '@/components/admin/AdminCard'
-import { ANALYTICS_BY_RANGE, ACTIVITY_FEED } from '@/lib/mock-analytics'
+import ActivityLogFeed from './ActivityLogFeed'
+import { ANALYTICS_BY_RANGE } from '@/lib/mock-analytics'
 import {
   ADMIN_PENDING_BOOKINGS,
   ADMIN_LOW_STOCK,
@@ -68,16 +69,7 @@ export default function DashboardOverview() {
         </div>
 
         <div className="xl:col-span-2">
-          <AdminCard title="Recent Activity" subtitle="Latest across shop & services">
-            <div className="divide-y divide-[#ECEEF2] max-h-[340px] overflow-y-auto">
-              {ACTIVITY_FEED.slice(0, 8).map((item) => (
-                <div key={item.id} className="px-5 py-3.5 admin-row-hover transition-colors">
-                  <p className="text-sm text-dark leading-snug">{item.message}</p>
-                  <p className="text-[11px] text-dark/35 mt-1">{item.timeAgo}</p>
-                </div>
-              ))}
-            </div>
-          </AdminCard>
+          <ActivityLogFeed limit={8} />
         </div>
       </div>
 

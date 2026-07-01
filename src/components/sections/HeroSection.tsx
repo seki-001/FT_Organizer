@@ -6,6 +6,7 @@ import { motion } from 'framer-motion'
 import { ArrowUpRight } from 'lucide-react'
 import { IMG } from '@/lib/image-placeholders'
 import { OfferBadge } from '@/components/ui/commerce'
+import { COMPANY } from '@/lib/constants'
 
 const HERO_AVATARS = IMG.avatars
 
@@ -28,7 +29,7 @@ export default function HeroSection() {
       <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 min-h-[min(88vh,820px)] flex items-end lg:items-center pb-14 sm:pb-16 lg:pb-0 pt-28 lg:pt-24">
         <div className="w-full max-w-xl lg:max-w-2xl">
           <OfferBadge variant="glass-dark" className="mb-5 w-fit">
-            Nairobi&apos;s Premier Organizing Service
+            {COMPANY.tagline}
           </OfferBadge>
 
           <motion.h1
@@ -38,10 +39,10 @@ export default function HeroSection() {
             className="text-white mb-5 sm:mb-6 drop-shadow-[0_2px_16px_rgba(0,0,0,0.35)]"
           >
             <span className="block head-sans text-4xl sm:text-5xl lg:text-6xl xl:text-[4.25rem] leading-[1.02] tracking-tight">
-              From Clutter
+              Organized Spaces.
             </span>
             <span className="block head-serif text-4xl sm:text-5xl lg:text-6xl xl:text-[4.25rem] leading-[1.02] text-accent">
-              to Order.
+              Better Living.
             </span>
           </motion.h1>
 
@@ -51,8 +52,8 @@ export default function HeroSection() {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="text-white/85 text-sm sm:text-base leading-relaxed max-w-md mb-7 sm:mb-8 drop-shadow-[0_1px_8px_rgba(0,0,0,0.3)]"
           >
-            Professional home &amp; office organizing in Nairobi — real results, friendly service,
-            and spaces that finally work for your life.
+            Professional organizing, storage, cleaning, relocation, training, staffing, and
+            event solutions for homes, workplaces, and institutions across Nairobi.
           </motion.p>
 
           <motion.div

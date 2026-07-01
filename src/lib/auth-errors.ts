@@ -1,5 +1,9 @@
 /** Map Supabase Auth errors to plain-language messages for customers. */
-export function humanizeAuthError(message: string): string {
+export function humanizeAuthError(message: string | undefined | null): string {
+  if (!message || typeof message !== 'string') {
+    return 'Something went wrong. Please try again.'
+  }
+
   const lower = message.toLowerCase()
 
   if (lower.includes('email not confirmed') || lower.includes('email_not_confirmed')) {
@@ -22,4 +26,21 @@ export function humanizeAuthError(message: string): string {
   }
 
   return message
+}
+
+/** Safely extract a user-facing error string from auth API results. */
+export function toAuthErrorMessage(
+  error: unknown,
+  fallback = 'Something went wrong. Please try again.',
+): string {
+  if (typeof error === 'string' && error.trim()) {
+    return humanizeAuthError(error)
+  }
+  if (error && typeof error === 'object' && 'message' in error) {
+    const msg = (error as { message?: unknown }).message
+    if (typeof msg === 'string' && msg.trim()) {
+      return humanizeAuthError(msg)
+    }
+  }
+  return fallback
 }

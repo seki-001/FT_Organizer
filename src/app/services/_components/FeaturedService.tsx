@@ -9,10 +9,10 @@ import { IMG } from '@/lib/image-placeholders'
 import { EASE_STANDARD } from '@/lib/animations'
 
 const INCLUDES = [
-  'Full home walkthrough',
-  'All rooms organized',
-  'Custom storage systems',
-  'Follow-up session',
+  'Home organization & decluttering',
+  'Office organization & digital files',
+  'Home staging & sustainable systems',
+  'Customized solutions for every space',
 ]
 
 export default function FeaturedService() {
@@ -50,13 +50,13 @@ export default function FeaturedService() {
 
             {/* Heading */}
             <h2 className="font-display text-3xl sm:text-4xl text-white font-bold leading-tight">
-              Whole House Organizing
+              Professional Organizing &amp; Decluttering
             </h2>
 
             {/* Description */}
             <p className="text-white/55 text-base leading-relaxed max-w-md">
-              Our flagship service — a complete top-to-bottom transformation of your entire home,
-              tailored to your lifestyle and the way you live.
+              Our flagship service — help clients regain control of their spaces, reduce stress,
+              and establish sustainable systems that simplify daily living.
             </p>
 
             {/* Includes pills */}
@@ -73,7 +73,7 @@ export default function FeaturedService() {
 
             {/* Price */}
             <p className="font-mono text-white/70 text-xl font-medium">
-              From {formatPrice(15000)}
+              From {formatPrice(5000)}
             </p>
 
             {/* Actions */}
@@ -85,7 +85,7 @@ export default function FeaturedService() {
                 Book This Service
               </Link>
               <Link
-                href="/services/whole-house-organizing"
+                href="/services/professional-organizing"
                 className="text-white/60 hover:text-white font-medium text-sm transition-colors"
               >
                 Learn More →
