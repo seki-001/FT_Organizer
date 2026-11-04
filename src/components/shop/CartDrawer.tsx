@@ -92,7 +92,7 @@ export default function CartDrawer() {
                   <Link
                     href="/shop"
                     onClick={closeCart}
-                    className="sfs-btn-primary text-sm px-6"
+                    className="btn-primary text-sm px-6"
                   >
                     Browse Products
                   </Link>
@@ -192,7 +192,7 @@ export default function CartDrawer() {
                   <Link
                     href="/checkout?mode=account"
                     onClick={closeCart}
-                    className="flex items-center justify-center w-full sfs-btn-primary py-3.5 text-sm shadow-sm shadow-primary/20"
+                    className="flex items-center justify-center w-full btn-primary py-3.5 text-sm shadow-sm shadow-primary/20"
                   >
                     Create Account &amp; Checkout
                   </Link>

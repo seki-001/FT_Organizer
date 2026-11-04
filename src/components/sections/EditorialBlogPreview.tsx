@@ -53,7 +53,7 @@ export default function EditorialBlogPreview() {
           className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-10"
         >
           <div>
-            <p className="section-label text-white/40 mb-3">Blog</p>
+            <p className="eyebrow-on-dark mb-3">Blog</p>
             <h2 className="text-white">
               <span className="head-sans text-4xl block">The Organized</span>
               <span className="head-serif italic text-4xl text-accent/90">Life</span>

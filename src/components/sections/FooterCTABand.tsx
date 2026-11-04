@@ -22,7 +22,7 @@ export default function FooterCTABand() {
           Book a site visit on any Monday (KSh 3,500 — credited when work begins) or request a free consultation to plan your project.
         </p>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-          <Link href={`/book?service=${SITE_VISIT_SLUG}`} className="sfs-btn-primary px-7 py-4">
+          <Link href={`/book?service=${SITE_VISIT_SLUG}`} className="btn-primary px-7 py-4">
             Book Site Visit <ArrowUpRight size={16} />
           </Link>
           <Link href="/book" className="glass-btn-ghost-light px-7 py-4">

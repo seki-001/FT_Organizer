@@ -16,7 +16,7 @@ export default function MediaFeaturesSection() {
           initial={{ opacity: 0, y: 12 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.4, ease: EASE_STANDARD }}
-          className="text-center section-label text-white/40 mb-8"
+          className="text-center eyebrow-on-dark mb-8"
         >
           As Seen In
         </motion.p>

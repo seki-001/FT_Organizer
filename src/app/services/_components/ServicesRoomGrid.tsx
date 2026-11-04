@@ -124,7 +124,7 @@ export default function ServicesRoomGrid() {
           initial={{ opacity: 0, y: 16 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.45, ease: EASE_STANDARD }}
-          className="section-label text-center mb-8"
+          className="eyebrow-on-dark text-center mb-8"
         >
           Choose Your Space
         </motion.p>

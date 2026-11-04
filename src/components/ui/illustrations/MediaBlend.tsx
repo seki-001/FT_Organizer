@@ -34,7 +34,7 @@ export default function MediaBlend({
       <div className="relative grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5 items-stretch">
         <div
           className={cn(
-            'relative aspect-[4/3] md:aspect-auto md:min-h-[320px] rounded-[2.25rem] overflow-hidden shadow-sfs-md border border-white/50 img-zoom',
+            'relative aspect-[4/3] md:aspect-auto md:min-h-[320px] rounded-[2.25rem] overflow-hidden shadow-card-md border border-white/50 img-zoom',
             !photoFirst && 'md:order-2',
           )}
         >

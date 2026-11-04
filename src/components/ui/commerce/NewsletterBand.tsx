@@ -35,7 +35,7 @@ export default function NewsletterBand() {
   return (
     <section className="py-14 md:py-16 glass-grid-bg">
       <div className="max-w-7xl mx-auto px-4 lg:px-8">
-        <div className="sfs-card p-8 md:p-12 flex flex-col lg:flex-row lg:items-center gap-8 lg:gap-16">
+        <div className="glass-card-interactive p-8 md:p-12 flex flex-col lg:flex-row lg:items-center gap-8 lg:gap-16">
           <div className="flex-1 max-w-lg">
             <OfferBadge variant="glass-light" className="mb-4">Member perks</OfferBadge>
             <h2 className="font-display text-2xl md:text-3xl text-dark leading-tight mb-3">
@@ -64,13 +64,13 @@ export default function NewsletterBand() {
                   placeholder="you@example.com"
                   required
                   disabled={status === 'loading'}
-                  className="sfs-input pl-11 w-full"
+                  className="input-pill pl-11 w-full"
                 />
               </div>
               <button
                 type="submit"
                 disabled={status === 'loading'}
-                className="sfs-btn-primary whitespace-nowrap min-h-[48px] px-6"
+                className="btn-primary whitespace-nowrap min-h-[48px] px-6"
               >
                 {status === 'loading' ? (
                   <><Loader2 size={16} className="animate-spin" /> Joining…</>

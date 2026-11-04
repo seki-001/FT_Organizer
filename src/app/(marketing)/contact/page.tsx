@@ -33,7 +33,7 @@ export default function ContactPage() {
     <main className="bg-dark min-h-screen">
       <div className="max-w-7xl mx-auto px-4 lg:px-8 py-20 lg:py-28">
         <div className="mb-14">
-          <p className="section-label mb-4">Contact</p>
+          <p className="eyebrow-on-dark mb-4">Contact</p>
           <h1 className="text-white">
             <span className="head-sans text-5xl lg:text-6xl block">Get in</span>
             <span className="head-serif italic text-5xl lg:text-6xl text-accent/90 block">Touch</span>

@@ -8,6 +8,7 @@ import { formatPrice } from '@/lib/utils'
 import { useScrollAnimation } from '@/hooks/useScrollAnimation'
 import { staggerContainer, staggerItem, EASE_STANDARD } from '@/lib/animations'
 import { SITE_IMAGES } from '@/lib/site-images'
+import { SERVICES } from '@/lib/constants'
 
 // ─── Reusable card wrapper ────────────────────────────────────────────────────
 
@@ -134,7 +135,7 @@ export default function EditorialServicesGrid() {
                 <p className="font-mono text-primary text-sm mt-2">{formatPrice(8000)}</p>
               </div>
               <p className="text-dark/40 text-sm flex items-center gap-1 group-hover:gap-2 transition-all">
-                Learn more <ArrowRight size={13} />
+                Learn more<span className="sr-only"> about Moving House</span> <ArrowRight size={13} aria-hidden="true" />
               </p>
             </div>
           </CardLink>
@@ -205,7 +206,7 @@ export default function EditorialServicesGrid() {
             className="inline-flex items-center gap-2 text-dark/50 hover:text-dark text-sm font-medium transition-colors group"
           >
             View all {' '}
-            <span className="text-primary font-semibold">12 services</span>
+            <span className="text-primary font-semibold">{SERVICES.filter((s) => !s.siteVisit).length} services</span>
             <ArrowRight size={14} className="text-primary group-hover:translate-x-1 transition-transform" />
           </Link>
         </motion.div>

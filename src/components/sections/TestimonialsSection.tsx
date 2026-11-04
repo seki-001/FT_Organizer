@@ -2,6 +2,7 @@ import Image from 'next/image'
 import type { Testimonial } from '@/lib/types'
 import { IMG } from '@/lib/image-placeholders'
 import { clientAvatar } from '@/lib/avatars'
+import { clientsServedLabel } from '@/lib/site-facts'
 
 const galleryImages = [
   {
@@ -43,7 +44,7 @@ export default function TestimonialsSection() {
   return (
     <section className="flex flex-col lg:flex-row min-h-[60vh] section-blend">
       <div className="lg:w-2/5 bg-gradient-to-b from-dark via-dark to-dark/95 p-8 lg:p-12 flex flex-col gap-4">
-        <p className="section-label text-white/40">Gallery</p>
+        <p className="eyebrow-on-dark">Gallery</p>
         <div className="flex flex-col gap-3 flex-1">
           {galleryImages.slice(0, 2).map((img, i) => (
             <div key={i} className="relative flex-1 min-h-[160px] img-frame-lg img-zoom ring-1 ring-white/20">
@@ -58,14 +59,14 @@ export default function TestimonialsSection() {
         </div>
       </div>
 
-      <div className="lg:w-3/5 glass-grid-bg p-8 lg:p-16 flex flex-col justify-center bg-gradient-to-br from-[#F7F7F8] via-[#F9F9FA] to-[#F3F3F5]">
+      <div className="lg:w-3/5 glass-grid-bg p-8 lg:p-16 flex flex-col justify-center bg-gradient-to-br from-page via-surface to-muted">
         <div className="mb-2">
-          <p className="head-sans text-5xl text-dark leading-none">2.5k</p>
+          <p className="head-sans text-5xl text-dark leading-none">{clientsServedLabel()}</p>
           <p className="head-serif italic text-5xl text-dark/70 leading-none">Reviews</p>
         </div>
         <p className="text-dark/40 text-xs mb-10">Real feedback from Nairobi clients who organized better.</p>
 
-        <p className="section-label text-dark/40 mb-4">Testimonials</p>
+        <p className="eyebrow mb-4">Testimonials</p>
         <h2 className="text-dark text-4xl mb-10">
           <span className="head-sans block">Loved by Nairobi</span>
           <span className="head-serif italic block text-primary">Homeowners</span>

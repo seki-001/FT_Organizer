@@ -211,7 +211,7 @@ function ServicesMegaMenu({
       transition={{ duration: 0.2, ease: 'easeOut' }}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
-      className="absolute top-full left-0 right-0 z-50 glass-panel-dropdown shadow-sfs-lg rounded-b-3xl mt-2 mx-2"
+      className="absolute top-full left-0 right-0 z-50 glass-panel-dropdown shadow-card-lg rounded-b-3xl mt-2 mx-2"
     >
       <div className="max-w-7xl mx-auto px-8 py-8">
         <div className="flex gap-10">
@@ -303,7 +303,7 @@ function ShopMegaMenu({
       transition={{ duration: 0.2, ease: 'easeOut' }}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
-      className="absolute top-full left-0 right-0 z-50 glass-panel-dropdown shadow-sfs-lg rounded-b-3xl mt-2 mx-2"
+      className="absolute top-full left-0 right-0 z-50 glass-panel-dropdown shadow-card-lg rounded-b-3xl mt-2 mx-2"
     >
       <div className="max-w-7xl mx-auto px-6 lg:px-8 py-6">
         <div className="flex gap-8 lg:gap-12">
@@ -754,7 +754,7 @@ export default function Header() {
 
               {/* Book Now — desktop */}
               <Link href="/book"
-                className="hidden md:inline-flex items-center gap-1.5 sfs-btn-primary text-sm py-2.5 ml-2 min-h-[40px]">
+                className="hidden md:inline-flex items-center gap-1.5 btn-primary text-sm py-2.5 ml-2 min-h-[40px]">
                 Book Now
                 <ArrowUpRight size={13} />
               </Link>

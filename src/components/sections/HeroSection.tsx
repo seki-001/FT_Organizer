@@ -7,6 +7,7 @@ import { ArrowUpRight } from 'lucide-react'
 import { IMG } from '@/lib/image-placeholders'
 import { OfferBadge } from '@/components/ui/commerce'
 import { COMPANY } from '@/lib/constants'
+import { homesOrganizedLabel } from '@/lib/site-facts'
 
 const HERO_AVATARS = IMG.avatars
 
@@ -62,7 +63,7 @@ export default function HeroSection() {
             transition={{ duration: 0.5, delay: 0.25 }}
             className="flex flex-wrap gap-3 mb-8"
           >
-            <Link href="/book" className="sfs-btn-primary text-sm sm:text-base px-6 py-3.5">
+            <Link href="/book" className="btn-primary text-sm sm:text-base px-6 py-3.5">
               Book Your Transformation <ArrowUpRight size={16} />
             </Link>
             <Link href="/shop" className="glass-btn-ghost-light text-sm sm:text-base px-6 py-3.5">
@@ -84,7 +85,7 @@ export default function HeroSection() {
               ))}
             </div>
             <div>
-              <p className="text-white text-sm font-semibold leading-tight">500+</p>
+              <p className="text-white text-sm font-semibold leading-tight">{homesOrganizedLabel()}</p>
               <p className="text-white/55 text-xs">
                 Homes <span className="font-display italic">Transformed</span>
               </p>

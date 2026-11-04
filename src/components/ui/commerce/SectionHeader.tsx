@@ -33,7 +33,7 @@ export default function SectionHeader({
       )}
     >
       <div className={cn('flex flex-col gap-2', centered && 'items-center')}>
-        <p className="sfs-label">{label}</p>
+        <p className="eyebrow">{label}</p>
         <h2 className="font-display text-3xl md:text-4xl text-dark leading-tight">
           <span className="block">{title}</span>
           {titleAccent && (

@@ -5,6 +5,7 @@ import {
   CartesianGrid, Tooltip, Cell, LabelList,
 } from 'recharts'
 import type { ServiceBookings } from '@/lib/analytics-types'
+import { BRAND } from '@/lib/brand-colors'
 
 function truncate(str: string, max: number) {
   return str.length > max ? str.slice(0, max) + '…' : str
@@ -52,12 +53,12 @@ export default function BookingsByServiceChart({ data }: { data: ServiceBookings
         <Tooltip content={<CustomTooltip />} cursor={{ fill: '#F4F4F4' }} />
         <Bar dataKey="bookings" name="bookings" radius={[0, 4, 4, 0]} maxBarSize={24}>
           {data.map((_, i) => (
-            <Cell key={i} fill="#CC1212" fillOpacity={1 - i * 0.08} />
+            <Cell key={i} fill={BRAND.primaryDark} fillOpacity={1 - i * 0.08} />
           ))}
           <LabelList
             dataKey="bookings"
             position="right"
-            style={{ fontSize: 11, fontWeight: 600, fill: '#1A1A1A', fontFamily: 'DM Mono, monospace' }}
+            style={{ fontSize: 11, fontWeight: 600, fill: BRAND.ink, fontFamily: 'DM Mono, monospace' }}
           />
         </Bar>
       </BarChart>

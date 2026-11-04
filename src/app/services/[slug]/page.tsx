@@ -16,6 +16,7 @@ import ServiceCard from '@/components/ui/ServiceCard'
 import FooterCTABand from '@/components/sections/FooterCTABand'
 import { IMG } from '@/lib/image-placeholders'
 import type { Testimonial } from '@/lib/types'
+import { clientsServedLabel } from '@/lib/site-facts'
 
 // ─── Icon map ────────────────────────────────────────────────────────────────
 
@@ -169,7 +170,7 @@ export default async function ServicePage({
 
             <div className="flex flex-col md:flex-row md:items-end gap-8 md:gap-12">
               <div className="flex flex-col gap-4 flex-1">
-                <p className="section-label text-white/40">Organizing Service</p>
+                <p className="eyebrow-on-dark">Organizing Service</p>
                 <h1 className="text-white leading-tight">
                   <span className="head-sans text-4xl md:text-5xl block">{service.title.split(' ').slice(0, -1).join(' ') || service.title}</span>
                   <span className="head-serif italic text-4xl md:text-5xl text-accent/90 block">
@@ -276,11 +277,11 @@ export default async function ServicePage({
           <div className="max-w-7xl mx-auto px-4 lg:px-8">
             <div className="flex items-start gap-8 mb-12">
               <div>
-                <p className="head-sans text-6xl text-white leading-none">2.5k+</p>
+                <p className="head-sans text-6xl text-white leading-none">{clientsServedLabel()}</p>
                 <p className="text-white/30 text-xs mt-2 max-w-[140px]">Happy clients, unforgettable spaces.</p>
               </div>
               <div className="ml-auto text-right">
-                <p className="section-label text-white/40 mb-2">Gallery</p>
+                <p className="eyebrow-on-dark mb-2">Gallery</p>
                 <h2 className="text-white text-3xl">
                   <span className="head-sans block">Before & After</span>
                   <span className="head-serif italic text-accent/90">Moments</span>

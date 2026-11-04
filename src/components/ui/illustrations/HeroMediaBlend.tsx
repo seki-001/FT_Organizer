@@ -38,7 +38,7 @@ export default function HeroMediaBlend({
 
       {/* Floating illustration — desktop */}
       <div className="hidden lg:block absolute right-8 xl:right-16 top-1/2 -translate-y-1/2 w-[min(42vw,480px)] z-10">
-        <div className="relative bg-white/95 backdrop-blur-sm rounded-[2rem] p-5 shadow-sfs-lg border border-white/80 cartoon-float">
+        <div className="relative bg-white/95 backdrop-blur-sm rounded-[2rem] p-5 shadow-card-lg border border-white/80 cartoon-float">
           <Image
             src={illustration}
             alt={illustrationAlt}

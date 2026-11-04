@@ -1,5 +1,6 @@
 import Image from 'next/image'
 import { IMG } from '@/lib/image-placeholders'
+import { clientsServedLabel } from '@/lib/site-facts'
 
 export default function TransformationShowcase() {
   return (
@@ -7,11 +8,11 @@ export default function TransformationShowcase() {
       <div className="max-w-7xl mx-auto px-4 lg:px-8">
         <div className="flex items-start gap-8 mb-12">
           <div>
-            <p className="head-sans text-6xl text-dark leading-none">2.5k+</p>
+            <p className="head-sans text-6xl text-dark leading-none">{clientsServedLabel()}</p>
             <p className="text-dark/45 text-xs mt-2 max-w-[140px]">Happy clients, unforgettable spaces.</p>
           </div>
           <div className="ml-auto text-right">
-            <p className="section-label text-dark/40 mb-2">Gallery</p>
+            <p className="eyebrow mb-2">Gallery</p>
             <h2 className="text-dark text-3xl">
               <span className="head-sans block">Before & After</span>
               <span className="head-serif italic text-primary">Moments</span>

@@ -48,7 +48,7 @@ export default function ShopProductCard({
   return (
     <motion.article
       className={cn(
-        'sfs-card group flex flex-col h-full',
+        'glass-card-interactive group flex flex-col h-full',
         variant === 'carousel' && 'min-w-[220px] sm:min-w-[260px] snap-start',
         className,
       )}
@@ -82,7 +82,7 @@ export default function ShopProductCard({
               onClick={handleAdd}
               aria-label={`Add ${product.name} to cart`}
               className={cn(
-                'absolute bottom-3 right-3 w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 shadow-sfs-md',
+                'absolute bottom-3 right-3 w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 shadow-card-md',
                 added
                   ? 'bg-success text-white opacity-100'
                   : 'bg-white text-dark opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 hover:bg-primary hover:text-white',
@@ -94,7 +94,7 @@ export default function ShopProductCard({
         </div>
 
         <div className="p-4 pt-3 flex flex-col flex-1 gap-1.5">
-          <p className="sfs-label text-dark/40">{categoryLabel(product.category)}</p>
+          <p className="eyebrow text-dark/40">{categoryLabel(product.category)}</p>
           <h3 className="font-medium text-sm text-dark line-clamp-2 group-hover:text-primary transition-colors leading-snug">
             {product.name}
           </h3>

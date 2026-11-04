@@ -11,6 +11,7 @@ import { COMPANY } from '@/lib/constants'
 import { cn } from '@/lib/utils'
 import type { BlogPost, BlogCategory } from '@/lib/types'
 import BlogPostSidebar from '../_components/BlogPostSidebar'
+import { FOUNDED_YEAR } from '@/lib/site-facts'
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -278,7 +279,7 @@ export default function BlogPostPage() {
                 <p className="font-display text-lg text-dark">{post.author}</p>
                 <p className="text-dark/55 text-sm leading-relaxed mt-2">
                   Faith is Nairobi&apos;s leading professional organizer, helping hundreds of homes and
-                  offices go From Clutter to Order since 2018. She shares practical tips and real
+                  offices go From Clutter to Order since {FOUNDED_YEAR}. She shares practical tips and real
                   transformations on this blog every week.
                 </p>
                 <Link href="/blog" className="text-dark/50 hover:text-dark text-sm font-medium mt-2 inline-block">

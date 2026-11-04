@@ -13,6 +13,7 @@ import { adminFetch } from '@/lib/admin-client'
 import { emptyAnalyticsPeriod } from '@/lib/analytics-types'
 import type { DateRange, AnalyticsPeriod } from '@/lib/analytics-types'
 import { cn, formatPrice } from '@/lib/utils'
+import { BRAND } from '@/lib/brand-colors'
 
 // Lazy-load chart components (recharts needs client-side only)
 const RevenueChart         = dynamic(() => import('@/components/admin/charts/RevenueChart'),         { ssr: false })
@@ -210,7 +211,7 @@ export default function AnalyticsPage() {
         <ChartCard title="New vs Returning Customers">
           <div className="flex flex-col gap-5">
             <div className="flex items-center gap-5">
-              <MiniDonut pct={returningPct} primary="#CC1212" accent="#E8A020" />
+              <MiniDonut pct={returningPct} primary={BRAND.primaryDark} accent={BRAND.accent} />
               <div className="flex flex-col gap-2">
                 <div>
                   <p className="font-display text-3xl font-bold text-dark">{returningPct}%</p>

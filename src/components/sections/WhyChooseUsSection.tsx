@@ -19,7 +19,7 @@ export default function WhyChooseUsSection() {
           transition={{ duration: 0.5, ease: EASE_STANDARD }}
           className="max-w-3xl mx-auto text-center mb-12"
         >
-          <p className="sfs-label mb-4">Why Choose Us</p>
+          <p className="eyebrow mb-4">Why Choose Us</p>
           <h2 className="text-dark text-3xl md:text-4xl font-sans font-medium mb-4">
             {WHY_CHOOSE_US.title}
           </h2>

@@ -214,7 +214,7 @@ function CategoryCard({
     <button
       type="button"
       onClick={onClick}
-      className={cn('sfs-chip flex-shrink-0', active && 'active')}
+      className={cn('chip flex-shrink-0', active && 'active')}
       aria-pressed={active}
     >
       {label}
@@ -317,16 +317,16 @@ function ShopCatalogueInner() {
                 Curated storage, kitchen, closet and office essentials — real products, friendly shopping.
               </p>
               <div className="flex flex-wrap gap-3 pt-1">
-                <Link href="/register?callbackUrl=/shop" className="sfs-btn-primary">
+                <Link href="/register?callbackUrl=/shop" className="btn-primary">
                   Create free account
                 </Link>
-                <Link href="/shop?category=all" className="sfs-btn-outline">
+                <Link href="/shop?category=all" className="btn-outline">
                   Browse all products
                 </Link>
               </div>
               <div className="flex flex-wrap gap-2 pt-2">
-                <span className="sfs-chip">🚚 Free CBD delivery</span>
-                <span className="sfs-chip">✓ Same-day before 2 pm</span>
+                <span className="chip">🚚 Free CBD delivery</span>
+                <span className="chip">✓ Same-day before 2 pm</span>
               </div>
             </div>
 
