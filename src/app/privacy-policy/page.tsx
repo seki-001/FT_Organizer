@@ -117,7 +117,7 @@ export default function PrivacyPolicyPage() {
       </p>
       <ul>
         <li>
-          <strong>Payment processors</strong> (M-Pesa via Daraja/IntaSend, Flutterwave) — to
+          <strong>Payment processors</strong> (M-Pesa via Safaricom Daraja, Paystack) — to
           process transactions securely. They receive only the data required to complete your
           payment.
         </li>

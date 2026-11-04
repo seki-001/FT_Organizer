@@ -7,7 +7,6 @@ import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { Clock, CheckCheck, Link2, MessageCircle, Facebook, ArrowLeft } from 'lucide-react'
 import { useState, useCallback } from 'react'
-import { MOCK_POSTS } from '@/lib/mock-posts'
 import { COMPANY } from '@/lib/constants'
 import { cn } from '@/lib/utils'
 import type { BlogPost, BlogCategory } from '@/lib/types'
@@ -138,7 +137,7 @@ export default function BlogPostPage() {
   const slug   = typeof params.slug === 'string' ? params.slug : Array.isArray(params.slug) ? params.slug[0] : ''
 
   const [post, setPost] = useState<BlogPost | null>(null)
-  const [allPosts, setAllPosts] = useState<BlogPost[]>(MOCK_POSTS)
+  const [allPosts, setAllPosts] = useState<BlogPost[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => { window.scrollTo(0, 0) }, [slug])

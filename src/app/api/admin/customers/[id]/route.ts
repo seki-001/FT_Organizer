@@ -1,17 +1,28 @@
 import { NextResponse } from 'next/server'
-import { getAdminSession } from '@/lib/auth'
-import { MOCK_CUSTOMERS } from '@/lib/mock-admin-customers'
+import { z } from 'zod'
+import { adminRoute } from '@/lib/admin-api'
+import { adjustCustomerBalance, deleteCustomer } from '@/lib/db/backoffice'
+import { logAdminActivity } from '@/lib/activity-log'
 
-type Params = { params: { id: string } }
+const schema = z.object({ delta: z.number().refine((n) => n !== 0, 'Amount cannot be zero') })
 
-export async function GET(_req: Request, { params }: Params) {
-  const session = await getAdminSession()
-  if (!session || session.user.role !== 'admin') {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  }
-
-  const customer = MOCK_CUSTOMERS.find(c => c.id === params.id)
+/** PATCH { delta } — positive = customer owes more, negative = payment received. */
+export const PATCH = (request: Request, { params }: { params: { id: string } }) => adminRoute(async (session) => {
+  const { delta } = schema.parse(await request.json())
+  const customer = await adjustCustomerBalance(params.id, delta)
   if (!customer) return NextResponse.json({ error: 'Not found' }, { status: 404 })
-
+  await logAdminActivity(session, request, {
+    action: delta < 0 ? 'customer.payment' : 'customer.debt',
+    description: `${delta < 0 ? 'Payment received from' : 'Debt added for'} ${customer.name}`,
+    resourceType: 'customer', resourceId: customer.id, metadata: { delta },
+  })
   return NextResponse.json({ customer })
-}
+})
+
+export const DELETE = (request: Request, { params }: { params: { id: string } }) => adminRoute(async (session) => {
+  await deleteCustomer(params.id)
+  await logAdminActivity(session, request, {
+    action: 'customer.deleted', description: 'Deleted a customer', resourceType: 'customer', resourceId: params.id,
+  })
+  return NextResponse.json({ success: true })
+})

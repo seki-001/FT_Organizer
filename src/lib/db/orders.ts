@@ -1,3 +1,4 @@
+import { randomBytes } from 'crypto'
 import type { Order } from '@/lib/types'
 import type { CreateOrderInput } from '@/lib/validations'
 import { MOCK_ADMIN_ORDERS } from '@/lib/mock-admin-orders'
@@ -8,15 +9,20 @@ import { isSupabaseAdminConfigured, isSupabaseConfigured } from '@/lib/supabase/
 import { orderRowToOrder } from '@/lib/db/mappers'
 import { listProducts } from '@/lib/db/products'
 import { logger } from '@/lib/logger'
+import { priceOrder, PricingError } from '@/lib/pricing'
+import { allowMockData } from '@/lib/mock-guard'
 import type { Json } from '@/types/database'
 
 function generateOrderReference(): string {
-  return 'ORD-' + Math.random().toString(36).toUpperCase().slice(2, 8)
+  // Unguessable: the reference is the only secret protecting the public order-status lookup.
+  const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
+  const bytes = randomBytes(10)
+  return 'ORD-' + Array.from(bytes, (b) => alphabet[b % alphabet.length]).join('')
 }
 
 export async function listOrders(): Promise<Order[]> {
   if (!isSupabaseAdminConfigured()) {
-    return [...MOCK_ADMIN_ORDERS]
+    return allowMockData() ? [...MOCK_ADMIN_ORDERS] : []
   }
 
   const admin = createAdminClient()
@@ -27,7 +33,7 @@ export async function listOrders(): Promise<Order[]> {
 
   if (error) {
     logger.error({ event: 'orders_list_failed', error_code: error.code })
-    return [...MOCK_ADMIN_ORDERS]
+    throw error
   }
 
   const products = await listProducts({})
@@ -63,7 +69,7 @@ export async function updateOrderPaymentStatus(reference: string, paymentStatus:
 
 export async function listOrdersForUser(userId: string): Promise<Order[]> {
   if (!isSupabaseConfigured()) {
-    return MOCK_ORDERS
+    return allowMockData() ? MOCK_ORDERS : []
   }
 
   const supabase = await createClient()
@@ -75,7 +81,7 @@ export async function listOrdersForUser(userId: string): Promise<Order[]> {
 
   if (error || !orders?.length) {
     if (error) logger.error({ event: 'user_orders_list_failed', error_code: error.code, user_id: userId })
-    return isSupabaseAdminConfigured() ? [] : MOCK_ORDERS
+    return isSupabaseAdminConfigured() || !allowMockData() ? [] : MOCK_ORDERS
   }
 
   const products = await listProducts({})
@@ -98,17 +104,10 @@ export async function createOrder(
     throw new Error('DATABASE_NOT_CONFIGURED')
   }
 
-  const computedSubtotal = input.items.reduce(
-    (sum, item) => sum + item.unitPrice * item.quantity,
-    0,
-  )
-  if (Math.abs(computedSubtotal - input.subtotal) > 1) {
-    throw new Error('SUBTOTAL_MISMATCH')
-  }
-
-  const computedTotal = computedSubtotal - input.discount + input.deliveryFee
-  if (Math.abs(computedTotal - input.total) > 1) {
-    throw new Error('TOTAL_MISMATCH')
+  // Never trust client-sent money fields: reprice from the database.
+  const priced = await priceOrder(input)
+  if (Math.abs(priced.total - input.total) > 1) {
+    throw new PricingError('PRICE_CHANGED', 'Prices changed since you added items. Please review your cart and try again.')
   }
 
   const reference = generateOrderReference()
@@ -119,9 +118,9 @@ export async function createOrder(
     .insert({
       reference,
       user_id: userId ?? null,
-      subtotal: input.subtotal,
-      delivery_fee: input.deliveryFee,
-      total: input.total,
+      subtotal: priced.subtotal,
+      delivery_fee: priced.deliveryFee,
+      total: priced.total,
       delivery_method: input.deliveryMethod,
       payment_method: input.paymentMethod,
       payment_status: 'pending',
@@ -141,7 +140,7 @@ export async function createOrder(
     throw new Error('ORDER_CREATE_FAILED')
   }
 
-  const orderItems = input.items.map((item) => ({
+  const orderItems = priced.items.map((item) => ({
     order_id: order.id,
     product_id: item.productId ?? null,
     product_slug: item.productSlug,
@@ -155,6 +154,21 @@ export async function createOrder(
   if (itemsError) {
     logger.error({ event: 'order_items_create_failed', error_code: itemsError.code, resource_id: reference })
     throw new Error('ORDER_ITEMS_CREATE_FAILED')
+  }
+
+  // Reserve stock for the order (best effort; admin can restock if the order is cancelled).
+  for (const item of priced.items) {
+    if (!item.productId) continue
+    const { data: p } = await admin.from('products').select('stock_count').eq('id', item.productId).maybeSingle()
+    if (p) {
+      const next = Math.max(0, p.stock_count - item.quantity)
+      await admin.from('products').update({ stock_count: next, in_stock: next > 0 }).eq('id', item.productId)
+    }
+  }
+
+  if (priced.couponId) {
+    const { data: c } = await admin.from('coupons').select('uses').eq('id', priced.couponId).maybeSingle()
+    if (c) await admin.from('coupons').update({ uses: c.uses + 1 }).eq('id', priced.couponId)
   }
 
   logger.info({

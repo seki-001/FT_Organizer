@@ -6,17 +6,26 @@ import Link          from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 import AdminPageHeader from '@/components/admin/AdminPageHeader'
 import ProductForm     from '@/components/admin/ProductForm'
-import { MOCK_PRODUCTS } from '@/lib/mock-products'
+import { useEffect, useState } from 'react'
+import type { Product } from '@/lib/types'
 import type { ProductFormInitialData } from '@/components/admin/ProductForm'
 
 export default function EditProductPage() {
   const params  = useParams<{ slug: string }>()
-  const product = MOCK_PRODUCTS.find(p => p.slug === params.slug)
+  const [product, setProduct] = useState<Product | null>(null)
+  const [state, setState] = useState<'loading' | 'ready' | 'missing'>('loading')
 
-  if (!product) {
-    notFound()
-    return null
-  }
+  useEffect(() => {
+    fetch(`/api/products/${encodeURIComponent(params.slug)}`)
+      .then(r => (r.ok ? r.json() : null))
+      .then((d: { product?: Product } | null) => {
+        if (d?.product) { setProduct(d.product); setState('ready') } else setState('missing')
+      })
+      .catch(() => setState('missing'))
+  }, [params.slug])
+
+  if (state === 'missing') { notFound(); return null }
+  if (!product) return <p className="p-6 text-sm text-dark/40">Loading product…</p>
 
   const initialData: ProductFormInitialData = {
     name:        product.name,

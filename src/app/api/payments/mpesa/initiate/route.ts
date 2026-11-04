@@ -6,6 +6,8 @@ import { logger } from '@/lib/logger'
 import { insertPaymentEvent } from '@/lib/db/payments'
 import { initiateStkPush } from '@/lib/payments/mpesa'
 import { isMpesaConfigured } from '@/lib/payments/config'
+import { resolvePayable, PayableError } from '@/lib/payments/payable'
+import { allowMockData } from '@/lib/mock-guard'
 
 const InitiateSchema = z.object({
   phone:    z.string().min(9, 'Phone number too short'),
@@ -36,7 +38,8 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const { phone, amount, orderRef } = parsed.data
+    const { phone, amount: clientAmount, orderRef } = parsed.data
+    const { amount } = await resolvePayable(orderRef, clientAmount)
     const normalisedPhone = normalisePhone(phone)
 
     if (!normalisedPhone) {
@@ -59,6 +62,9 @@ export async function POST(request: NextRequest) {
       checkoutRequestId = result.checkoutRequestId
       merchantRequestId = result.merchantRequestId
     } else {
+      if (!allowMockData()) {
+        return apiError('M-Pesa payments are temporarily unavailable.', 'PAYMENTS_UNAVAILABLE', 503)
+      }
       checkoutRequestId = `mock_${Date.now()}`
     }
 
@@ -92,6 +98,7 @@ export async function POST(request: NextRequest) {
       rate.resetAt,
     )
   } catch (err) {
+    if (err instanceof PayableError) return apiError(err.message, err.code, err.status)
     logger.error({ event: 'mpesa_initiate_failed', error_code: 'INTERNAL_ERROR' })
     const message = err instanceof Error ? err.message : 'Failed to initiate M-Pesa payment.'
     return apiError(message, 'INTERNAL_ERROR', 500)

@@ -9,7 +9,6 @@ import {
   CheckCircle2, XCircle, Truck, Package, Clock,
   Heart, Star, X, Minus, Plus, ChevronRight, ShoppingCart, Shield,
 } from 'lucide-react'
-import { MOCK_PRODUCTS } from '@/lib/mock-products'
 import type { Product } from '@/lib/types'
 import { SHOP_CATEGORIES } from '@/lib/constants'
 import { formatPrice, discountPercent, cn } from '@/lib/utils'
@@ -162,7 +161,7 @@ export default function ProductPage() {
   const { addItem, openCart } = useCart()
 
   const [product, setProduct] = useState<Product | null>(null)
-  const [allProducts, setAllProducts] = useState<Product[]>(MOCK_PRODUCTS)
+  const [allProducts, setAllProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
   const [activeImage,     setActiveImage]     = useState(0)
   const [selectedVariant, setSelectedVariant] = useState<ProductVariant | undefined>(undefined)

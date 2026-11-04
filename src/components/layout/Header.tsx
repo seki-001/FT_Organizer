@@ -10,7 +10,7 @@ import {
 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { NAV_LINKS, SERVICES, SHOP_CATEGORIES, COMPANY } from '@/lib/constants'
-import { MOCK_PRODUCTS } from '@/lib/mock-products'
+import type { Product } from '@/lib/types'
 import { useCart } from '@/context/CartContext'
 import BrandLogo from '@/components/brand/BrandLogo'
 import ShopMemberCta from '@/components/shop/ShopMemberCta'
@@ -40,7 +40,7 @@ const ROOMS = [
 
 function SearchOverlay({ onClose }: { onClose: () => void }) {
   const [query,   setQuery]   = useState('')
-  const [results, setResults] = useState<{ services: typeof SERVICES; products: typeof MOCK_PRODUCTS } | null>(null)
+  const [results, setResults] = useState<{ services: typeof SERVICES; products: Product[] } | null>(null)
   const inputRef = useRef<HTMLInputElement>(null)
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
@@ -57,12 +57,16 @@ function SearchOverlay({ onClose }: { onClose: () => void }) {
     setQuery(val)
     if (timerRef.current) clearTimeout(timerRef.current)
     if (!val.trim()) { setResults(null); return }
-    timerRef.current = setTimeout(() => {
+    timerRef.current = setTimeout(async () => {
       const q = val.toLowerCase()
-      setResults({
-        services: SERVICES.filter(s => s.title.toLowerCase().includes(q)),
-        products: MOCK_PRODUCTS.filter(p => p.name.toLowerCase().includes(q)).slice(0, 6),
-      })
+      const services = SERVICES.filter(s => s.title.toLowerCase().includes(q))
+      try {
+        const res = await fetch(`/api/products?search=${encodeURIComponent(q)}&limit=6`)
+        const data = (await res.json()) as { products?: Product[] }
+        setResults({ services, products: data.products ?? [] })
+      } catch {
+        setResults({ services, products: [] })
+      }
     }, 300)
   }
 
@@ -281,7 +285,13 @@ function ShopMegaMenu({
   onMouseEnter,
   onMouseLeave,
 }: { onClose: () => void; onMouseEnter: () => void; onMouseLeave: () => void }) {
-  const featured = MOCK_PRODUCTS.filter((p) => p.featured).slice(0, 3)
+  const [featured, setFeatured] = useState<Product[]>([])
+  useEffect(() => {
+    fetch('/api/products?featured=1&limit=3')
+      .then((r) => r.json())
+      .then((d: { products?: Product[] }) => setFeatured(d.products ?? []))
+      .catch(() => {})
+  }, [])
   const popular = SHOP_POPULAR_SLUGS.map((slug) => SHOP_CATEGORIES.find((c) => c.slug === slug)).filter(Boolean)
   const rest = SHOP_CATEGORIES.filter((c) => !SHOP_POPULAR_SLUGS.includes(c.slug as typeof SHOP_POPULAR_SLUGS[number]))
 

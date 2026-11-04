@@ -5,7 +5,6 @@ import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { AnimatePresence, motion } from 'framer-motion'
 import { SlidersHorizontal, X, ChevronDown } from 'lucide-react'
-import { MOCK_PRODUCTS } from '@/lib/mock-products'
 import type { Product } from '@/lib/types'
 import { SHOP_CATEGORIES } from '@/lib/constants'
 import type { ProductCategory } from '@/lib/types'
@@ -244,7 +243,7 @@ function ShopCatalogueInner() {
   const [priceMax, setPriceMax] = useState(MAX_PRICE)
   const [inStockOnly, setInStockOnly] = useState(false)
   const [drawerOpen, setDrawerOpen] = useState(false)
-  const [products, setProducts] = useState<Product[]>(MOCK_PRODUCTS)
+  const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -253,6 +252,7 @@ function ShopCatalogueInner() {
       .then((d: { products?: Product[] }) => {
         if (d.products?.length) setProducts(d.products)
       })
+      .catch(() => {})
       .finally(() => setLoading(false))
   }, [])
 

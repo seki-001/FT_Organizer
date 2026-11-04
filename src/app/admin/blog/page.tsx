@@ -1,14 +1,15 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import Image from 'next/image'
 import Link  from 'next/link'
 import {
   PlusCircle, Search, ChevronDown, Pencil, Trash2, Eye, Clock, BarChart2,
 } from 'lucide-react'
 import AdminPageHeader from '@/components/admin/AdminPageHeader'
-import { MOCK_ADMIN_POSTS, BLOG_CATEGORIES } from '@/lib/mock-admin-blog'
-import type { AdminPost } from '@/lib/mock-admin-blog'
+import { BLOG_CATEGORIES } from '@/lib/admin-types'
+import { adminFetch } from '@/lib/admin-client'
+import type { AdminPost } from '@/lib/admin-types'
 import { cn } from '@/lib/utils'
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -52,7 +53,16 @@ function DeleteDialog({ post, onConfirm, onCancel }: { post: AdminPost; onConfir
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function AdminBlogPage() {
-  const [posts,       setPosts]       = useState<AdminPost[]>(MOCK_ADMIN_POSTS)
+  const [posts,       setPosts]       = useState<AdminPost[]>([])
+  const [loading, setLoading] = useState(true)
+  const [loadError, setLoadError] = useState('')
+
+  useEffect(() => {
+    adminFetch<{ posts: AdminPost[] }>('/api/admin/blog')
+      .then(d => setPosts(d.posts))
+      .catch(e => setLoadError(e instanceof Error ? e.message : 'Could not load posts'))
+      .finally(() => setLoading(false))
+  }, [])
   const [search,      setSearch]      = useState('')
   const [statusFilter,setStatusFilter]= useState('all')
   const [catFilter,   setCatFilter]   = useState('all')
@@ -80,6 +90,7 @@ export default function AdminBlogPage() {
 
   return (
     <>
+      {loadError && <div role="alert" className="admin-card p-4 text-sm text-danger">{loadError}</div>}
       <div className="flex flex-col gap-6">
 
         <AdminPageHeader

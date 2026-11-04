@@ -107,9 +107,8 @@ export default function AdminOrdersPage() {
         const data = await res.json() as { orders: Order[] }
         setOrders(data.orders ?? [])
       } catch {
-        setLoadError('Could not load orders. Showing sample data.')
-        const { MOCK_ADMIN_ORDERS } = await import('@/lib/mock-admin-orders')
-        setOrders(MOCK_ADMIN_ORDERS)
+        setLoadError('Could not load orders. Please refresh the page.')
+        setOrders([])
       } finally {
         setLoading(false)
       }

@@ -1,10 +1,20 @@
 import { NextResponse } from 'next/server'
 import { getAdminSession } from '@/lib/auth'
-import { upsertPost, deletePostBySlug } from '@/lib/db/blog'
+import { upsertPost, deletePostBySlug, getAdminPostBySlug } from '@/lib/db/blog'
 import { logAdminActivity } from '@/lib/activity-log'
 import type { BlogPost } from '@/lib/types'
 
 type Params = { params: { slug: string } }
+
+export async function GET(_request: Request, { params }: Params) {
+  const session = await getAdminSession()
+  if (!session || session.user.role !== 'admin') {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+  const post = await getAdminPostBySlug(params.slug)
+  if (!post) return NextResponse.json({ error: 'Not found' }, { status: 404 })
+  return NextResponse.json({ post })
+}
 
 export async function PATCH(request: Request, { params }: Params) {
   const session = await getAdminSession()

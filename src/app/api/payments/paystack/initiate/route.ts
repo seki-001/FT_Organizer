@@ -6,6 +6,8 @@ import { logger } from '@/lib/logger'
 import { insertPaymentEvent } from '@/lib/db/payments'
 import { initializePaystackTransaction } from '@/lib/payments/paystack'
 import { isPaystackConfigured } from '@/lib/payments/config'
+import { resolvePayable, PayableError } from '@/lib/payments/payable'
+import { allowMockData } from '@/lib/mock-guard'
 
 const InitiateSchema = z.object({
   amount:   z.number().positive(),
@@ -25,9 +27,14 @@ export async function POST(request: NextRequest) {
       return apiError('Invalid payment request.', 'VALIDATION_ERROR', 400)
     }
 
-    const { amount, orderRef, email } = parsed.data
+    const { amount: clientAmount, orderRef, email } = parsed.data
+    const payable = await resolvePayable(orderRef, clientAmount)
+    const amount = payable.amount
 
     if (!isPaystackConfigured()) {
+      if (!allowMockData()) {
+        return apiError('Online card payments are temporarily unavailable.', 'PAYMENTS_UNAVAILABLE', 503)
+      }
       const appUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'
       return apiSuccess({
         success: true,
@@ -68,6 +75,7 @@ export async function POST(request: NextRequest) {
       rate.resetAt,
     )
   } catch (err) {
+    if (err instanceof PayableError) return apiError(err.message, err.code, err.status)
     logger.error({ event: 'paystack_initiate_failed', error_code: 'INTERNAL_ERROR' })
     const message = err instanceof Error ? err.message : 'Payment initiation failed'
     return apiError(message, 'INTERNAL_ERROR', 500)

@@ -1,5 +1,6 @@
 import type { Product } from '@/lib/types'
 import { MOCK_PRODUCTS } from '@/lib/mock-products'
+import { allowMockData } from '@/lib/mock-guard'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { isSupabaseAdminConfigured } from '@/lib/supabase/env'
 import type { TablesInsert } from '@/types/database'
@@ -31,12 +32,12 @@ export async function listProducts(filters: {
 
 export async function getProductBySlug(slug: string): Promise<Product | null> {
   if (!isSupabaseAdminConfigured()) {
-    return MOCK_PRODUCTS.find((p) => p.slug === slug) ?? null
+    return allowMockData() ? (MOCK_PRODUCTS.find((p) => p.slug === slug) ?? null) : null
   }
 
   const admin = createAdminClient()
   const { data, error } = await admin.from('products').select('*').eq('slug', slug).maybeSingle()
-  if (error || !data) return MOCK_PRODUCTS.find((p) => p.slug === slug) ?? null
+  if (error || !data) return null
   return rowToProduct(data)
 }
 
@@ -87,7 +88,7 @@ function filterMockProducts(filters: {
   stock?: string
   sort?: string
 }): Product[] {
-  return applyProductFilters([...MOCK_PRODUCTS], filters)
+  return allowMockData() ? applyProductFilters([...MOCK_PRODUCTS], filters) : []
 }
 
 function applyProductFilters(products: Product[], filters: {

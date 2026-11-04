@@ -363,6 +363,122 @@ export interface Database {
         Update: Partial<Database['public']['Tables']['activity_logs']['Insert']>
         Relationships: []
       }
+      business_customers: {
+        Row: {
+          id: string
+          name: string
+          phone: string
+          email: string | null
+          address: string | null
+          credit_balance: number
+          total_purchases: number
+          last_purchase_at: string | null
+          notes: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          name: string
+          phone?: string
+          email?: string | null
+          address?: string | null
+          credit_balance?: number
+          total_purchases?: number
+          last_purchase_at?: string | null
+          notes?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: Partial<Database['public']['Tables']['business_customers']['Insert']>
+        Relationships: []
+      }
+      sales: {
+        Row: {
+          id: string
+          receipt_no: string
+          items: Json
+          subtotal: number
+          discount: number
+          total: number
+          payment_method: 'cash' | 'mpesa' | 'card' | 'credit'
+          customer_id: string | null
+          customer_name: string | null
+          cashier_name: string
+          note: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          receipt_no: string
+          items?: Json
+          subtotal: number
+          discount?: number
+          total: number
+          payment_method: 'cash' | 'mpesa' | 'card' | 'credit'
+          customer_id?: string | null
+          customer_name?: string | null
+          cashier_name?: string
+          note?: string | null
+          created_at?: string
+        }
+        Update: Partial<Database['public']['Tables']['sales']['Insert']>
+        Relationships: []
+      }
+      expenses: {
+        Row: {
+          id: string
+          description: string
+          category: string
+          amount: number
+          payment_method: 'cash' | 'mpesa' | 'card' | 'credit'
+          expense_date: string
+          attachment_url: string | null
+          note: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          description: string
+          category: string
+          amount: number
+          payment_method: 'cash' | 'mpesa' | 'card' | 'credit'
+          expense_date?: string
+          attachment_url?: string | null
+          note?: string | null
+          created_at?: string
+        }
+        Update: Partial<Database['public']['Tables']['expenses']['Insert']>
+        Relationships: []
+      }
+      purchases: {
+        Row: {
+          id: string
+          supplier_name: string
+          items: Json
+          subtotal: number
+          total: number
+          payment_method: 'cash' | 'mpesa' | 'card' | 'credit'
+          purchase_date: string
+          invoice_no: string | null
+          note: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          supplier_name: string
+          items?: Json
+          subtotal: number
+          total: number
+          payment_method: 'cash' | 'mpesa' | 'card' | 'credit'
+          purchase_date?: string
+          invoice_no?: string | null
+          note?: string | null
+          created_at?: string
+        }
+        Update: Partial<Database['public']['Tables']['purchases']['Insert']>
+        Relationships: []
+      }
     }
     Views: Record<string, never>
     Functions: {

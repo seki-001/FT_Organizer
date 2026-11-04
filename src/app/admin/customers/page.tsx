@@ -3,11 +3,8 @@
 import { useState, useEffect } from 'react'
 import { Plus, Search, User, Phone, Mail, TrendingUp, TrendingDown, X, CheckCircle2 } from 'lucide-react'
 import { formatPrice } from '@/lib/utils'
+import { adminFetch } from '@/lib/admin-client'
 import type { BusinessCustomer } from '@/lib/types'
-
-const KEY = 'fto_customers'
-const load = (): BusinessCustomer[] => { try { return JSON.parse(localStorage.getItem(KEY) ?? '[]') } catch { return [] } }
-const save = (d: BusinessCustomer[]) => { try { localStorage.setItem(KEY, JSON.stringify(d)) } catch {} }
 
 const BLANK = { name: '', phone: '', email: '', address: '', notes: '' }
 
@@ -19,34 +16,52 @@ export default function CustomersPage() {
   const [payModal, setPayModal] = useState<{ c: BusinessCustomer; amt: string } | null>(null)
   const [debtModal, setDebtModal] = useState<{ c: BusinessCustomer; amt: string } | null>(null)
 
-  useEffect(() => setList(load()), [])
+  const [loading, setLoading] = useState(true)
+  const [loadError, setLoadError] = useState('')
+
+  useEffect(() => {
+    adminFetch<{ customers: BusinessCustomer[] }>('/api/admin/customers')
+      .then(d => setList(d.customers))
+      .catch(e => setLoadError(e instanceof Error ? e.message : 'Could not load customers'))
+      .finally(() => setLoading(false))
+  }, [])
 
   const filtered = list.filter(c => !search || c.name.toLowerCase().includes(search.toLowerCase()) || c.phone.includes(search))
   const totalDebt = list.reduce((s, c) => s + Math.max(0, c.creditBalance), 0)
 
-  function add() {
+  async function add() {
     if (!form.name.trim() || !form.phone.trim()) return alert('Name and phone are required')
-    const updated = [{ id: Date.now().toString(), ...form, creditBalance: 0, totalPurchases: 0, createdAt: new Date().toISOString() } as BusinessCustomer, ...list]
-    setList(updated); save(updated); setForm({ ...BLANK }); setShowForm(false)
+    try {
+      const { customer } = await adminFetch<{ customer: BusinessCustomer }>('/api/admin/customers', { method: 'POST', body: JSON.stringify(form) })
+      setList(l => [customer, ...l]); setForm({ ...BLANK }); setShowForm(false)
+    } catch (e) { alert(e instanceof Error ? e.message : 'Could not save customer') }
+  }
+
+  async function adjust(id: string, delta: number, close: () => void) {
+    try {
+      const { customer } = await adminFetch<{ customer: BusinessCustomer }>(`/api/admin/customers/${id}`, { method: 'PATCH', body: JSON.stringify({ delta }) })
+      setList(l => l.map(c => c.id === id ? customer : c)); close()
+    } catch (e) { alert(e instanceof Error ? e.message : 'Could not update balance') }
   }
 
   function recordPayment() {
     if (!payModal) return
     const amt = parseFloat(payModal.amt); if (!amt || amt <= 0) return
-    const updated = list.map(c => c.id === payModal.c.id ? { ...c, creditBalance: c.creditBalance - amt } : c)
-    setList(updated); save(updated); setPayModal(null)
+    void adjust(payModal.c.id, -amt, () => setPayModal(null))
   }
 
   function recordDebt() {
     if (!debtModal) return
     const amt = parseFloat(debtModal.amt); if (!amt || amt <= 0) return
-    const updated = list.map(c => c.id === debtModal.c.id ? { ...c, creditBalance: c.creditBalance + amt, totalPurchases: c.totalPurchases + amt, lastPurchaseAt: new Date().toISOString() } : c)
-    setList(updated); save(updated); setDebtModal(null)
+    void adjust(debtModal.c.id, amt, () => setDebtModal(null))
   }
 
-  function del(id: string) {
+  async function del(id: string) {
     if (!confirm('Delete this customer?')) return
-    const updated = list.filter(c => c.id !== id); setList(updated); save(updated)
+    try {
+      await adminFetch(`/api/admin/customers/${id}`, { method: 'DELETE' })
+      setList(l => l.filter(c => c.id !== id))
+    } catch (e) { alert(e instanceof Error ? e.message : 'Could not delete customer') }
   }
 
   return (
@@ -108,7 +123,9 @@ export default function CustomersPage() {
       )}
 
       {/* List */}
-      {filtered.length === 0 ? (
+      {loadError ? (
+        <div className="admin-card p-12 text-center text-sm text-danger">{loadError}</div>
+      ) : filtered.length === 0 ? (
         <div className="admin-card p-16 text-center">
           <User size={36} className="text-dark/15 mx-auto mb-3" />
           <p className="text-dark/40 text-sm">{search ? 'No results' : 'No customers yet — add your first customer above.'}</p>

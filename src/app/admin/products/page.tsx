@@ -8,7 +8,7 @@ import {
   Star, StarOff,
 } from 'lucide-react'
 import AdminPageHeader from '@/components/admin/AdminPageHeader'
-import { MOCK_PRODUCTS } from '@/lib/mock-products'
+import { adminFetch } from '@/lib/admin-client'
 import { SHOP_CATEGORIES } from '@/lib/constants'
 import { cn, formatPrice, discountPercent } from '@/lib/utils'
 import type { Product } from '@/lib/types'
@@ -155,7 +155,14 @@ function DeleteDialog({
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function AdminProductsPage() {
-  const [products,        setProducts]        = useState<Product[]>(MOCK_PRODUCTS)
+  const [products,        setProducts]        = useState<Product[]>([])
+  const [loadError, setLoadError] = useState('')
+
+  useEffect(() => {
+    adminFetch<{ products: Product[] }>('/api/admin/products')
+      .then(d => setProducts(d.products))
+      .catch(e => setLoadError(e instanceof Error ? e.message : 'Could not load products'))
+  }, [])
   const [selectedIds,     setSelectedIds]     = useState<Set<string>>(new Set())
   const [deleteSlug,      setDeleteSlug]      = useState<string | null>(null)
   const [search,          setSearch]          = useState('')
@@ -265,11 +272,12 @@ export default function AdminProductsPage() {
 
   return (
     <>
+      {loadError && <div role="alert" className="admin-card p-4 text-sm text-danger">{loadError}</div>}
       <div className="flex flex-col gap-6">
 
         <AdminPageHeader
           title="Products"
-          subtitle={`${MOCK_PRODUCTS.length} products across 24 categories`}
+          subtitle={`${products.length} products`}
           action={{ label: 'Add Product', href: '/admin/products/new', icon: PlusCircle }}
         />
 

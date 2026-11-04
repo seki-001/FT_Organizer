@@ -3,11 +3,8 @@
 import { useState, useEffect } from 'react'
 import { Plus, X, Truck, Calendar, Package } from 'lucide-react'
 import { formatPrice } from '@/lib/utils'
+import { adminFetch } from '@/lib/admin-client'
 import type { Purchase, PaymentMethod } from '@/lib/types'
-
-const KEY = 'fto_purchases'
-const load = (): Purchase[] => { try { return JSON.parse(localStorage.getItem(KEY) ?? '[]') } catch { return [] } }
-const save = (d: Purchase[]) => { try { localStorage.setItem(KEY, JSON.stringify(d)) } catch {} }
 
 const BLANK = {
   supplierName: '', itemName: '', quantity: '', unitCost: '',
@@ -20,36 +17,44 @@ export default function PurchasesPage() {
   const [form, setForm] = useState({ ...BLANK })
   const [filterMonth, setFilterMonth] = useState(new Date().toISOString().slice(0, 7))
 
-  useEffect(() => setList(load()), [])
+  const [loadError, setLoadError] = useState('')
+
+  useEffect(() => {
+    adminFetch<{ purchases: Purchase[] }>('/api/admin/purchases')
+      .then(d => setList(d.purchases))
+      .catch(e => setLoadError(e instanceof Error ? e.message : 'Could not load purchases'))
+  }, [])
 
   const filtered = list.filter(p => p.date.startsWith(filterMonth))
   const totalCost = filtered.reduce((s, p) => s + p.total, 0)
 
-  const qty = parseFloat(form.quantity) || 1
+  const qty = Math.max(1, Math.round(parseFloat(form.quantity) || 1))
   const unitCost = parseFloat(form.unitCost) || 0
   const lineTotal = qty * unitCost
 
-  function add() {
+  async function add() {
     if (!form.supplierName.trim() || !form.itemName.trim()) return alert('Supplier and item name are required')
     if (!form.unitCost || unitCost <= 0) return alert('Enter a valid unit cost')
-    const p: Purchase = {
-      id: Date.now().toString(),
-      supplierName: form.supplierName,
-      items: [{ productName: form.itemName, quantity: qty, unitCost, total: lineTotal }],
-      subtotal: lineTotal,
-      total: lineTotal,
-      paymentMethod: form.paymentMethod,
-      date: form.date,
-      createdAt: new Date().toISOString(),
-      note: form.note,
-    }
-    const updated = [p, ...list]; setList(updated); save(updated)
-    setForm({ ...BLANK, date: form.date, supplierName: form.supplierName }); setShowForm(false)
+    try {
+      const { purchase } = await adminFetch<{ purchase: Purchase }>('/api/admin/purchases', {
+        method: 'POST',
+        body: JSON.stringify({
+          supplierName: form.supplierName,
+          items: [{ productName: form.itemName, quantity: qty, unitCost, total: lineTotal }],
+          paymentMethod: form.paymentMethod, date: form.date, note: form.note || undefined,
+        }),
+      })
+      setList(l => [purchase, ...l])
+      setForm({ ...BLANK, date: form.date, supplierName: form.supplierName }); setShowForm(false)
+    } catch (e) { alert(e instanceof Error ? e.message : 'Could not save purchase') }
   }
 
-  function del(id: string) {
+  async function del(id: string) {
     if (!confirm('Delete this purchase record?')) return
-    const updated = list.filter(p => p.id !== id); setList(updated); save(updated)
+    try {
+      await adminFetch(`/api/admin/purchases/${id}`, { method: 'DELETE' })
+      setList(l => l.filter(p => p.id !== id))
+    } catch (e) { alert(e instanceof Error ? e.message : 'Could not delete purchase') }
   }
 
   return (
@@ -143,7 +148,9 @@ export default function PurchasesPage() {
       )}
 
       {/* List */}
-      {filtered.length === 0 ? (
+      {loadError ? (
+        <div className="admin-card p-12 text-center text-sm text-danger">{loadError}</div>
+      ) : filtered.length === 0 ? (
         <div className="admin-card p-16 text-center">
           <Package size={36} className="text-dark/15 mx-auto mb-3" />
           <p className="text-dark/40 text-sm">No purchases recorded for {filterMonth}.</p>

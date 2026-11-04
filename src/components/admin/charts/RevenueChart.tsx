@@ -4,7 +4,7 @@ import {
   ResponsiveContainer, AreaChart, Area,
   XAxis, YAxis, CartesianGrid, Tooltip, Legend,
 } from 'recharts'
-import type { RevenueSeries } from '@/lib/mock-analytics'
+import type { RevenueSeries } from '@/lib/analytics-types'
 
 interface TTPayload { name: string; value: number; color: string }
 interface TTProps { active?: boolean; payload?: TTPayload[]; label?: string }

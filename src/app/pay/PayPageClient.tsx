@@ -77,7 +77,7 @@ export default function PayPageClient() {
                 type="text"
                 value={orderRef}
                 onChange={(e) => setOrderRef(e.target.value.toUpperCase())}
-                placeholder="ORD-XXXXXX or invoice number"
+                placeholder="Your order reference (ORD-…)"
                 className="mt-1.5 w-full bg-muted rounded-lg px-4 py-3 text-sm font-mono outline-none focus:ring-2 focus:ring-primary/30"
               />
             </div>

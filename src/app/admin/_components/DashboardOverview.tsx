@@ -1,15 +1,15 @@
 'use client'
 
 import dynamic from 'next/dynamic'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
 import AdminCard from '@/components/admin/AdminCard'
 import ActivityLogFeed from './ActivityLogFeed'
-import { ANALYTICS_BY_RANGE } from '@/lib/mock-analytics'
-import {
-  ADMIN_PENDING_BOOKINGS,
-  ADMIN_LOW_STOCK,
-} from '@/lib/mock-admin-data'
+import { adminFetch } from '@/lib/admin-client'
+import { emptyAnalyticsPeriod } from '@/lib/analytics-types'
+import type { AnalyticsPeriod } from '@/lib/analytics-types'
+import type { AdminOverview } from '@/lib/db/analytics-shapes'
 import { formatPrice } from '@/lib/utils'
 
 const RevenueChart = dynamic(() => import('@/components/admin/charts/RevenueChart'), { ssr: false })
@@ -33,7 +33,13 @@ function StatusBadge({ status }: { status: string }) {
 }
 
 export default function DashboardOverview() {
-  const data = ANALYTICS_BY_RANGE['30d']
+  const [data, setData] = useState<AnalyticsPeriod>(emptyAnalyticsPeriod())
+  const [overview, setOverview] = useState<AdminOverview>({ pendingBookings: [], processingOrders: [], lowStock: [] })
+
+  useEffect(() => {
+    adminFetch<{ data: AnalyticsPeriod }>('/api/admin/analytics?range=30d').then(r => setData(r.data)).catch(() => {})
+    adminFetch<AdminOverview>('/api/admin/overview').then(setOverview).catch(() => {})
+  }, [])
   const totalOrders = data.orderStatuses.reduce((s, o) => s + o.count, 0)
 
   return (
@@ -77,7 +83,10 @@ export default function DashboardOverview() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <AdminCard title="Pending Bookings" href="/admin/bookings" subtitle="Awaiting your action">
           <div className="divide-y divide-[#ECEEF2]">
-            {ADMIN_PENDING_BOOKINGS.slice(0, 4).map((booking) => (
+            {overview.pendingBookings.length === 0 && (
+              <p className="px-5 py-8 text-center text-sm text-dark/40">No bookings awaiting action.</p>
+            )}
+            {overview.pendingBookings.slice(0, 4).map((booking) => (
               <div key={booking.id} className="px-5 py-4 admin-row-hover transition-colors">
                 <div className="flex items-start justify-between gap-2 mb-1">
                   <p className="font-medium text-dark text-sm">{booking.service}</p>
@@ -95,12 +104,15 @@ export default function DashboardOverview() {
           href="/admin/products"
           headerRight={
             <span className="text-xs font-semibold text-danger bg-danger/8 px-2 py-1 rounded-md">
-              {ADMIN_LOW_STOCK.length} items
+              {overview.lowStock.length} items
             </span>
           }
         >
           <div className="px-5 py-4 flex flex-col gap-3">
-            {ADMIN_LOW_STOCK.map((item) => (
+            {overview.lowStock.length === 0 && (
+              <p className="text-center text-sm text-dark/40 py-4">All products are well stocked.</p>
+            )}
+            {overview.lowStock.map((item) => (
               <div
                 key={item.slug}
                 className="flex items-center justify-between gap-3 rounded-lg border border-danger/10 bg-danger/[0.04] px-4 py-3"

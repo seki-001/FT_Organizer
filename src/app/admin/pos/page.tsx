@@ -1,12 +1,12 @@
 'use client'
 
-import { useState, useMemo, useCallback } from 'react'
+import { useState, useMemo, useCallback, useEffect } from 'react'
 import Image from 'next/image'
 import { Search, Plus, Minus, Trash2, Receipt, User, DollarSign, Smartphone, CreditCard, X, CheckCircle2, Printer } from 'lucide-react'
-import { MOCK_PRODUCTS } from '@/lib/mock-products'
+import { adminFetch } from '@/lib/admin-client'
 import { SHOP_CATEGORIES } from '@/lib/constants'
 import { formatPrice } from '@/lib/utils'
-import type { SaleItem, PaymentMethod, Sale } from '@/lib/types'
+import type { SaleItem, PaymentMethod, Sale, Product, BusinessCustomer } from '@/lib/types'
 import { POSReceipt, printPOSReceipt } from './POSReceipt'
 
 interface CartLine {
@@ -24,31 +24,40 @@ const PAYMENT_OPTIONS: { value: PaymentMethod; label: string; icon: React.ReactN
   { value: 'credit', label: 'Credit (Debt)', icon: <User size={16} /> },
 ]
 
-function generateReceiptNo() {
-  return 'FTO-' + Date.now().toString(36).toUpperCase()
-}
-
 export default function POSPage() {
   const [search, setSearch] = useState('')
   const [selectedCat, setSelectedCat] = useState('all')
   const [cart, setCart] = useState<CartLine[]>([])
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('cash')
-  const [customerName, setCustomerName] = useState('')
+  const [customerId, setCustomerId] = useState('')
+  const [products, setProducts] = useState<Product[]>([])
+  const [customers, setCustomers] = useState<BusinessCustomer[]>([])
+  const [loadError, setLoadError] = useState('')
+  const [submitting, setSubmitting] = useState(false)
   const [discount, setDiscount] = useState(0)
   const [note, setNote] = useState('')
   const [showSuccess, setShowSuccess] = useState(false)
   const [lastReceipt, setLastReceipt] = useState<string | null>(null)
   const [completedSale, setCompletedSale] = useState<Sale | null>(null)
 
+  useEffect(() => {
+    adminFetch<{ products: Product[] }>('/api/admin/products')
+      .then(d => setProducts(d.products))
+      .catch(e => setLoadError(e instanceof Error ? e.message : 'Could not load products'))
+    adminFetch<{ customers: BusinessCustomer[] }>('/api/admin/customers')
+      .then(d => setCustomers(d.customers))
+      .catch(() => { /* customers are optional for non-credit sales */ })
+  }, [])
+
   const filteredProducts = useMemo(() => {
-    return MOCK_PRODUCTS.filter(p => {
+    return products.filter(p => {
       const matchesCat = selectedCat === 'all' || p.category === selectedCat
       const matchesSearch = !search || p.name.toLowerCase().includes(search.toLowerCase())
       return matchesCat && matchesSearch && p.inStock
     }).slice(0, 60)
-  }, [search, selectedCat])
+  }, [products, search, selectedCat])
 
-  const addToCart = useCallback((product: typeof MOCK_PRODUCTS[0]) => {
+  const addToCart = useCallback((product: Product) => {
     setCart(prev => {
       const existing = prev.find(l => l.productId === product.id)
       if (existing) {
@@ -75,44 +84,47 @@ export default function POSPage() {
   const discountAmt = Math.min(discount, subtotal)
   const total = subtotal - discountAmt
 
-  const completeSale = () => {
-    if (cart.length === 0) return
-    const receiptNo = generateReceiptNo()
-    const sale: Sale = {
-      id: receiptNo,
-      items: cart.map(l => ({
-        productId: l.productId,
-        productName: l.name,
-        category: l.category,
-        quantity: l.qty,
-        unitPrice: l.price,
-        total: l.price * l.qty,
-      } satisfies SaleItem)),
-      subtotal,
-      discount: discountAmt,
-      total,
-      paymentMethod,
-      customerName: customerName || 'Walk-in',
-      cashierName: 'Admin',
-      createdAt: new Date().toISOString(),
-      receiptNo,
-      note,
+  const completeSale = async () => {
+    if (cart.length === 0 || submitting) return
+    if (paymentMethod === 'credit' && !customerId) {
+      alert('Select a registered customer for credit sales.')
+      return
     }
-
-    // Persist to localStorage (until POS is wired to Supabase)
+    setSubmitting(true)
     try {
-      const existing = JSON.parse(localStorage.getItem('fto_sales') ?? '[]')
-      existing.unshift(sale)
-      localStorage.setItem('fto_sales', JSON.stringify(existing.slice(0, 500)))
-    } catch {}
-
-    setCompletedSale(sale)
-    setLastReceipt(receiptNo)
-    setShowSuccess(true)
-    setCart([])
-    setDiscount(0)
-    setCustomerName('')
-    setNote('')
+      const customer = customers.find(c => c.id === customerId)
+      const { sale } = await adminFetch<{ sale: Sale }>('/api/admin/pos/sales', {
+        method: 'POST',
+        body: JSON.stringify({
+          items: cart.map(l => ({
+            productId: l.productId,
+            productName: l.name,
+            category: l.category,
+            quantity: l.qty,
+            unitPrice: l.price,
+            total: l.price * l.qty,
+          } satisfies SaleItem)),
+          discount: discountAmt,
+          paymentMethod,
+          customerId: customerId || undefined,
+          customerName: customer?.name ?? 'Walk-in',
+          note: note || undefined,
+        }),
+      })
+      setCompletedSale(sale)
+      setLastReceipt(sale.receiptNo)
+      setShowSuccess(true)
+      setCart([])
+      setDiscount(0)
+      setCustomerId('')
+      setNote('')
+      // Refresh stock levels after the sale
+      adminFetch<{ products: Product[] }>('/api/admin/products').then(d => setProducts(d.products)).catch(() => {})
+    } catch (e) {
+      alert(e instanceof Error ? e.message : 'Could not complete the sale')
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   if (showSuccess && completedSale) {
@@ -225,7 +237,7 @@ export default function POSPage() {
           </div>
           {filteredProducts.length === 0 && (
             <div className="text-center py-16 text-dark/35">
-              <p className="text-sm">No products found</p>
+              <p className="text-sm">{loadError || 'No products found'}</p>
             </div>
           )}
         </div>
@@ -249,13 +261,15 @@ export default function POSPage() {
           {/* Customer */}
           <div className="relative">
             <User size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-dark/35" />
-            <input
-              type="text"
-              placeholder="Customer name (optional)"
-              value={customerName}
-              onChange={e => setCustomerName(e.target.value)}
-              className="w-full pl-8 pr-3 py-2 text-sm border border-dark/12 rounded-lg bg-surface focus:outline-none focus:ring-1 focus:ring-primary/30 focus:border-primary/40 placeholder:text-dark/30"
-            />
+            <select
+              value={customerId}
+              onChange={e => setCustomerId(e.target.value)}
+              aria-label="Customer"
+              className="w-full pl-8 pr-3 py-2 text-sm border border-dark/12 rounded-lg bg-surface focus:outline-none focus:ring-1 focus:ring-primary/30 focus:border-primary/40"
+            >
+              <option value="">Walk-in customer</option>
+              {customers.map(c => <option key={c.id} value={c.id}>{c.name} · {c.phone}</option>)}
+            </select>
           </div>
         </div>
 
@@ -352,10 +366,10 @@ export default function POSPage() {
           {/* Complete Sale */}
           <button
             onClick={completeSale}
-            disabled={cart.length === 0}
+            disabled={cart.length === 0 || submitting}
             className="w-full bg-primary hover:bg-primary/90 disabled:opacity-40 disabled:cursor-not-allowed text-white font-bold py-3.5 rounded-xl transition-colors text-sm"
           >
-            Complete Sale · {formatPrice(total)}
+            {submitting ? 'Processing…' : `Complete Sale · ${formatPrice(total)}`}
           </button>
         </div>
       </div>

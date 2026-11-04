@@ -2,10 +2,9 @@ import { NextRequest } from 'next/server'
 import { apiError, apiSuccess } from '@/lib/api-response'
 import { enforceRateLimit } from '@/lib/rate-limit'
 import { logger } from '@/lib/logger'
-import { insertPaymentEvent, updatePaymentEventStatus, getPaymentEventByExternalId } from '@/lib/db/payments'
-import { verifyPaystackTransaction } from '@/lib/payments/paystack'
 import { isPaystackConfigured } from '@/lib/payments/config'
-import { updateOrderPaymentStatus } from '@/lib/db/orders'
+import { completePaystackPayment } from '@/lib/payments/complete'
+import { allowMockData } from '@/lib/mock-guard'
 
 export async function GET(request: NextRequest) {
   const limited = enforceRateLimit(request, 'paystack-verify', { limit: 30, windowMs: 60_000 })
@@ -17,36 +16,14 @@ export async function GET(request: NextRequest) {
   }
 
   if (!isPaystackConfigured()) {
+    if (!allowMockData()) {
+      return apiError('Payment verification is unavailable.', 'PAYMENTS_UNAVAILABLE', 503)
+    }
     return apiSuccess({ success: true, paid: true, reference })
   }
 
   try {
-    const result = await verifyPaystackTransaction(reference)
-
-    await insertPaymentEvent({
-      provider: 'paystack',
-      eventType: result.paid ? 'payment_verified' : 'payment_failed',
-      externalId: reference,
-      amount: Math.round(result.amount),
-      status: result.paid ? 'paid' : 'failed',
-      verified: result.paid,
-      payload: { currency: result.currency },
-    })
-
-    if (result.paid) {
-      await updatePaymentEventStatus(reference, 'paid', true)
-      const existing = await getPaymentEventByExternalId(reference)
-      if (existing?.order_reference) {
-        await updateOrderPaymentStatus(existing.order_reference, 'paid')
-      }
-    }
-
-    logger.info({
-      event: 'paystack_verified',
-      resource_id: reference,
-      action: result.paid ? 'paid' : 'failed',
-    })
-
+    const result = await completePaystackPayment(reference)
     return apiSuccess({
       success: true,
       paid: result.paid,

@@ -16,8 +16,8 @@ export async function GET(request: Request) {
   const search   = (searchParams.get('search')  ?? '').toLowerCase()
 
   let posts = await listAllPosts()
-  if (status === 'published') posts = posts.filter((p) => p.publishedAt)
-  if (status === 'draft') posts = posts.filter((p) => !p.publishedAt)
+  if (status === 'published') posts = posts.filter((p) => p.status === 'published')
+  if (status === 'draft') posts = posts.filter((p) => p.status === 'draft')
   if (category !== 'all') posts = posts.filter((p) => p.category === category)
   if (search) posts = posts.filter((p) => p.title.toLowerCase().includes(search) || p.slug.includes(search))
 

@@ -4,11 +4,8 @@ import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { Bell, Calendar, Package, ShoppingBag, AlertTriangle, Check } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import {
-  ADMIN_PENDING_BOOKINGS,
-  ADMIN_LOW_STOCK,
-  ADMIN_RECENT_ORDERS,
-} from '@/lib/mock-admin-data'
+import { adminFetch } from '@/lib/admin-client'
+import type { AdminOverview } from '@/lib/db/analytics-shapes'
 
 export interface AdminNotification {
   id: string
@@ -20,42 +17,28 @@ export interface AdminNotification {
   read: boolean
 }
 
-function buildNotifications(): AdminNotification[] {
+function buildNotifications(o: AdminOverview): AdminNotification[] {
   const items: AdminNotification[] = []
 
-  ADMIN_PENDING_BOOKINGS.filter((b) => b.status === 'new').forEach((b) => {
+  o.pendingBookings.filter((b) => b.status === 'new').forEach((b) => {
     items.push({
-      id: `bk-${b.id}`,
-      title: 'New booking request',
-      message: `${b.customer} — ${b.service}`,
-      href: '/admin/bookings',
-      timeAgo: b.date,
-      type: 'booking',
-      read: false,
+      id: `bk-${b.id}`, title: 'New booking request', message: `${b.customer} — ${b.service}`,
+      href: '/admin/bookings', timeAgo: b.date, type: 'booking', read: false,
     })
   })
 
-  ADMIN_RECENT_ORDERS.filter((o) => o.status === 'processing').slice(0, 2).forEach((o) => {
+  o.processingOrders.slice(0, 3).forEach((ord) => {
     items.push({
-      id: `ord-${o.id}`,
-      title: 'Order needs processing',
-      message: `${o.customer} · ${o.id}`,
-      href: '/admin/orders',
-      timeAgo: o.timeAgo,
-      type: 'order',
-      read: false,
+      id: `ord-${ord.id}`, title: 'Order needs processing', message: `${ord.customer} · ${ord.id}`,
+      href: '/admin/orders', timeAgo: new Date(ord.createdAt).toLocaleDateString('en-KE', { day: 'numeric', month: 'short' }),
+      type: 'order', read: false,
     })
   })
 
-  ADMIN_LOW_STOCK.slice(0, 2).forEach((p) => {
+  o.lowStock.slice(0, 3).forEach((p) => {
     items.push({
-      id: `stock-${p.slug}`,
-      title: 'Low stock alert',
-      message: `${p.name} — only ${p.stockCount} left`,
-      href: '/admin/products',
-      timeAgo: 'Today',
-      type: 'stock',
-      read: false,
+      id: `stock-${p.slug}`, title: 'Low stock alert', message: `${p.name} — only ${p.stockCount} left`,
+      href: '/admin/products', timeAgo: 'Today', type: 'stock', read: false,
     })
   })
 
@@ -80,7 +63,9 @@ export default function AdminNotifications() {
   const panelRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    setItems(buildNotifications())
+    adminFetch<AdminOverview>('/api/admin/overview')
+      .then((o) => setItems(buildNotifications(o)))
+      .catch(() => setItems([]))
   }, [])
 
   useEffect(() => {

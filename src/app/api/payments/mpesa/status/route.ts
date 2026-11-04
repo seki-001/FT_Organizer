@@ -8,6 +8,7 @@ import {
 import { queryStkPushStatus } from '@/lib/payments/mpesa'
 import { isMpesaConfigured } from '@/lib/payments/config'
 import { updateOrderPaymentStatus } from '@/lib/db/orders'
+import { allowMockData } from '@/lib/mock-guard'
 
 export async function GET(request: NextRequest) {
   const limited = enforceRateLimit(request, 'mpesa-status', { limit: 60, windowMs: 60_000 })
@@ -24,7 +25,7 @@ export async function GET(request: NextRequest) {
 
   const stored = await getPaymentEventByExternalId(checkoutRequestId)
 
-  if (checkoutRequestId.startsWith('mock_') && !isMpesaConfigured()) {
+  if (checkoutRequestId.startsWith('mock_') && !isMpesaConfigured() && allowMockData()) {
     const mockPoll = Number(request.nextUrl.searchParams.get('poll') ?? '0')
     const status = mockPoll < 2 ? 'pending' : 'success'
     if (status === 'success' && stored?.order_reference) {

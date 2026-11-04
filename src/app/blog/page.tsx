@@ -5,7 +5,6 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Clock, ArrowRight, CheckCircle2, Loader2 } from 'lucide-react'
-import { MOCK_POSTS } from '@/lib/mock-posts'
 import type { BlogPost, BlogCategory } from '@/lib/types'
 import { cn } from '@/lib/utils'
 import { useScrollAnimation } from '@/hooks/useScrollAnimation'
@@ -231,7 +230,7 @@ function NewsletterBand() {
 
 export default function BlogIndexPage() {
   const [activeFilter, setActiveFilter] = useState<FilterCategory>('all')
-  const [posts, setPosts] = useState<BlogPost[]>(MOCK_POSTS)
+  const [posts, setPosts] = useState<BlogPost[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -240,6 +239,7 @@ export default function BlogIndexPage() {
       .then((d: { posts?: BlogPost[] }) => {
         if (d.posts?.length) setPosts(d.posts)
       })
+      .catch(() => {})
       .finally(() => setLoading(false))
   }, [])
 
@@ -254,6 +254,16 @@ export default function BlogIndexPage() {
   const { ref: row3Ref, isInView: row3InView } = useScrollAnimation({ amount: 0.08 })
 
   const today = new Date().toLocaleDateString('en-KE', { year: 'numeric', month: 'long', day: 'numeric' })
+
+  if (!featured) {
+    return (
+      <main className="bg-dark min-h-[60vh] flex items-center justify-center px-6 text-center">
+        <p className="text-white/60 text-sm">
+          {loading ? 'Loading articles…' : 'New articles are on the way. Check back soon.'}
+        </p>
+      </main>
+    )
+  }
 
   return (
     <main className="bg-dark">

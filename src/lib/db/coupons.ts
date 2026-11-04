@@ -1,4 +1,5 @@
 import { MOCK_COUPONS } from '@/lib/mock-admin-coupons'
+import { allowMockData } from '@/lib/mock-guard'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { isSupabaseAdminConfigured } from '@/lib/supabase/env'
 import { logger } from '@/lib/logger'
@@ -42,6 +43,7 @@ function rowToCoupon(row: {
 
 export async function listCoupons(): Promise<CouponRecord[]> {
   if (!isSupabaseAdminConfigured()) {
+    if (!allowMockData()) return []
     return MOCK_COUPONS.map((c) => ({
       id: c.id,
       code: c.code,
@@ -68,7 +70,8 @@ export async function findCouponByCode(code: string): Promise<CouponRecord | nul
   const normalized = code.toUpperCase().trim()
 
   if (!isSupabaseAdminConfigured()) {
-    const mock = MOCK_COUPONS.find((c) => c.code === normalized)
+    // Demo codes must never grant discounts in production.
+    const mock = allowMockData() ? MOCK_COUPONS.find((c) => c.code === normalized) : undefined
     if (!mock) return null
     return {
       id: mock.id,

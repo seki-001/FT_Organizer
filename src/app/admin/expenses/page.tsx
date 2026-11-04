@@ -3,11 +3,8 @@
 import { useState, useEffect } from 'react'
 import { Plus, X, TrendingDown, Calendar } from 'lucide-react'
 import { formatPrice } from '@/lib/utils'
+import { adminFetch } from '@/lib/admin-client'
 import type { Expense, ExpenseCategory, PaymentMethod } from '@/lib/types'
-
-const KEY = 'fto_expenses'
-const load = (): Expense[] => { try { return JSON.parse(localStorage.getItem(KEY) ?? '[]') } catch { return [] } }
-const save = (d: Expense[]) => { try { localStorage.setItem(KEY, JSON.stringify(d)) } catch {} }
 
 const CATEGORIES: { value: ExpenseCategory; label: string }[] = [
   { value: 'rent', label: 'Rent' },
@@ -33,8 +30,16 @@ export default function ExpensesPage() {
   const [showForm, setShowForm] = useState(false)
   const [form, setForm] = useState({ ...BLANK })
   const [filterMonth, setFilterMonth] = useState(new Date().toISOString().slice(0,7))
+  const [loading, setLoading] = useState(true)
+  const [saving, setSaving] = useState(false)
+  const [loadError, setLoadError] = useState('')
 
-  useEffect(() => setList(load()), [])
+  useEffect(() => {
+    adminFetch<{ expenses: Expense[] }>('/api/admin/expenses')
+      .then(d => setList(d.expenses))
+      .catch(e => setLoadError(e instanceof Error ? e.message : 'Could not load expenses'))
+      .finally(() => setLoading(false))
+  }, [])
 
   const filtered = list.filter(e => e.date.startsWith(filterMonth))
   const total = filtered.reduce((s, e) => s + e.amount, 0)
@@ -43,18 +48,29 @@ export default function ExpensesPage() {
     total: filtered.filter(e => e.category === c.value).reduce((s, e) => s + e.amount, 0)
   })).filter(c => c.total > 0).sort((a,b) => b.total - a.total)
 
-  function add() {
+  async function add() {
     if (!form.description.trim() || !form.amount) return alert('Description and amount are required')
     const amt = parseFloat(form.amount); if (!amt || amt <= 0) return alert('Enter a valid amount')
-    const e: Expense = { id: Date.now().toString(), description: form.description, category: form.category, amount: amt,
-      paymentMethod: form.paymentMethod, date: form.date, createdAt: new Date().toISOString(), note: form.note }
-    const updated = [e, ...list]; setList(updated); save(updated)
-    setForm({ ...BLANK, date: form.date }); setShowForm(false)
+    setSaving(true)
+    try {
+      const { expense } = await adminFetch<{ expense: Expense }>('/api/admin/expenses', {
+        method: 'POST',
+        body: JSON.stringify({ description: form.description, category: form.category, amount: amt,
+          paymentMethod: form.paymentMethod, date: form.date, note: form.note || undefined }),
+      })
+      setList(l => [expense, ...l])
+      setForm({ ...BLANK, date: form.date }); setShowForm(false)
+    } catch (e) {
+      alert(e instanceof Error ? e.message : 'Could not save expense')
+    } finally { setSaving(false) }
   }
 
-  function del(id: string) {
+  async function del(id: string) {
     if (!confirm('Delete this expense?')) return
-    const updated = list.filter(e => e.id !== id); setList(updated); save(updated)
+    try {
+      await adminFetch(`/api/admin/expenses/${id}`, { method: 'DELETE' })
+      setList(l => l.filter(e => e.id !== id))
+    } catch (e) { alert(e instanceof Error ? e.message : 'Could not delete expense') }
   }
 
   return (
@@ -125,14 +141,18 @@ export default function ExpensesPage() {
           </div>
           <input type="text" placeholder="Note (optional)" value={form.note} onChange={e => setForm(f => ({...f,note:e.target.value}))}
             className="w-full text-sm border border-dark/15 rounded-lg px-3 py-2 focus:outline-none focus:ring-1 focus:ring-primary/30" />
-          <button onClick={add} className="bg-primary text-white text-sm font-semibold px-5 py-2.5 rounded-xl hover:bg-primary/90 transition-colors">Save Expense</button>
+          <button onClick={add} disabled={saving} className="bg-primary text-white text-sm font-semibold px-5 py-2.5 rounded-xl hover:bg-primary/90 transition-colors disabled:opacity-60">{saving ? 'Saving…' : 'Save Expense'}</button>
         </div>
       )}
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Expense list */}
         <div className="lg:col-span-2 space-y-3">
-          {filtered.length === 0 ? (
+          {loading ? (
+            <div className="admin-card p-12 text-center text-sm text-dark/40">Loading expenses…</div>
+          ) : loadError ? (
+            <div className="admin-card p-12 text-center text-sm text-danger">{loadError}</div>
+          ) : filtered.length === 0 ? (
             <div className="admin-card p-12 text-center">
               <TrendingDown size={32} className="text-dark/15 mx-auto mb-3" />
               <p className="text-dark/40 text-sm">No expenses recorded for {filterMonth}.</p>

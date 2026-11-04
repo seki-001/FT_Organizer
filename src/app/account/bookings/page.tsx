@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { Calendar, MessageCircle, Home, Briefcase, Building2 } from 'lucide-react'
-import { MOCK_BOOKINGS } from '@/lib/mock-account'
 import { SERVICES, COMPANY } from '@/lib/constants'
 import { cn } from '@/lib/utils'
 import type { Booking } from '@/lib/types'
@@ -120,7 +119,7 @@ function BookingCard({ booking }: { booking: Booking }) {
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function AccountBookingsPage() {
-  const [bookings, setBookings] = useState<Booking[]>(MOCK_BOOKINGS)
+  const [bookings, setBookings] = useState<Booking[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -129,6 +128,7 @@ export default function AccountBookingsPage() {
       .then((d: { bookings?: Booking[] } | null) => {
         if (d?.bookings) setBookings(d.bookings)
       })
+      .catch(() => {})
       .finally(() => setLoading(false))
   }, [])
 

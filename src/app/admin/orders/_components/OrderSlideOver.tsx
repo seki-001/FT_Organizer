@@ -148,9 +148,11 @@ export default function OrderSlideOver({ order, onClose, onStatusUpdate }: Props
   const [updating,  setUpdating]  = useState(false)
 
   // Sync dropdown when order or its status changes
+  const orderId = order?.id
+  const orderStatus = order?.orderStatus
   useEffect(() => {
-    if (order) setNewStatus(order.orderStatus)
-  }, [order?.id, order?.orderStatus])
+    if (orderStatus) setNewStatus(orderStatus)
+  }, [orderId, orderStatus])
 
   // Escape key closes
   useEffect(() => {

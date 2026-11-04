@@ -4,7 +4,7 @@ import {
   ResponsiveContainer, BarChart, Bar,
   XAxis, YAxis, CartesianGrid, Tooltip, Cell,
 } from 'recharts'
-import type { CategoryRevenue } from '@/lib/mock-analytics'
+import type { CategoryRevenue } from '@/lib/analytics-types'
 
 interface TTProps { active?: boolean; payload?: Array<{ value: number }>; label?: string }
 

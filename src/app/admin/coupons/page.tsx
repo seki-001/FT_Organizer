@@ -1,12 +1,13 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
   PlusCircle, Pencil, Trash2, RefreshCw, X, Loader2, CheckCircle2, AlertCircle,
 } from 'lucide-react'
 import AdminPageHeader from '@/components/admin/AdminPageHeader'
-import { MOCK_COUPONS, generateCouponCode } from '@/lib/mock-admin-coupons'
-import type { Coupon } from '@/lib/mock-admin-coupons'
+import { generateCouponCode } from '@/lib/admin-types'
+import type { Coupon } from '@/lib/admin-types'
+import { adminFetch } from '@/lib/admin-client'
 import { cn, formatPrice } from '@/lib/utils'
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -199,7 +200,14 @@ function CouponModal({ coupon, onSave, onClose, isSaving }: ModalProps) {
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function AdminCouponsPage() {
-  const [coupons,     setCoupons]     = useState<Coupon[]>(MOCK_COUPONS)
+  const [coupons,     setCoupons]     = useState<Coupon[]>([])
+  const [loadError, setLoadError] = useState('')
+
+  useEffect(() => {
+    adminFetch<{ coupons: (Coupon & { createdAt?: string })[] }>('/api/admin/coupons')
+      .then(d => setCoupons(d.coupons.map(c => ({ ...c, createdAt: c.createdAt ?? new Date().toISOString() }))))
+      .catch(e => setLoadError(e instanceof Error ? e.message : 'Could not load coupons'))
+  }, [])
   const [showModal,   setShowModal]   = useState(false)
   const [editCoupon,  setEditCoupon]  = useState<Coupon | undefined>()
   const [deleteId,    setDeleteId]    = useState<string | null>(null)
@@ -264,6 +272,7 @@ export default function AdminCouponsPage() {
 
   return (
     <>
+      {loadError && <div role="alert" className="admin-card p-4 text-sm text-danger">{loadError}</div>}
       <div className="flex flex-col gap-6">
 
         <AdminPageHeader

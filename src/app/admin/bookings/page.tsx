@@ -12,7 +12,6 @@ import {
 } from 'lucide-react'
 import AdminPageHeader  from '@/components/admin/AdminPageHeader'
 import BookingSlideOver from './_components/BookingSlideOver'
-import { MOCK_ADMIN_BOOKINGS } from '@/lib/mock-admin-bookings'
 import type { AdminBooking }   from '@/lib/mock-admin-bookings'
 import { SERVICES } from '@/lib/constants'
 import { cn } from '@/lib/utils'
@@ -233,8 +232,8 @@ export default function AdminBookingsPage() {
         const data = await res.json() as { bookings: AdminBooking[] }
         setBookings(data.bookings ?? [])
       } catch {
-        setLoadError('Could not load bookings. Showing sample data.')
-        setBookings(MOCK_ADMIN_BOOKINGS)
+        setLoadError('Could not load bookings. Please refresh the page.')
+        setBookings([])
       } finally {
         setLoading(false)
       }

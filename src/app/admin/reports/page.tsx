@@ -19,7 +19,10 @@ interface Sale {
 
 interface Customer { id: string; name: string; creditBalance: number; totalPurchases: number }
 
-const loadJSON = <T,>(key: string): T[] => { try { return JSON.parse(localStorage.getItem(key) ?? '[]') } catch { return [] } }
+import { adminFetch } from '@/lib/admin-client'
+
+const loadList = <T,>(url: string, key: string): Promise<T[]> =>
+  adminFetch<Record<string, T[]>>(url).then(d => d[key] ?? []).catch(() => [])
 
 function monthLabel(iso: string) {
   const [y, m] = iso.split('-')
@@ -34,10 +37,10 @@ export default function ReportsPage() {
   const [month, setMonth] = useState(new Date().toISOString().slice(0, 7))
 
   useEffect(() => {
-    setSales(loadJSON<Sale>('fto_sales'))
-    setExpenses(loadJSON<Expense>('fto_expenses'))
-    setPurchases(loadJSON<Purchase>('fto_purchases'))
-    setCustomers(loadJSON<Customer>('fto_customers'))
+    loadList<Sale>('/api/admin/pos/sales', 'sales').then(setSales)
+    loadList<Expense>('/api/admin/expenses', 'expenses').then(setExpenses)
+    loadList<Purchase>('/api/admin/purchases', 'purchases').then(setPurchases)
+    loadList<Customer>('/api/admin/customers', 'customers').then(setCustomers)
   }, [])
 
   const data = useMemo(() => {

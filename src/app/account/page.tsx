@@ -1,10 +1,11 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import type { Order, Booking } from '@/lib/types'
 import { ShoppingBag, Calendar, Heart, ArrowRight } from 'lucide-react'
 import { useSession } from '@/context/AuthContext'
 import { useWishlist } from '@/context/WishlistContext'
-import { MOCK_ORDERS, MOCK_BOOKINGS } from '@/lib/mock-account'
 import { SERVICES } from '@/lib/constants'
 import { formatPrice } from '@/lib/utils'
 import { cn } from '@/lib/utils'
@@ -50,8 +51,18 @@ export default function AccountDashboardPage() {
 
   const firstName = session?.user.name?.split(' ')[0] ?? 'there'
 
-  const recentOrders   = MOCK_ORDERS.slice(0, 3)
-  const nextBooking    = MOCK_BOOKINGS.find((b) => b.status === 'confirmed' || b.status === 'new')
+  const [orders, setOrders] = useState<Order[]>([])
+  const [bookings, setBookings] = useState<Booking[]>([])
+
+  useEffect(() => {
+    fetch('/api/account/orders').then((r) => (r.ok ? r.json() : null))
+      .then((d: { orders?: Order[] } | null) => setOrders(d?.orders ?? [])).catch(() => {})
+    fetch('/api/account/bookings').then((r) => (r.ok ? r.json() : null))
+      .then((d: { bookings?: Booking[] } | null) => setBookings(d?.bookings ?? [])).catch(() => {})
+  }, [])
+
+  const recentOrders   = orders.slice(0, 3)
+  const nextBooking    = bookings.find((b) => b.status === 'confirmed' || b.status === 'new')
 
   return (
     <div className="flex flex-col gap-8">
@@ -72,7 +83,7 @@ export default function AccountDashboardPage() {
             <ShoppingBag size={20} className="text-primary" aria-hidden="true" />
           </div>
           <div>
-            <p className="text-2xl font-bold text-dark font-mono">{MOCK_ORDERS.length}</p>
+            <p className="text-2xl font-bold text-dark font-mono">{orders.length}</p>
             <p className="text-dark/50 text-xs">Orders</p>
           </div>
         </div>
@@ -81,7 +92,7 @@ export default function AccountDashboardPage() {
             <Calendar size={20} className="text-primary" aria-hidden="true" />
           </div>
           <div>
-            <p className="text-2xl font-bold text-dark font-mono">{MOCK_BOOKINGS.length}</p>
+            <p className="text-2xl font-bold text-dark font-mono">{bookings.length}</p>
             <p className="text-dark/50 text-xs">Bookings</p>
           </div>
         </div>

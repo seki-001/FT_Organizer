@@ -4,7 +4,7 @@ import {
   ResponsiveContainer, BarChart, Bar, XAxis, YAxis,
   CartesianGrid, Tooltip, Cell, LabelList,
 } from 'recharts'
-import type { ServiceBookings } from '@/lib/mock-analytics'
+import type { ServiceBookings } from '@/lib/analytics-types'
 
 function truncate(str: string, max: number) {
   return str.length > max ? str.slice(0, max) + '…' : str

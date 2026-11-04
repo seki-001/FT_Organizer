@@ -76,3 +76,24 @@ export async function updatePaymentEventStatus(
     logger.error({ event: 'payment_event_update_failed', error_code: error.code })
   }
 }
+
+/** The original initiation event for a provider reference (holds the order reference + expected amount). */
+export async function getInitiationEvent(externalId: string) {
+  if (!isSupabaseAdminConfigured()) return null
+
+  const admin = createAdminClient()
+  const { data, error } = await admin
+    .from('payment_events')
+    .select('id, order_reference, amount, status, verified')
+    .eq('external_id', externalId)
+    .in('event_type', ['payment_initiated', 'stk_initiated'])
+    .order('created_at', { ascending: true })
+    .limit(1)
+    .maybeSingle()
+
+  if (error) {
+    logger.error({ event: 'payment_initiation_lookup_failed', error_code: error.code })
+    return null
+  }
+  return data
+}

@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { X, Package, CheckCircle2, Truck, ShoppingBag, Clock } from 'lucide-react'
-import { MOCK_ORDERS } from '@/lib/mock-account'
 import { formatPrice, cn } from '@/lib/utils'
 import type { Order } from '@/lib/types'
 
@@ -90,7 +89,7 @@ function OrderTimeline({ status }: { status: string }) {
 
 function OrderDrawer({ order, onClose }: { order: Order; onClose: () => void }) {
   const paymentLabels: Record<string, string> = {
-    mpesa: 'M-Pesa', card: 'Card (Flutterwave)', cod: 'Cash on Delivery',
+    mpesa: 'M-Pesa', card: 'Card (Paystack)', cod: 'Cash on Delivery',
   }
   const deliveryLabels: Record<string, string> = {
     'nairobi-same-day':   'Nairobi Same Day',
@@ -210,7 +209,7 @@ function OrderDrawer({ order, onClose }: { order: Order; onClose: () => void }) 
 
 export default function AccountOrdersPage() {
   const [selected, setSelected] = useState<Order | null>(null)
-  const [orders, setOrders] = useState<Order[]>(MOCK_ORDERS)
+  const [orders, setOrders] = useState<Order[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -219,6 +218,7 @@ export default function AccountOrdersPage() {
       .then((d: { orders?: Order[] } | null) => {
         if (d?.orders) setOrders(d.orders)
       })
+      .catch(() => {})
       .finally(() => setLoading(false))
   }, [])
 

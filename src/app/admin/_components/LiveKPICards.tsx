@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { TrendingUp, TrendingDown, ShoppingBag, Users, AlertTriangle, ArrowRight } from 'lucide-react'
 import { formatPrice } from '@/lib/utils'
+import { adminFetch } from '@/lib/admin-client'
 import AdminStatCard from '@/components/admin/AdminStatCard'
 import AdminCard from '@/components/admin/AdminCard'
 
@@ -20,8 +21,8 @@ function lastMonthKey() {
   return d.toISOString().slice(0, 7)
 }
 
-function loadJSON<T>(key: string): T[] {
-  try { return JSON.parse(localStorage.getItem(key) ?? '[]') } catch { return [] }
+function loadList<T>(url: string, key: string): Promise<T[]> {
+  return adminFetch<Record<string, T[]>>(url).then(d => d[key] ?? []).catch(() => [])
 }
 
 function TrendBadge({ pct }: { pct: number | null }) {
@@ -46,9 +47,9 @@ export default function LiveKPICards() {
   const [expenses, setExpenses] = useState<Expense[]>([])
 
   useEffect(() => {
-    setSales(loadJSON<Sale>('fto_sales'))
-    setCustomers(loadJSON<Customer>('fto_customers'))
-    setExpenses(loadJSON<Expense>('fto_expenses'))
+    loadList<Sale>('/api/admin/pos/sales', 'sales').then(setSales)
+    loadList<Customer>('/api/admin/customers', 'customers').then(setCustomers)
+    loadList<Expense>('/api/admin/expenses', 'expenses').then(setExpenses)
   }, [])
 
   const thisMonth = thisMonthKey()

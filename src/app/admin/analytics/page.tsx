@@ -1,15 +1,17 @@
 'use client'
 
 import dynamic from 'next/dynamic'
-import { useState, useMemo } from 'react'
+import { useState, useEffect } from 'react'
 import {
   TrendingUp, TrendingDown,
   ShoppingBag, Calendar, User, Package,
   DollarSign, ShoppingCart, Users, BookOpen, ArrowUpRight,
 } from 'lucide-react'
 import AdminPageHeader from '@/components/admin/AdminPageHeader'
-import { ANALYTICS_BY_RANGE, ACTIVITY_FEED } from '@/lib/mock-analytics'
-import type { DateRange, ActivityItem } from '@/lib/mock-analytics'
+import ActivityLogFeed from '../_components/ActivityLogFeed'
+import { adminFetch } from '@/lib/admin-client'
+import { emptyAnalyticsPeriod } from '@/lib/analytics-types'
+import type { DateRange, AnalyticsPeriod } from '@/lib/analytics-types'
 import { cn, formatPrice } from '@/lib/utils'
 
 // Lazy-load chart components (recharts needs client-side only)
@@ -69,26 +71,29 @@ function ChartCard({ title, children, className }: { title: string; children: Re
   )
 }
 
-// ─── Activity feed ────────────────────────────────────────────────────────────
-
-const ACTIVITY_ICONS: Record<ActivityItem['type'], React.ReactNode> = {
-  order:    <div className="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0"><ShoppingBag size={14} className="text-primary" /></div>,
-  booking:  <div className="w-8 h-8 rounded-xl bg-success/10 flex items-center justify-center flex-shrink-0"><Calendar size={14} className="text-success" /></div>,
-  customer: <div className="w-8 h-8 rounded-xl bg-accent/10  flex items-center justify-center flex-shrink-0"><User size={14} className="text-accent" /></div>,
-  stock:    <div className="w-8 h-8 rounded-xl bg-muted      flex items-center justify-center flex-shrink-0"><Package size={14} className="text-dark/50" /></div>,
-}
-
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function AnalyticsPage() {
-  const [range, setRange] = useState<DateRange>('3m')
+  const [range, setRange] = useState<DateRange>('30d')
+  const [data, setData] = useState<AnalyticsPeriod>(emptyAnalyticsPeriod())
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
 
-  const data   = useMemo(() => ANALYTICS_BY_RANGE[range], [range])
+  useEffect(() => {
+    let cancelled = false
+    setLoading(true); setError('')
+    adminFetch<{ data: AnalyticsPeriod }>(`/api/admin/analytics?range=${range}`)
+      .then(r => { if (!cancelled) setData(r.data) })
+      .catch(e => { if (!cancelled) setError(e instanceof Error ? e.message : 'Could not load analytics') })
+      .finally(() => { if (!cancelled) setLoading(false) })
+    return () => { cancelled = true }
+  }, [range])
+
   const { kpi } = data
 
   const totalOrders       = data.orderStatuses.reduce((s, o) => s + o.count, 0)
-  const returningPct      = Math.round(data.returningCustomers / (data.newCustomers + data.returningCustomers) * 100)
-  const maxAreaRevenue    = Math.max(...data.areaRows.map(r => r.revenue))
+  const returningPct      = (data.newCustomers + data.returningCustomers) > 0 ? Math.round(data.returningCustomers / (data.newCustomers + data.returningCustomers) * 100) : 0
+  const maxAreaRevenue    = Math.max(1, ...data.areaRows.map(r => r.revenue))
 
   const KPI_CARDS = [
     {
@@ -130,6 +135,8 @@ export default function AnalyticsPage() {
 
   return (
     <div className="flex flex-col gap-8">
+      {error && <div role="alert" className="admin-card p-4 text-sm text-danger">{error}</div>}
+      {loading && !error && <p className="text-xs text-dark/40">Loading analytics…</p>}
 
       {/* ── Header + date range ───────────────────────────────────────────── */}
       <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
@@ -265,23 +272,7 @@ export default function AnalyticsPage() {
       </div>
 
       {/* ── Section 6: Activity feed ─────────────────────────────────────── */}
-      <ChartCard title="Recent Activity">
-        <div className="flex flex-col gap-0 -mx-6">
-          {ACTIVITY_FEED.map((item, i) => (
-            <div key={item.id}
-              className={cn(
-                'flex items-start gap-3 px-6 py-3 border-b border-dark/5',
-                i % 2 !== 0 && 'bg-muted/15',
-              )}>
-              {ACTIVITY_ICONS[item.type]}
-              <div className="flex-1 min-w-0">
-                <p className="text-sm text-dark leading-snug">{item.message}</p>
-              </div>
-              <span className="text-xs text-dark/35 whitespace-nowrap flex-shrink-0 mt-0.5">{item.timeAgo}</span>
-            </div>
-          ))}
-        </div>
-      </ChartCard>
+      <ActivityLogFeed limit={10} />
 
     </div>
   )

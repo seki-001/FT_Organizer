@@ -149,7 +149,7 @@ export default function ShippingAndReturnsPage() {
           <strong>M-Pesa payments:</strong> Refunded to the originating M-Pesa number.
         </li>
         <li>
-          <strong>Card payments:</strong> Refunded to the originating card via Flutterwave.
+          <strong>Card payments:</strong> Refunded to the originating card via Paystack.
           Bank processing times may add 2–3 additional business days.
         </li>
         <li>

@@ -9,6 +9,7 @@ import { createCheckoutAccount } from '@/lib/checkout-account'
 import { getUserSession } from '@/lib/auth'
 import { isSupabaseAdminConfigured } from '@/lib/supabase/env'
 import { logActivity } from '@/lib/activity-log'
+import { PricingError } from '@/lib/pricing'
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 
@@ -105,6 +106,9 @@ export async function POST(request: NextRequest) {
       rate.resetAt,
     )
   } catch (err) {
+    if (err instanceof PricingError) {
+      return apiError(err.message, err.code, 409)
+    }
     const code = err instanceof Error ? err.message : 'INTERNAL_ERROR'
     if (code === 'SUBTOTAL_MISMATCH' || code === 'TOTAL_MISMATCH') {
       return apiError('Order totals do not match. Please refresh and try again.', code, 400)

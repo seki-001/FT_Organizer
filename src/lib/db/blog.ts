@@ -1,4 +1,6 @@
 import type { BlogPost } from '@/lib/types'
+import type { AdminPost } from '@/lib/admin-types'
+import { allowMockData } from '@/lib/mock-guard'
 import { MOCK_POSTS } from '@/lib/mock-posts'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { isSupabaseAdminConfigured } from '@/lib/supabase/env'
@@ -8,7 +10,7 @@ import type { TablesInsert } from '@/types/database'
 
 export async function listPublishedPosts(): Promise<BlogPost[]> {
   if (!isSupabaseAdminConfigured()) {
-    return [...MOCK_POSTS]
+    return allowMockData() ? [...MOCK_POSTS] : []
   }
 
   const admin = createAdminClient()
@@ -18,31 +20,44 @@ export async function listPublishedPosts(): Promise<BlogPost[]> {
     .eq('published', true)
     .order('published_at', { ascending: false })
 
-  if (error || !data?.length) {
-    if (error) logger.error({ event: 'blog_list_failed', error_code: error.code })
-    return [...MOCK_POSTS]
+  if (error) {
+    logger.error({ event: 'blog_list_failed', error_code: error.code })
+    return allowMockData() ? [...MOCK_POSTS] : []
   }
+  if (!data?.length) return allowMockData() ? [...MOCK_POSTS] : []
 
   return data.map(rowToBlogPost)
 }
 
-export async function listAllPosts(): Promise<BlogPost[]> {
-  if (!isSupabaseAdminConfigured()) return [...MOCK_POSTS]
+function rowToAdminPost(row: Parameters<typeof rowToBlogPost>[0]): AdminPost {
+  return { ...rowToBlogPost(row), status: row.published ? 'published' : 'draft', views: 0 }
+}
 
+/** All posts including drafts — admin only. Never falls back to demo data in production. */
+export async function listAllPosts(): Promise<AdminPost[]> {
+  if (!isSupabaseAdminConfigured()) return []
   const admin = createAdminClient()
   const { data, error } = await admin.from('blog_posts').select('*').order('created_at', { ascending: false })
-  if (error || !data?.length) return [...MOCK_POSTS]
-  return data.map(rowToBlogPost)
+  if (error) throw error
+  return (data ?? []).map(rowToAdminPost)
+}
+
+export async function getAdminPostBySlug(slug: string): Promise<AdminPost | null> {
+  if (!isSupabaseAdminConfigured()) return null
+  const admin = createAdminClient()
+  const { data, error } = await admin.from('blog_posts').select('*').eq('slug', slug).maybeSingle()
+  if (error) throw error
+  return data ? rowToAdminPost(data) : null
 }
 
 export async function getPostBySlug(slug: string): Promise<BlogPost | null> {
   if (!isSupabaseAdminConfigured()) {
-    return MOCK_POSTS.find((p) => p.slug === slug) ?? null
+    return allowMockData() ? (MOCK_POSTS.find((p) => p.slug === slug) ?? null) : null
   }
 
   const admin = createAdminClient()
   const { data, error } = await admin.from('blog_posts').select('*').eq('slug', slug).maybeSingle()
-  if (error || !data) return MOCK_POSTS.find((p) => p.slug === slug) ?? null
+  if (error || !data) return null
   return rowToBlogPost(data)
 }
 

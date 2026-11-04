@@ -111,7 +111,7 @@ export default function TermsAndConditionsPage() {
       </p>
       <p>
         <strong>Payment:</strong> We accept M-Pesa (via STK Push), card payments (Visa/Mastercard
-        via Flutterwave), and Cash on Delivery for Nairobi orders. Payment must be completed before
+        via Paystack), and Cash on Delivery for Nairobi orders. Payment must be completed before
         dispatch, except for Cash on Delivery orders.
       </p>
       <p>

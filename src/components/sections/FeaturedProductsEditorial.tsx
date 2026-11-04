@@ -6,7 +6,6 @@ import { ArrowUpRight } from 'lucide-react'
 import { SHOP_CATEGORIES } from '@/lib/constants'
 import { useEffect, useState } from 'react'
 import type { Product } from '@/lib/types'
-import { MOCK_PRODUCTS } from '@/lib/mock-products'
 import {
   SectionHeader,
   ShopProductCard,
@@ -17,7 +16,7 @@ const POPULAR_CATS = ['kitchen', 'bathroom', 'storage-containers', 'closet-bedro
 const BROWSE_CATEGORIES = SHOP_CATEGORIES.slice(0, 8)
 
 export default function FeaturedProductsEditorial() {
-  const [products, setProducts] = useState<Product[]>(MOCK_PRODUCTS)
+  const [products, setProducts] = useState<Product[]>([])
   const [suggestedCat, setSuggestedCat] = useState<string | null>(null)
   const [suggestedProducts, setSuggestedProducts] = useState<Product[]>([])
 

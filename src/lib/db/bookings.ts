@@ -2,6 +2,7 @@ import type { BookingFormValues } from '@/lib/validations'
 import type { Booking } from '@/lib/types'
 import type { AdminBooking } from '@/lib/mock-admin-bookings'
 import { MOCK_ADMIN_BOOKINGS } from '@/lib/mock-admin-bookings'
+import { allowMockData } from '@/lib/mock-guard'
 import { MOCK_BOOKINGS } from '@/lib/mock-account'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { createClient } from '@/lib/supabase/server'
@@ -114,7 +115,7 @@ export async function updateBookingNotes(reference: string, internalNotes: strin
 
 export async function listBookingsForUser(userId: string): Promise<Booking[]> {
   if (!isSupabaseConfigured()) {
-    return MOCK_BOOKINGS
+    return allowMockData() ? MOCK_BOOKINGS : []
   }
 
   const supabase = await createClient()
@@ -126,7 +127,7 @@ export async function listBookingsForUser(userId: string): Promise<Booking[]> {
 
   if (error || !data?.length) {
     if (error) logger.error({ event: 'user_bookings_list_failed', error_code: error.code, user_id: userId })
-    return isSupabaseAdminConfigured() ? [] : MOCK_BOOKINGS
+    return isSupabaseAdminConfigured() || !allowMockData() ? [] : MOCK_BOOKINGS
   }
 
   return data.map(rowToBooking)
@@ -138,7 +139,7 @@ function filterMockBookings(filters: {
   service?: string
   dateRange?: string
 }): AdminBooking[] {
-  let bookings = [...MOCK_ADMIN_BOOKINGS]
+  let bookings = allowMockData() ? [...MOCK_ADMIN_BOOKINGS] : []
   if (filters.search) {
     const q = filters.search.toLowerCase()
     bookings = bookings.filter(

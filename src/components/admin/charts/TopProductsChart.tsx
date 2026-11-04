@@ -1,7 +1,7 @@
 'use client'
 
 import { LineChart, Line, ResponsiveContainer } from 'recharts'
-import type { TopProductRow } from '@/lib/mock-analytics'
+import type { TopProductRow } from '@/lib/analytics-types'
 import { formatPrice } from '@/lib/utils'
 import { TrendingUp, TrendingDown, Minus } from 'lucide-react'
 

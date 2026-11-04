@@ -12,7 +12,7 @@ import {
   UploadCloud, X, Plus, ChevronDown, ChevronUp, Loader2, AlertCircle,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { BLOG_CATEGORIES } from '@/lib/mock-admin-blog'
+import { BLOG_CATEGORIES } from '@/lib/admin-types'
 import { BLOG_COVER_PICKER, blogCoverForCategory } from '@/lib/site-image-picker'
 import SiteImagePicker from '@/components/admin/SiteImagePicker'
 import type { BlogCategory } from '@/lib/types'

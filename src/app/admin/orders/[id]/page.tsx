@@ -10,7 +10,7 @@ import {
   Truck, CheckCircle2, XCircle, Phone, Mail, MapPin,
   MessageCircle, Loader2,
 } from 'lucide-react'
-import { MOCK_ADMIN_ORDERS } from '@/lib/mock-admin-orders'
+import { adminFetch } from '@/lib/admin-client'
 import { cn, formatPrice } from '@/lib/utils'
 import { COMPANY } from '@/lib/constants'
 import type { Order } from '@/lib/types'
@@ -128,9 +128,22 @@ function buildWhatsAppUrl(order: Order): string {
 
 export default function OrderDetailPage() {
   const params = useParams<{ id: string }>()
-  const baseOrder = MOCK_ADMIN_ORDERS.find(o => o.id === params.id)
-  if (!baseOrder) notFound()
+  const [initial, setInitial] = useState<Order | null>(null)
+  const [state, setState] = useState<'loading' | 'ready' | 'missing' | 'error'>('loading')
 
+  useEffect(() => {
+    adminFetch<{ order: Order }>(`/api/admin/orders/${encodeURIComponent(params.id)}`)
+      .then(d => { setInitial(d.order); setState('ready') })
+      .catch(e => setState(e instanceof Error && e.message === 'Not found' ? 'missing' : 'error'))
+  }, [params.id])
+
+  if (state === 'missing') notFound()
+  if (state === 'error') return <p role="alert" className="admin-card p-6 text-sm text-danger">Could not load this order. Please refresh.</p>
+  if (state === 'loading' || !initial) return <p className="p-6 text-sm text-dark/40">Loading order…</p>
+  return <OrderDetail baseOrder={initial} />
+}
+
+function OrderDetail({ baseOrder }: { baseOrder: Order }) {
   const [order,     setOrder]     = useState<Order>(baseOrder)
   const [newStatus, setNewStatus] = useState<string>(baseOrder.orderStatus)
   const [updating,  setUpdating]  = useState(false)

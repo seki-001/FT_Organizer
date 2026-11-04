@@ -1,7 +1,7 @@
 'use client'
 
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts'
-import type { OrderStatusSlice } from '@/lib/mock-analytics'
+import type { OrderStatusSlice } from '@/lib/analytics-types'
 
 interface TTProps { active?: boolean; payload?: Array<{ name: string; value: number }> }
 
