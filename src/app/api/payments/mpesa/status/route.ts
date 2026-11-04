@@ -11,7 +11,7 @@ import { updateOrderPaymentStatus } from '@/lib/db/orders'
 import { allowMockData } from '@/lib/mock-guard'
 
 export async function GET(request: NextRequest) {
-  const limited = enforceRateLimit(request, 'mpesa-status', { limit: 60, windowMs: 60_000 })
+  const limited = await enforceRateLimit(request, 'mpesa-status', { limit: 60, windowMs: 60_000 })
   if (limited) return limited
 
   const checkoutRequestId = request.nextUrl.searchParams.get('checkoutRequestId') ?? ''

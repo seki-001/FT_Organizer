@@ -24,7 +24,7 @@ function normalisePhone(raw: string): string | null {
 }
 
 export async function POST(request: NextRequest) {
-  const limited = enforceRateLimit(request, 'mpesa-initiate', { limit: 5, windowMs: 60_000 })
+  const limited = await enforceRateLimit(request, 'mpesa-initiate', { limit: 5, windowMs: 60_000 })
   if (limited) return limited
 
   try {

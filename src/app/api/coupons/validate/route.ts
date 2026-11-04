@@ -10,7 +10,7 @@ const ValidateSchema = z.object({
 })
 
 export async function POST(request: NextRequest) {
-  const limited = enforceRateLimit(request, 'coupons-validate', { limit: 20, windowMs: 60_000 })
+  const limited = await enforceRateLimit(request, 'coupons-validate', { limit: 20, windowMs: 60_000 })
   if (limited) return limited
 
   let body: unknown

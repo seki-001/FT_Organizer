@@ -31,7 +31,7 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
-  const limited = enforceRateLimit(request, 'profile', { limit: 10, windowMs: 60_000 })
+  const limited = await enforceRateLimit(request, 'profile', { limit: 10, windowMs: 60_000 })
   if (limited) return limited
 
   const session = await getUserSession()

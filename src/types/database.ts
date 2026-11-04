@@ -483,6 +483,10 @@ export interface Database {
     Views: Record<string, never>
     Functions: {
       is_admin: { Args: Record<string, never>; Returns: boolean }
+      rate_limit_hit: {
+        Args: { p_key: string; p_limit: number; p_window_seconds: number }
+        Returns: { allowed: boolean; remaining: number; reset_at: string }[]
+      }
     }
     Enums: Record<string, never>
   }

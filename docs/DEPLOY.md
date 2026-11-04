@@ -4,7 +4,7 @@ Branch flow: `dev` (staging) → test → merge to `main` (production). Hosting:
 
 ## 1. Supabase production project
 1. Create a **new** Supabase project (separate from staging). Region: closest to Nairobi (e.g. `eu-west`/`ap-south`).
-2. SQL Editor → run every file in `supabase/migrations/` in filename order (7 existing + `20260704100000_create_business_ops.sql`).
+2. SQL Editor → run every file in `supabase/migrations/` in filename order (7 existing + `20260704100000_create_business_ops.sql` + `20260704110000_security_hardening.sql`).
 3. Load the shop catalog: run `supabase/catalog.sql` (397 products, idempotent). **Do not run `supabase/seed.sql`** — it holds test coupons and sample posts.
 4. Authentication → URL Configuration: Site URL `https://www.organizer.co.ke`; Redirect URLs `https://www.organizer.co.ke/**` and `https://organizer.co.ke/**`.
 5. Authentication → Providers → Google: enable with production Google OAuth client; add `https://<project-ref>.supabase.co/auth/v1/callback` in Google Cloud.
@@ -37,3 +37,9 @@ Vercel → Project → Domains: `www.organizer.co.ke` (primary) and `organizer.c
 - Place a test order (COD), then a Paystack live payment of a small amount; confirm order flips to paid (also via webhook with the tab closed).
 - Log in as admin: `/admin` shows real (initially empty) dashboards; record a POS sale and an expense and confirm they persist after refresh.
 - `https://www.organizer.co.ke/robots.txt` allows indexing; submit `/sitemap.xml` in Google Search Console.
+
+## 6. Security notes
+- `20260704110000_security_hardening.sql` closes a privilege-escalation hole (users could register or edit themselves into the `admin` role) and enables shared rate limiting. **Run it on staging too.** Afterwards audit admins: `select p.id, u.email, p.role from public.profiles p join auth.users u on u.id = p.id where p.role = 'admin';`
+- Admin promotion is only possible from the Supabase SQL editor / service role.
+- Keep the GitHub repo private if it is not meant to be public; never commit `.env*` files.
+- Rotate any key that was ever pasted into chat or a ticket (Supabase service role, Paystack, M-Pesa).

@@ -4,9 +4,10 @@ import { updateProductBySlug, deleteProductBySlug } from '@/lib/db/products'
 import { logAdminActivity } from '@/lib/activity-log'
 import type { Product } from '@/lib/types'
 
-type Params = { params: { slug: string } }
+type Params = { params: Promise<{ slug: string }> }
 
-export async function PATCH(request: Request, { params }: Params) {
+export async function PATCH(request: Request, props: Params) {
+  const params = await props.params;
   const session = await getAdminSession()
   if (!session || session.user.role !== 'admin') {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -48,7 +49,8 @@ export async function PATCH(request: Request, { params }: Params) {
   return NextResponse.json({ success: true, product })
 }
 
-export async function DELETE(request: Request, { params }: Params) {
+export async function DELETE(request: Request, props: Params) {
+  const params = await props.params;
   const session = await getAdminSession()
   if (!session || session.user.role !== 'admin') {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })

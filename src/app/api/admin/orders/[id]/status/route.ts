@@ -13,10 +13,8 @@ const VALID_STATUSES = [
 
 type OrderStatus = (typeof VALID_STATUSES)[number]
 
-export async function PATCH(
-  request: Request,
-  { params }: { params: { id: string } },
-) {
+export async function PATCH(request: Request, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const session = await getAdminSession()
   if (!session || session.user.role !== 'admin') {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })

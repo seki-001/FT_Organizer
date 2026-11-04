@@ -7,7 +7,7 @@ import { completePaystackPayment } from '@/lib/payments/complete'
 import { allowMockData } from '@/lib/mock-guard'
 
 export async function GET(request: NextRequest) {
-  const limited = enforceRateLimit(request, 'paystack-verify', { limit: 30, windowMs: 60_000 })
+  const limited = await enforceRateLimit(request, 'paystack-verify', { limit: 30, windowMs: 60_000 })
   if (limited) return limited
 
   const reference = request.nextUrl.searchParams.get('reference') ?? ''

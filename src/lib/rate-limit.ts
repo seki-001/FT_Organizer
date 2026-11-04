@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { createAdminClient } from '@/lib/supabase/admin'
+import { isSupabaseAdminConfigured } from '@/lib/supabase/env'
 
 interface RateLimitEntry {
   count: number
@@ -71,13 +73,33 @@ export function withRateLimitHeaders(
   return response
 }
 
-export function enforceRateLimit(
+/**
+ * Rate limit by client IP. Uses a shared Postgres counter so limits hold across serverless instances;
+ * falls back to the in-memory counter if the database is unavailable (fails open, never blocks customers).
+ */
+export async function enforceRateLimit(
   request: NextRequest,
   namespace: string,
   options: RateLimitOptions,
-): NextResponse | null {
-  const ip = getClientIp(request)
-  const result = checkRateLimit(`${namespace}:${ip}`, options)
-  if (!result.allowed) return rateLimitResponse(result.resetAt)
-  return null
+): Promise<NextResponse | null> {
+  const key = `${namespace}:${getClientIp(request)}`
+
+  if (isSupabaseAdminConfigured()) {
+    try {
+      const { data, error } = await createAdminClient().rpc('rate_limit_hit', {
+        p_key: key,
+        p_limit: options.limit,
+        p_window_seconds: Math.ceil(options.windowMs / 1000),
+      })
+      const row = data?.[0]
+      if (!error && row) {
+        return row.allowed ? null : rateLimitResponse(new Date(row.reset_at).getTime())
+      }
+    } catch {
+      // fall through to the in-memory limiter
+    }
+  }
+
+  const result = checkRateLimit(key, options)
+  return result.allowed ? null : rateLimitResponse(result.resetAt)
 }

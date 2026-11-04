@@ -75,7 +75,7 @@ export const CreateOrderSchema = z.object({
   checkoutMode: z.enum(['guest', 'account']).default('guest'),
   accountPassword: z.string().min(8, 'Password must be at least 8 characters').optional(),
   customer: CheckoutFormSchema,
-  items: z.array(orderItemSchema).min(1),
+  items: z.array(orderItemSchema).min(1).max(100),
 })
 
 export type CreateOrderInput = z.infer<typeof CreateOrderSchema>

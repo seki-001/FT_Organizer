@@ -4,9 +4,10 @@ import { upsertPost, deletePostBySlug, getAdminPostBySlug } from '@/lib/db/blog'
 import { logAdminActivity } from '@/lib/activity-log'
 import type { BlogPost } from '@/lib/types'
 
-type Params = { params: { slug: string } }
+type Params = { params: Promise<{ slug: string }> }
 
-export async function GET(_request: Request, { params }: Params) {
+export async function GET(_request: Request, props: Params) {
+  const params = await props.params;
   const session = await getAdminSession()
   if (!session || session.user.role !== 'admin') {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -16,7 +17,8 @@ export async function GET(_request: Request, { params }: Params) {
   return NextResponse.json({ post })
 }
 
-export async function PATCH(request: Request, { params }: Params) {
+export async function PATCH(request: Request, props: Params) {
+  const params = await props.params;
   const session = await getAdminSession()
   if (!session || session.user.role !== 'admin') {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -52,7 +54,8 @@ export async function PATCH(request: Request, { params }: Params) {
   return NextResponse.json({ success: true, post })
 }
 
-export async function DELETE(request: Request, { params }: Params) {
+export async function DELETE(request: Request, props: Params) {
+  const params = await props.params;
   const session = await getAdminSession()
   if (!session || session.user.role !== 'admin') {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })

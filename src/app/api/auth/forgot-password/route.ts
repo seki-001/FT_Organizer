@@ -13,7 +13,7 @@ const ForgotPasswordSchema = z.object({
 })
 
 export async function POST(request: NextRequest) {
-  const limited = enforceRateLimit(request, 'auth-forgot-password', { limit: 5, windowMs: 60_000 })
+  const limited = await enforceRateLimit(request, 'auth-forgot-password', { limit: 5, windowMs: 60_000 })
   if (limited) return limited
 
   if (!isSupabaseConfigured()) {

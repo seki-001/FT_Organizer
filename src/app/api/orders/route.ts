@@ -14,7 +14,7 @@ import { PricingError } from '@/lib/pricing'
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 
 export async function POST(request: NextRequest) {
-  const limited = enforceRateLimit(request, 'orders-create', { limit: 10, windowMs: 60_000 })
+  const limited = await enforceRateLimit(request, 'orders-create', { limit: 10, windowMs: 60_000 })
   if (limited) return limited
 
   if (!isSupabaseAdminConfigured()) {

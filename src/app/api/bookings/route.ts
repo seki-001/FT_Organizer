@@ -11,7 +11,7 @@ function generateReference(): string {
 }
 
 export async function POST(request: NextRequest) {
-  const limited = enforceRateLimit(request, 'bookings', { limit: 5, windowMs: 60_000 })
+  const limited = await enforceRateLimit(request, 'bookings', { limit: 5, windowMs: 60_000 })
   if (limited) return limited
 
   try {

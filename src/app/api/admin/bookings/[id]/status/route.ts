@@ -4,12 +4,13 @@ import { getAdminSession } from '@/lib/auth'
 import { updateBookingStatus } from '@/lib/db/bookings'
 import { logAdminActivity } from '@/lib/activity-log'
 
-type Params = { params: { id: string } }
+type Params = { params: Promise<{ id: string }> }
 
 const VALID_STATUSES = ['new', 'quoted', 'confirmed', 'completed', 'cancelled'] as const
 type BookingStatus = (typeof VALID_STATUSES)[number]
 
-export async function PATCH(request: NextRequest, { params }: Params) {
+export async function PATCH(request: NextRequest, props: Params) {
+  const params = await props.params;
   const session = await getAdminSession()
   if (!session || session.user.role !== 'admin') {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })

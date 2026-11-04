@@ -7,7 +7,7 @@ import { logger } from '@/lib/logger'
 import { logActivity } from '@/lib/activity-log'
 
 export async function POST(request: NextRequest) {
-  const limited = enforceRateLimit(request, 'contact', { limit: 5, windowMs: 60_000 })
+  const limited = await enforceRateLimit(request, 'contact', { limit: 5, windowMs: 60_000 })
   if (limited) return limited
 
   try {

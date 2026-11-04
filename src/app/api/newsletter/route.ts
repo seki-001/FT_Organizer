@@ -11,7 +11,7 @@ const SubscribeSchema = z.object({
 })
 
 export async function POST(request: NextRequest) {
-  const limited = enforceRateLimit(request, 'newsletter', { limit: 3, windowMs: 60_000 })
+  const limited = await enforceRateLimit(request, 'newsletter', { limit: 3, windowMs: 60_000 })
   if (limited) return limited
 
   try {

@@ -28,7 +28,7 @@ interface StkCallbackBody {
  * by a direct Daraja status query before the order is marked paid.
  */
 export async function POST(request: NextRequest) {
-  const limited = enforceRateLimit(request, 'mpesa-callback', { limit: 60, windowMs: 60_000 })
+  const limited = await enforceRateLimit(request, 'mpesa-callback', { limit: 60, windowMs: 60_000 })
   if (limited) return limited
 
   try {

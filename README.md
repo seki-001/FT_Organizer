@@ -51,8 +51,6 @@ Open `.env.local` and fill in your values. See the comments in `.env.local.examp
 At minimum, for local development you need:
 
 ```
-NEXTAUTH_SECRET=<any random string for dev>
-NEXTAUTH_URL=http://localhost:3000
 NEXT_PUBLIC_SITE_URL=http://localhost:3000
 ```
 
@@ -178,7 +176,7 @@ src/
 3. **Set environment variables**
    - In Vercel project → Settings → Environment Variables
    - Add all variables from `.env.local.example` with production values
-   - Set `NEXTAUTH_URL` to your production domain: `https://www.organizer.co.ke`
+   - Set `NEXT_PUBLIC_SITE_URL` to `https://www.organizer.co.ke`
    - Set `INTASEND_IS_SANDBOX=false` for live M-Pesa payments
 
 4. **Deploy**

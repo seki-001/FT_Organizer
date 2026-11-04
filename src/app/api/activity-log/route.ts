@@ -6,17 +6,17 @@ import { logActivity } from '@/lib/activity-log'
 import { getUserSession } from '@/lib/auth'
 import { getClientIp } from '@/lib/rate-limit'
 
+// Only these client-reported events are accepted; anything else could be used to forge audit entries.
+const ALLOWED_ACTIONS = ['user.login', 'user.register', 'user.logout'] as const
+
 const ClientActivitySchema = z.object({
-  action: z.string().min(1).max(100),
+  action: z.enum(ALLOWED_ACTIONS),
   description: z.string().min(1).max(500),
-  resourceType: z.string().max(50).optional(),
-  resourceId: z.string().max(100).optional(),
-  metadata: z.record(z.unknown()).optional(),
 }).strict()
 
 /** Allow authenticated storefront users to log non-sensitive actions (e.g. login). */
 export async function POST(request: NextRequest) {
-  const limited = enforceRateLimit(request, 'activity-log', { limit: 30, windowMs: 60_000 })
+  const limited = await enforceRateLimit(request, 'activity-log', { limit: 30, windowMs: 60_000 })
   if (limited) return limited
 
   try {
@@ -36,9 +36,8 @@ export async function POST(request: NextRequest) {
       userId: session?.user.id ?? null,
       actorEmail: session?.user.email ?? null,
       actorName: session?.profile?.full_name ?? (session?.user.user_metadata?.full_name as string | undefined) ?? null,
-      resourceType: parsed.data.resourceType ?? null,
-      resourceId: parsed.data.resourceId ?? null,
-      metadata: parsed.data.metadata,
+      resourceType: 'user',
+      resourceId: session?.user.id ?? null,
       ipAddress: ip,
       userAgent,
       source: 'storefront',

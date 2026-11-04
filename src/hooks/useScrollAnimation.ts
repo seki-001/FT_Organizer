@@ -13,7 +13,7 @@ interface UseScrollAnimationOptions {
 }
 
 interface UseScrollAnimationReturn {
-  ref:      React.RefObject<HTMLDivElement>
+  ref:      React.RefObject<HTMLDivElement | null>
   isInView: boolean
 }
 
