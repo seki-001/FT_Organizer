@@ -6,6 +6,7 @@ import { useEffect, useRef } from 'react'
 import { ArrowRight } from 'lucide-react'
 import { useScrollAnimation } from '@/hooks/useScrollAnimation'
 import { EASE_STANDARD } from '@/lib/animations'
+import { SITE_FACTS, homesOrganizedLabel, yearsInBusiness } from '@/lib/site-facts'
 
 // ─── Animated counter ─────────────────────────────────────────────────────────
 
@@ -42,9 +43,9 @@ function AnimatedStat({ value, suffix = '', duration = 1.8 }: {
 // ─── Component ────────────────────────────────────────────────────────────────
 
 const STATS = [
-  { label: 'Homes Organized',  value: 500,  suffix: '+' },
-  { label: 'Years Experience', value: 7,    suffix: '+' },
-  { label: 'Client Rating',    value: 4.9,  suffix: '★' },
+  { label: 'Homes Organized',  value: SITE_FACTS.homesOrganized.value, suffix: SITE_FACTS.homesOrganized.suffix },
+  { label: 'Years Experience', value: yearsInBusiness(), suffix: '+' },
+  { label: 'Client Rating',    value: SITE_FACTS.clientRating.value, suffix: SITE_FACTS.clientRating.suffix },
 ]
 
 export default function BoldStatsBlock() {
@@ -65,7 +66,7 @@ export default function BoldStatsBlock() {
             className="flex-1"
           >
             <h2 className="font-display text-5xl md:text-6xl text-white leading-[1.05]">
-              500+ Homes
+              {homesOrganizedLabel()} Homes
               <br />
               <span className="text-primary">Transformed</span>
               <br />

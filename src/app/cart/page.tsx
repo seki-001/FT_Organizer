@@ -136,7 +136,7 @@ export default function CartPage() {
             <h1 className="font-display text-3xl text-dark mb-2">Your cart is empty</h1>
             <p className="text-dark/50">Add some organizing products to get started.</p>
           </div>
-          <Link href="/shop" className="sfs-btn-primary px-8">
+          <Link href="/shop" className="btn-primary px-8">
             Start Shopping
           </Link>
         </div>
@@ -159,7 +159,7 @@ export default function CartPage() {
 
           {/* LEFT — Cart items */}
           <div className="lg:col-span-2">
-            <div className="bg-white/60 backdrop-blur-xl rounded-2xl border border-white/70 px-4 sm:px-6 shadow-sfs-sm">
+            <div className="bg-white/60 backdrop-blur-xl rounded-2xl border border-white/70 px-4 sm:px-6 shadow-card-sm">
               {items.map((item) => (
                 <CartItemRow key={`${item.product.id}-${item.variant?.id ?? 'no-variant'}`} item={item} />
               ))}

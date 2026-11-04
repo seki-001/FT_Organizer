@@ -7,11 +7,12 @@ import type {
   AnalyticsPeriod, CategoryRevenue, DateRange, OrderStatusSlice, RevenueSeries,
   ServiceBookings, TopProductRow, AreaRow,
 } from '@/lib/analytics-types'
+import { BRAND } from '@/lib/brand-colors'
 
 const RANGE_DAYS: Record<DateRange, number> = { '7d': 7, '30d': 30, '3m': 90, '1y': 365 }
 
 const STATUS_COLORS: Record<string, string> = {
-  delivered: '#2D7A47', processing: '#E8A020', dispatched: '#6366F1', packed: '#3B82F6', cancelled: '#991010',
+  delivered: '#2D7A47', processing: BRAND.accent, dispatched: '#6366F1', packed: '#3B82F6', cancelled: '#991010',
 }
 
 const DAY = 86_400_000

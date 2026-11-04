@@ -9,6 +9,7 @@ import type { BlogPost, BlogCategory } from '@/lib/types'
 import { cn } from '@/lib/utils'
 import { useScrollAnimation } from '@/hooks/useScrollAnimation'
 import { staggerContainer, staggerItem, EASE_STANDARD } from '@/lib/animations'
+import { FOUNDED_YEAR } from '@/lib/site-facts'
 
 // ─── Types + constants ────────────────────────────────────────────────────────
 
@@ -284,7 +285,7 @@ export default function BlogIndexPage() {
           <div className="grid grid-cols-3 items-end gap-4 py-6">
             {/* Left: issue info */}
             <div className="hidden sm:block text-xs text-dark/40 leading-relaxed">
-              <p>Est. 2018 · Nairobi, Kenya</p>
+              <p>Est. {FOUNDED_YEAR} · Nairobi, Kenya</p>
               <p className="mt-1">Home · Office · Life</p>
             </div>
 

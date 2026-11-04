@@ -27,7 +27,7 @@ export default function ServiceShowcaseCard({
     <Link
       href={href}
       className={cn(
-        'sfs-card group flex flex-col overflow-hidden h-full',
+        'glass-card-interactive group flex flex-col overflow-hidden h-full',
         className,
       )}
     >
@@ -61,7 +61,7 @@ export default function ServiceShowcaseCard({
             <span />
           )}
           <span className="inline-flex items-center gap-1 text-sm font-medium text-primary">
-            Learn more <ArrowUpRight size={14} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+            Learn more<span className="sr-only"> about {title}</span> <ArrowUpRight size={14} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
           </span>
         </div>
       </div>

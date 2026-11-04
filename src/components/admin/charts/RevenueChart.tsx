@@ -5,6 +5,7 @@ import {
   XAxis, YAxis, CartesianGrid, Tooltip, Legend,
 } from 'recharts'
 import type { RevenueSeries } from '@/lib/analytics-types'
+import { BRAND } from '@/lib/brand-colors'
 
 interface TTPayload { name: string; value: number; color: string }
 interface TTProps { active?: boolean; payload?: TTPayload[]; label?: string }
@@ -57,12 +58,12 @@ export default function RevenueChart({ data }: { data: RevenueSeries[] }) {
         <AreaChart data={data} margin={{ top: 8, right: 16, left: 0, bottom: 0 }}>
           <defs>
             <linearGradient id="shopGradient" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%"  stopColor="#CC1212" stopOpacity={0.15} />
-              <stop offset="95%" stopColor="#CC1212" stopOpacity={0} />
+              <stop offset="5%"  stopColor={BRAND.primaryDark} stopOpacity={0.15} />
+              <stop offset="95%" stopColor={BRAND.primaryDark} stopOpacity={0} />
             </linearGradient>
             <linearGradient id="serviceGradient" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%"  stopColor="#E8A020" stopOpacity={0.15} />
-              <stop offset="95%" stopColor="#E8A020" stopOpacity={0} />
+              <stop offset="5%"  stopColor={BRAND.accent} stopOpacity={0.15} />
+              <stop offset="95%" stopColor={BRAND.accent} stopOpacity={0} />
             </linearGradient>
           </defs>
           <CartesianGrid strokeDasharray="3 3" stroke="#F4F4F4" vertical={false} />
@@ -79,15 +80,15 @@ export default function RevenueChart({ data }: { data: RevenueSeries[] }) {
           <Tooltip content={<CustomTooltip />} cursor={{ stroke: '#F4F4F4', strokeWidth: 2 }} />
           <Area
             type="monotone" dataKey="shop" name="shop"
-            stroke="#CC1212" strokeWidth={2.5}
+            stroke={BRAND.primaryDark} strokeWidth={2.5}
             fill="url(#shopGradient)"
-            dot={false} activeDot={{ r: 4, fill: '#CC1212', strokeWidth: 0 }}
+            dot={false} activeDot={{ r: 4, fill: BRAND.primaryDark, strokeWidth: 0 }}
           />
           <Area
             type="monotone" dataKey="service" name="service"
-            stroke="#E8A020" strokeWidth={2.5}
+            stroke={BRAND.accent} strokeWidth={2.5}
             fill="url(#serviceGradient)"
-            dot={false} activeDot={{ r: 4, fill: '#E8A020', strokeWidth: 0 }}
+            dot={false} activeDot={{ r: 4, fill: BRAND.accent, strokeWidth: 0 }}
           />
           <Legend content={<CustomLegend />} />
         </AreaChart>

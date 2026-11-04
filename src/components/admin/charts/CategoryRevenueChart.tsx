@@ -5,6 +5,7 @@ import {
   XAxis, YAxis, CartesianGrid, Tooltip, Cell,
 } from 'recharts'
 import type { CategoryRevenue } from '@/lib/analytics-types'
+import { BRAND } from '@/lib/brand-colors'
 
 interface TTProps { active?: boolean; payload?: Array<{ value: number }>; label?: string }
 
@@ -29,10 +30,10 @@ export default function CategoryRevenueChart({ data }: { data: CategoryRevenue[]
         <defs>
           {data.map((_, i) => {
             const t = i / (data.length - 1)
-            // Gradient interpolation: primary (#CC1212) → accent (#E8A020)
-            const r = Math.round(0xCC + (0xE8 - 0xCC) * t)
-            const g = Math.round(0x12 + (0xA0 - 0x12) * t)
-            const b = Math.round(0x12 + (0x20 - 0x12) * t)
+            // Gradient interpolation: BRAND.primaryDark → BRAND.accent
+            const from = [1, 3, 5].map((k) => parseInt(BRAND.primaryDark.slice(k, k + 2), 16))
+            const to = [1, 3, 5].map((k) => parseInt(BRAND.accent.slice(k, k + 2), 16))
+            const [r, g, b] = from.map((f, k) => Math.round(f + (to[k] - f) * t))
             const hex = `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`
             return (
               <linearGradient key={i} id={`catGrad${i}`} x1="0" y1="0" x2="0" y2="1">

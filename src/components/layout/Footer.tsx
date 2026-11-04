@@ -24,7 +24,7 @@ export default function Footer() {
           </GlassPanel>
 
           {[
-            { label: 'Services', items: SERVICES.slice(0, 6).map((s) => ({ label: s.title, href: `/services/${s.slug}` })) },
+            { label: 'Services', items: SERVICES.filter((s) => !s.siteVisit).map((s) => ({ label: s.title, href: `/services/${s.slug}` })) },
             { label: 'Shop', items: SHOP_CATEGORIES.slice(0, 10).map((c) => ({ label: c.label, href: `/shop?category=${c.slug}` })) },
             {
               label: 'Company',
@@ -39,7 +39,7 @@ export default function Footer() {
             },
           ].map((col) => (
             <GlassPanel key={col.label} tone="dark" className="p-6">
-              <p className="section-label text-white/40 mb-4">{col.label}</p>
+              <p className="eyebrow-on-dark mb-4">{col.label}</p>
               <ul className="flex flex-col gap-2.5">
                 {col.items.map((item) => (
                   <li key={item.href}>

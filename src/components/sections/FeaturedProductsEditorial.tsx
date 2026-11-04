@@ -30,8 +30,10 @@ export default function FeaturedProductsEditorial() {
   }, [])
 
   const featured = products.filter((p) => p.featured).slice(0, 8)
+  // Skip anything already shown under "Featured picks" so the two rails never repeat a product.
+  const featuredIds = new Set(featured.map((p) => p.id))
   const bestSellers = POPULAR_CATS.map((cat) =>
-    products.find((p) => p.category === cat)
+    products.find((p) => p.category === cat && !featuredIds.has(p.id))
   ).filter(Boolean).slice(0, 6) as Product[]
 
   useEffect(() => {
@@ -108,7 +110,7 @@ export default function FeaturedProductsEditorial() {
               <Link
                 key={cat.slug}
                 href={`/shop?category=${cat.slug}`}
-                className="sfs-card group p-4 flex flex-col gap-3 text-center"
+                className="glass-card-interactive group p-4 flex flex-col gap-3 text-center"
               >
                 <div className="relative aspect-square img-frame-lg bg-muted img-zoom mx-auto w-full max-w-[140px]">
                   <Image
@@ -124,7 +126,7 @@ export default function FeaturedProductsEditorial() {
             ))}
           </div>
           <div className="text-center mt-8">
-            <Link href="/shop" className="sfs-btn-outline inline-flex">
+            <Link href="/shop" className="btn-outline inline-flex">
               Browse all products <ArrowUpRight size={15} />
             </Link>
           </div>

@@ -1,5 +1,12 @@
 import type { Config } from 'tailwindcss'
 
+/**
+ * Colours are driven by CSS variables (see :root in src/app/globals.css) stored
+ * as space-separated RGB channels so Tailwind opacity modifiers keep working
+ * (`bg-primary/90`, `text-dark/50`). Change a brand colour in ONE place.
+ */
+const token = (name: string) => `rgb(var(--color-${name}) / <alpha-value>)`
+
 const config: Config = {
   content: [
     './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
@@ -9,29 +16,37 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        primary: '#F01A1B',
-        accent: '#F0A824',
-        dark: '#2D2D2D',
-        surface: '#FAFAFA',
-        muted: '#F4F4F4',
-        success: '#2D7A47',
-        danger: '#B91212',
+        primary: {
+          DEFAULT: token('primary'),
+          dark: token('primary-dark'),
+        },
+        accent: token('accent'),
+        page: token('page'),
+        ink: token('ink'),
+        dark: token('dark'),
+        surface: token('surface'),
+        muted: token('muted'),
+        success: token('success'),
+        danger: token('danger'),
       },
       fontFamily: {
         display: ['var(--font-playfair)', 'Playfair Display', 'serif'],
         sans: ['var(--font-inter)', 'Inter', 'sans-serif'],
         mono: ['var(--font-dm-mono)', 'DM Mono', 'monospace'],
       },
+      // Named radii: control → card → panel → pill. Prefer these over raw values.
       borderRadius: {
-        xl: '1rem',
+        xl: 'var(--radius-control)',
         lg: '0.5rem',
+        card: 'var(--radius-card)',
+        panel: 'var(--radius-panel)',
         '4xl': '2rem',
         '5xl': '3rem',
       },
       boxShadow: {
-        'sfs-sm': '0 1px 3px rgba(45, 45, 45, 0.06), 0 1px 2px rgba(45, 45, 45, 0.04)',
-        'sfs-md': '0 8px 24px rgba(45, 45, 45, 0.08), 0 2px 8px rgba(45, 45, 45, 0.04)',
-        'sfs-lg': '0 16px 48px rgba(45, 45, 45, 0.10), 0 4px 16px rgba(45, 45, 45, 0.05)',
+        'card-sm': 'var(--shadow-sm)',
+        'card-md': 'var(--shadow-md)',
+        'card-lg': 'var(--shadow-lg)',
       },
     },
   },

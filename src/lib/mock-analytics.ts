@@ -1,3 +1,4 @@
+import { BRAND } from '@/lib/brand-colors'
 /**
  * Mock analytics data.
  * Each date-range key returns a complete dataset for that period.
@@ -99,7 +100,7 @@ export interface AnalyticsPeriod {
 
 const ORDER_STATUSES: OrderStatusSlice[] = [
   { status: 'Delivered',   count: 48, color: '#2D7A47' },
-  { status: 'Processing',  count: 18, color: '#E8A020' },
+  { status: 'Processing',  count: 18, color: BRAND.accent },
   { status: 'Dispatched',  count: 11, color: '#6366F1' },
   { status: 'Packed',      count:  6, color: '#3B82F6' },
   { status: 'Cancelled',   count:  4, color: '#991010' },

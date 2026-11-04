@@ -51,7 +51,7 @@ export default function ServicesStrip() {
 
         <div className="flex flex-wrap gap-2 justify-center">
           {SERVICES.map((s) => (
-            <Link key={s.slug} href={`/services/${s.slug}`} className="sfs-chip">
+            <Link key={s.slug} href={`/services/${s.slug}`} className="chip">
               {s.title}
             </Link>
           ))}
